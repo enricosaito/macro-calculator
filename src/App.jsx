@@ -1,4 +1,12 @@
+"use client";
+
 import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Dumbbell, Flame, Utensils } from "lucide-react";
 
 const MacroCalculator = () => {
   const [formData, setFormData] = useState({
@@ -12,21 +20,21 @@ const MacroCalculator = () => {
   const [result, setResult] = useState(null);
 
   const activityMultipliers = {
-    "1.2": "Sedentary (little to no exercise)",
-    "1.375": "Light (1-3 days of exercise)",
-    "1.55": "Moderate (3-5 days of exercise)",
-    "1.725": "Active (6-7 days of exercise)",
-    "1.9": "Very Active (Athlete, intense exercise)",
+    1.2: "Sedentary (little to no exercise)",
+    1.375: "Light (1-3 days of exercise)",
+    1.55: "Moderate (3-5 days of exercise)",
+    1.725: "Active (6-7 days of exercise)",
+    1.9: "Very Active (Athlete, intense exercise)",
   };
 
   const calculateMacros = () => {
     const { weight, height, age, sex, activityLevel, goal } = formData;
     if (!weight || !height || !age) return;
 
-    const weightKg = parseFloat(weight);
-    const heightCm = parseFloat(height);
-    const ageYears = parseInt(age);
-    const activityFactor = parseFloat(activityLevel);
+    const weightKg = Number.parseFloat(weight);
+    const heightCm = Number.parseFloat(height);
+    const ageYears = Number.parseInt(age);
+    const activityFactor = Number.parseFloat(activityLevel);
 
     // Calculate BMR (Basal Metabolic Rate)
     let bmr;
@@ -53,38 +61,161 @@ const MacroCalculator = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-lg">
-      <h2 className="text-xl font-bold mb-4">Macro Calculator</h2>
-      <div className="grid gap-2">
-        <input type="number" placeholder="Weight (kg)" value={formData.weight} onChange={(e) => setFormData({ ...formData, weight: e.target.value })} className="p-2 border rounded" />
-        <input type="number" placeholder="Height (cm)" value={formData.height} onChange={(e) => setFormData({ ...formData, height: e.target.value })} className="p-2 border rounded" />
-        <input type="number" placeholder="Age" value={formData.age} onChange={(e) => setFormData({ ...formData, age: e.target.value })} className="p-2 border rounded" />
-        <select value={formData.sex} onChange={(e) => setFormData({ ...formData, sex: e.target.value })} className="p-2 border rounded">
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-        </select>
-        <select value={formData.activityLevel} onChange={(e) => setFormData({ ...formData, activityLevel: e.target.value })} className="p-2 border rounded">
-          {Object.entries(activityMultipliers).map(([value, label]) => (
-            <option key={value} value={value}>{label}</option>
-          ))}
-        </select>
-        <select value={formData.goal} onChange={(e) => setFormData({ ...formData, goal: e.target.value })} className="p-2 border rounded">
-          <option value="maintain">Maintain</option>
-          <option value="cut">Cut (Fat Loss)</option>
-          <option value="bulk">Bulk (Muscle Gain)</option>
-        </select>
-        <button onClick={calculateMacros} className="bg-blue-500 text-white p-2 rounded">Calculate</button>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 p-4">
+      <div className="w-full max-w-3xl">
+        <Card>
+          <CardHeader>
+            <CardTitle>Macro Calculator</CardTitle>
+            <CardDescription>
+              Calculate your daily macronutrient needs based on your goals and activity level.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                calculateMacros();
+              }}
+              className="space-y-6"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="weight">Weight (kg)</Label>
+                  <Input
+                    id="weight"
+                    type="number"
+                    placeholder="Enter your weight"
+                    value={formData.weight}
+                    onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="height">Height (cm)</Label>
+                  <Input
+                    id="height"
+                    type="number"
+                    placeholder="Enter your height"
+                    value={formData.height}
+                    onChange={(e) => setFormData({ ...formData, height: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="age">Age</Label>
+                  <Input
+                    id="age"
+                    type="number"
+                    placeholder="Enter your age"
+                    value={formData.age}
+                    onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="sex">Sex</Label>
+                  <Select value={formData.sex} onValueChange={(value) => setFormData({ ...formData, sex: value })}>
+                    <SelectTrigger id="sex">
+                      <SelectValue placeholder="Select your sex" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="activityLevel">Activity Level</Label>
+                  <Select
+                    value={formData.activityLevel}
+                    onValueChange={(value) => setFormData({ ...formData, activityLevel: value })}
+                  >
+                    <SelectTrigger id="activityLevel">
+                      <SelectValue placeholder="Select your activity level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(activityMultipliers).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="goal">Goal</Label>
+                  <Select value={formData.goal} onValueChange={(value) => setFormData({ ...formData, goal: value })}>
+                    <SelectTrigger id="goal">
+                      <SelectValue placeholder="Select your goal" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="maintain">Maintain</SelectItem>
+                      <SelectItem value="cut">Cut (Fat Loss)</SelectItem>
+                      <SelectItem value="bulk">Bulk (Muscle Gain)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <Button type="submit" className="w-full">
+                Calculate Macros
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </form>
+            {result && (
+              <div className="mt-8 space-y-4">
+                <h3 className="text-lg font-semibold">Your Results:</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">TDEE</CardTitle>
+                      <Flame className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{result.tdee.toFixed(0)} kcal/day</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Calories</CardTitle>
+                      <Utensils className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{result.calorieIntake.toFixed(0)} kcal/day</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Protein</CardTitle>
+                      <Dumbbell className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{result.protein.toFixed(0)}g</div>
+                    </CardContent>
+                  </Card>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Carbs</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{result.carbs.toFixed(0)}g</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Fats</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{result.fats.toFixed(0)}g</div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
-      {result && (
-        <div className="mt-4 p-4 bg-gray-100 rounded">
-          <h3 className="text-lg font-semibold">Results:</h3>
-          <p><strong>TDEE:</strong> {result.tdee.toFixed(0)} kcal/day</p>
-          <p><strong>Calories:</strong> {result.calorieIntake.toFixed(0)} kcal/day</p>
-          <p><strong>Protein:</strong> {result.protein.toFixed(0)}g</p>
-          <p><strong>Carbs:</strong> {result.carbs.toFixed(0)}g</p>
-          <p><strong>Fats:</strong> {result.fats.toFixed(0)}g</p>
-        </div>
-      )}
     </div>
   );
 };
