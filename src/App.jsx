@@ -65,7 +65,7 @@ const MacroCalculator = () => {
       <div className="w-full max-w-3xl">
         <Card>
           <CardHeader>
-            <CardTitle>Macro Calculator</CardTitle>
+            <CardTitle>Calculadora de Macros</CardTitle>
             <CardDescription>
               Calculate your daily macronutrient needs based on your goals and activity level.
             </CardDescription>
