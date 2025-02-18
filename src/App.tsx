@@ -33,9 +33,7 @@ const App = () => {
   });
 
   const handleNext = () => {
-    if (validateStep()) {
-      setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
-    }
+    setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
   };
 
   const handlePrevious = () => {
@@ -46,21 +44,16 @@ const App = () => {
     setUserData((prev) => ({ ...prev, ...data }));
   };
 
-  const validateStep = () => {
-    switch (steps[currentStep]) {
-      case "bmr":
-        return (
-          Number.parseFloat(userData.weight) >= 30 &&
-          Number.parseFloat(userData.height) >= 100 &&
-          Number.parseInt(userData.age) >= 18
-        );
-      case "activity":
-        return !!userData.activityLevel;
-      case "goal":
-        return !!userData.goal;
-      default:
-        return true;
-    }
+  const handleStartOver = () => {
+    setCurrentStep(0);
+    setUserData({
+      weight: "",
+      height: "",
+      age: "",
+      sex: "male",
+      activityLevel: "",
+      goal: "",
+    });
   };
 
   const renderStep = () => {
@@ -68,13 +61,13 @@ const App = () => {
       case "landing":
         return <LandingPage onStart={handleNext} />;
       case "bmr":
-        return <BMRCalculation userData={userData} updateUserData={updateUserData} />;
+        return <BMRCalculation userData={userData} updateUserData={updateUserData} onNext={handleNext} />;
       case "activity":
         return <ActivityLevel userData={userData} updateUserData={updateUserData} />;
       case "goal":
         return <GoalSelection userData={userData} updateUserData={updateUserData} />;
       case "results":
-        return <ResultsPage userData={userData} />;
+        return <ResultsPage userData={userData} onStartOver={handleStartOver} />;
       default:
         return null;
     }
