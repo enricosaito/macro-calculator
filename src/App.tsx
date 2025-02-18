@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,52 +8,12 @@ import BMRCalculation from "@/components/steps/bmr-calculation";
 import ActivityLevel from "@/components/steps/activity-level";
 import GoalSelection from "@/components/steps/goal-selection";
 import ResultsPage from "@/components/steps/results-page";
+import useMacroCalculator from "@/hooks/useMacroCalculator";
 
 const steps = ["landing", "bmr", "activity", "goal", "results"];
 
-interface UserData {
-  weight: string;
-  height: string;
-  age: string;
-  sex: "male" | "female" | null;
-  activityLevel: string;
-  goal: string;
-}
-
 const App = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [userData, setUserData] = useState<UserData>({
-    weight: "",
-    height: "",
-    age: "",
-    sex: null,
-    activityLevel: "",
-    goal: "",
-  });
-
-  const handleNext = () => {
-    setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
-  };
-
-  const handlePrevious = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 0));
-  };
-
-  const updateUserData = (data: Partial<UserData>) => {
-    setUserData((prev) => ({ ...prev, ...data }));
-  };
-
-  const handleStartOver = () => {
-    setCurrentStep(0);
-    setUserData({
-      weight: "",
-      height: "",
-      age: "",
-      sex: null,
-      activityLevel: "",
-      goal: "",
-    });
-  };
+  const { userData, currentStep, handleNext, handlePrevious, updateUserData, handleStartOver } = useMacroCalculator();
 
   const renderStep = () => {
     switch (steps[currentStep]) {
