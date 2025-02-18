@@ -16,7 +16,7 @@ interface UserData {
   weight: string;
   height: string;
   age: string;
-  sex: "male" | "female";
+  sex: "male" | "female" | null;
   activityLevel: string;
   goal: string;
 }
@@ -27,7 +27,7 @@ const App = () => {
     weight: "",
     height: "",
     age: "",
-    sex: "male",
+    sex: null,
     activityLevel: "",
     goal: "",
   });
@@ -50,7 +50,7 @@ const App = () => {
       weight: "",
       height: "",
       age: "",
-      sex: "male",
+      sex: null,
       activityLevel: "",
       goal: "",
     });

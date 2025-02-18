@@ -14,7 +14,7 @@ interface BMRCalculationProps {
     weight: string;
     height: string;
     age: string;
-    sex: "male" | "female";
+    sex: "male" | "female" | null;
   };
   updateUserData: (data: Partial<{ weight: string; height: string; age: string; sex: "male" | "female" }>) => void;
   onNext: () => void;
@@ -25,15 +25,21 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
 
   const validateInputs = () => {
     const newErrors: { [key: string]: string } = {};
+    const weight = Number.parseFloat(userData.weight);
+    const height = Number.parseFloat(userData.height);
+    const age = Number.parseInt(userData.age);
 
-    if (Number.parseFloat(userData.weight) < 30) {
-      newErrors.weight = "Weight must be at least 30 kg";
+    if (isNaN(weight) || weight < 30 || weight > 300) {
+      newErrors.weight = "Weight must be between 30 and 300 kg";
     }
-    if (Number.parseFloat(userData.height) < 100) {
-      newErrors.height = "Height must be at least 100 cm";
+    if (isNaN(height) || height < 100 || height > 250) {
+      newErrors.height = "Height must be between 100 and 250 cm";
     }
-    if (Number.parseInt(userData.age) < 18) {
-      newErrors.age = "Age must be at least 18 years";
+    if (isNaN(age) || age < 18 || age > 120) {
+      newErrors.age = "Age must be between 18 and 120 years";
+    }
+    if (userData.sex === null) {
+      newErrors.sex = "Please select your sex";
     }
 
     setErrors(newErrors);
@@ -61,6 +67,7 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
             onChange={(e) => updateUserData({ weight: e.target.value })}
             placeholder="Enter your weight"
             min={30}
+            max={300}
             required
           />
         </div>
@@ -73,6 +80,7 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
             onChange={(e) => updateUserData({ height: e.target.value })}
             placeholder="Enter your height"
             min={100}
+            max={250}
             required
           />
         </div>
@@ -85,13 +93,14 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
             onChange={(e) => updateUserData({ age: e.target.value })}
             placeholder="Enter your age"
             min={18}
+            max={120}
             required
           />
         </div>
         <div>
           <Label>Sex</Label>
           <RadioGroup
-            value={userData.sex}
+            value={userData.sex || undefined}
             onValueChange={(value: "male" | "female") => updateUserData({ sex: value })}
             className="flex space-x-4"
           >

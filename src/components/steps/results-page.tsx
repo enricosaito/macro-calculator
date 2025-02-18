@@ -12,7 +12,7 @@ interface ResultsPageProps {
     weight: string;
     height: string;
     age: string;
-    sex: "male" | "female";
+    sex: "male" | "female" | null;
     activityLevel: string;
     goal: string;
   };
