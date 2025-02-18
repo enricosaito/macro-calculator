@@ -4,17 +4,26 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import LandingPage from "./steps/landing-page";
-import BMRCalculation from "./steps/bmr-calculation";
-import ActivityLevel from "./steps/activity-level";
-import GoalSelection from "./steps/goal-selection";
-import ResultsPage from "./steps/results-page";
+import LandingPage from "@/components/steps/landing-page";
+import BMRCalculation from "@/components/steps/bmr-calculation";
+import ActivityLevel from "@/components/steps/activity-level";
+import GoalSelection from "@/components/steps/goal-selection";
+import ResultsPage from "@/components/steps/results-page";
 
 const steps = ["landing", "bmr", "activity", "goal", "results"];
 
+interface UserData {
+  weight: string;
+  height: string;
+  age: string;
+  sex: "male" | "female";
+  activityLevel: string;
+  goal: string;
+}
+
 const MacroCalculator = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [userData, setUserData] = useState({
+  const [userData, setUserData] = useState<UserData>({
     weight: "",
     height: "",
     age: "",
@@ -31,7 +40,7 @@ const MacroCalculator = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   };
 
-  const updateUserData = (data) => {
+  const updateUserData = (data: Partial<UserData>) => {
     setUserData((prev) => ({ ...prev, ...data }));
   };
 
@@ -55,18 +64,19 @@ const MacroCalculator = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 p-4">
       <Card className="w-full max-w-4xl">
-        <CardContent className="p-6">
+        <CardContent className="p-6 flex flex-col items-center">
           <motion.div
             key={currentStep}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
+            className="w-full max-w-2xl"
           >
             {renderStep()}
           </motion.div>
           {currentStep > 0 && currentStep < steps.length - 1 && (
-            <div className="flex justify-between mt-6">
+            <div className="flex justify-between mt-6 w-full max-w-2xl">
               <Button onClick={handlePrevious} variant="outline">
                 Previous
               </Button>
