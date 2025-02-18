@@ -21,7 +21,7 @@ interface UserData {
   goal: string;
 }
 
-const MacroCalculator = () => {
+const App = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [userData, setUserData] = useState<UserData>({
     weight: "",
@@ -33,7 +33,9 @@ const MacroCalculator = () => {
   });
 
   const handleNext = () => {
-    setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+    if (validateStep()) {
+      setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+    }
   };
 
   const handlePrevious = () => {
@@ -42,6 +44,23 @@ const MacroCalculator = () => {
 
   const updateUserData = (data: Partial<UserData>) => {
     setUserData((prev) => ({ ...prev, ...data }));
+  };
+
+  const validateStep = () => {
+    switch (steps[currentStep]) {
+      case "bmr":
+        return (
+          Number.parseFloat(userData.weight) >= 30 &&
+          Number.parseFloat(userData.height) >= 100 &&
+          Number.parseInt(userData.age) >= 18
+        );
+      case "activity":
+        return !!userData.activityLevel;
+      case "goal":
+        return !!userData.goal;
+      default:
+        return true;
+    }
   };
 
   const renderStep = () => {
@@ -62,21 +81,21 @@ const MacroCalculator = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 p-4">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 p-4">
       <Card className="w-full max-w-4xl">
-        <CardContent className="p-6 flex flex-col items-center">
+        <CardContent className="p-6">
           <motion.div
             key={currentStep}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
-            className="w-full max-w-2xl"
+            className="w-full"
           >
             {renderStep()}
           </motion.div>
           {currentStep > 0 && currentStep < steps.length - 1 && (
-            <div className="flex justify-between mt-6 w-full max-w-2xl">
+            <div className="flex justify-between mt-6">
               <Button onClick={handlePrevious} variant="outline">
                 Previous
               </Button>
@@ -89,4 +108,4 @@ const MacroCalculator = () => {
   );
 };
 
-export default MacroCalculator;
+export default App;
