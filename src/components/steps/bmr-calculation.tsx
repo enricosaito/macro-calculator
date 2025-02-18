@@ -2,10 +2,12 @@
 
 import type React from "react";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface BMRCalculationProps {
   userData: {
@@ -15,25 +17,14 @@ interface BMRCalculationProps {
     sex: "male" | "female";
   };
   updateUserData: (data: Partial<{ weight: string; height: string; age: string; sex: "male" | "female" }>) => void;
+  onNext: () => void;
 }
 
-const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserData }) => {
-  const [errors, setErrors] = useState({
-    weight: "",
-    height: "",
-    age: "",
-  });
-
-  useEffect(() => {
-    validateInputs();
-  }, [userData]); // Updated dependency array
+const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserData, onNext }) => {
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const validateInputs = () => {
-    const newErrors = {
-      weight: "",
-      height: "",
-      age: "",
-    };
+    const newErrors: { [key: string]: string } = {};
 
     if (Number.parseFloat(userData.weight) < 30) {
       newErrors.weight = "Weight must be at least 30 kg";
@@ -46,10 +37,18 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
     }
 
     setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateInputs()) {
+      onNext();
+    }
   };
 
   return (
-    <div className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <h2 className="text-2xl font-bold text-center">Let's Calculate Your BMR</h2>
       <p className="text-center">Your Basal Metabolic Rate (BMR) is the number of calories you burn at rest.</p>
       <div className="space-y-4">
@@ -64,7 +63,6 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
             min={30}
             required
           />
-          {errors.weight && <p className="text-red-500 text-sm mt-1">{errors.weight}</p>}
         </div>
         <div>
           <Label htmlFor="height">Height (cm)</Label>
@@ -77,7 +75,6 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
             min={100}
             required
           />
-          {errors.height && <p className="text-red-500 text-sm mt-1">{errors.height}</p>}
         </div>
         <div>
           <Label htmlFor="age">Age</Label>
@@ -90,7 +87,6 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
             min={18}
             required
           />
-          {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
         </div>
         <div>
           <Label>Sex</Label>
@@ -110,7 +106,21 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
           </RadioGroup>
         </div>
       </div>
-    </div>
+      {Object.keys(errors).length > 0 && (
+        <Alert variant="destructive">
+          <AlertDescription>
+            <ul className="list-disc pl-4">
+              {Object.values(errors).map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          </AlertDescription>
+        </Alert>
+      )}
+      <Button type="submit" className="w-full">
+        Next
+      </Button>
+    </form>
   );
 };
 
