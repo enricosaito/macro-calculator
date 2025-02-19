@@ -1,11 +1,9 @@
 "use client";
 
-import type React from "react";
-
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Flame, Dumbbell, CroissantIcon as Bread, Droplet } from "lucide-react";
+import { Flame, Dumbbell, Croissant, Droplet } from "lucide-react";
 
 interface ResultsPageProps {
   userData: {
@@ -19,7 +17,7 @@ interface ResultsPageProps {
   onStartOver: () => void;
 }
 
-const ResultsPage: React.FC<ResultsPageProps> = ({ userData, onStartOver }) => {
+const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
   // Calculate BMR
   const calculateBMR = () => {
     const { weight, height, age, sex } = userData;
@@ -50,9 +48,9 @@ const ResultsPage: React.FC<ResultsPageProps> = ({ userData, onStartOver }) => {
       tdee += 500; // Calorie surplus for weight gain
     }
 
-    const protein = (tdee * 0.3) / 4;
-    const fats = (tdee * 0.3) / 9;
-    const carbs = (tdee * 0.4) / 4;
+    const protein = (tdee * 0.3) / 4; // 30% of calories from protein
+    const fats = (tdee * 0.3) / 9; // 30% of calories from fats
+    const carbs = (tdee * 0.4) / 4; // 40% of calories from carbs
 
     return { calories: tdee, protein, carbs, fats };
   };
@@ -62,15 +60,19 @@ const ResultsPage: React.FC<ResultsPageProps> = ({ userData, onStartOver }) => {
   const macroIcons = {
     calories: Flame,
     protein: Dumbbell,
-    carbs: Bread,
+    carbs: Croissant,
     fats: Droplet,
   };
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">Your Personalized Macro Plan</h2>
-      <p className="mb-6">Based on your information, here's your recommended daily intake:</p>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <h2 className="text-3xl font-bold mb-6 text-center">Your Personalized Macro Plan</h2>
+      <p className="text-lg mb-8 text-center text-muted-foreground">
+        Based on your information, here’s your recommended daily intake:
+      </p>
+
+      {/* Macro Breakdown Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {Object.entries(macros).map(([key, value], index) => {
           const Icon = macroIcons[key as keyof typeof macroIcons];
           return (
@@ -96,6 +98,8 @@ const ResultsPage: React.FC<ResultsPageProps> = ({ userData, onStartOver }) => {
           );
         })}
       </div>
+
+      {/* Motivational Message */}
       <motion.p
         className="mt-6 text-center text-muted-foreground"
         initial={{ opacity: 0 }}
@@ -105,12 +109,21 @@ const ResultsPage: React.FC<ResultsPageProps> = ({ userData, onStartOver }) => {
         Remember, these are general guidelines. Adjust your intake based on your progress and consult with a
         nutritionist for personalized advice.
       </motion.p>
+
+      {/* Subtle CTA for Future Upsells */}
       <motion.div
-        className="mt-8 flex justify-center"
+        className="mt-8 text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
       >
+        <p className="text-lg mb-4">
+          Want to take your nutrition to the next level?{" "}
+          <span className="font-semibold text-primary">Unlock personalized meal plans and expert coaching!</span>
+        </p>
+        <Button variant="outline" className="mr-4">
+          Learn More
+        </Button>
         <Button onClick={onStartOver}>Start Over</Button>
       </motion.div>
     </div>
