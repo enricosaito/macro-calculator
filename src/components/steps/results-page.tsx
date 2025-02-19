@@ -66,9 +66,9 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
 
   return (
     <div>
-      <h2 className="text-3xl font-bold mb-6 text-center">Your Personalized Macro Plan</h2>
+      <h2 className="text-3xl font-bold mb-6 text-center">Seu Plano de Macros Personalizado</h2>
       <p className="text-lg mb-8 text-center text-muted-foreground">
-        Based on your information, here’s your recommended daily intake:
+        Com base nas suas informações, aqui está sua ingestão diária recomendada:
       </p>
 
       {/* Macro Breakdown Cards */}
@@ -106,8 +106,8 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
       >
-        Remember, these are general guidelines. Adjust your intake based on your progress and consult with a
-        nutritionist for personalized advice.
+        Lembre-se, estas são diretrizes gerais. Ajuste sua ingestão com base no seu progresso e consulte um
+        nutricionista para orientação personalizada.
       </motion.p>
 
       {/* Subtle CTA for Future Upsells */}
@@ -118,11 +118,13 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
         transition={{ delay: 0.7 }}
       >
         <p className="text-lg mb-4">
-          Want to take your nutrition to the next level?{" "}
-          <span className="font-semibold text-primary">Unlock personalized meal plans and expert coaching!</span>
+          Quer levar sua nutrição para o próximo nível?{" "}
+          <span className="font-semibold text-primary">
+            Desbloqueie planos de refeições personalizados e consultoria focada em você!
+          </span>
         </p>
         <Button variant="outline" className="mr-4">
-          Learn More
+          Saiba Mais
         </Button>
         <Button onClick={onStartOver}>Start Over</Button>
       </motion.div>

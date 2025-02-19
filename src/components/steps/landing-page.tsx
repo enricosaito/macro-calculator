@@ -16,7 +16,7 @@ const LandingPage = ({ onStart }: LandingPageProps) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        Discover Your Perfect Macros
+        Descubra os seus Macros Ideais
       </motion.h1>
       <motion.p
         className="text-xl mb-8 text-muted-foreground"
@@ -24,8 +24,8 @@ const LandingPage = ({ onStart }: LandingPageProps) => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.5 }}
       >
-        Stop guessing—get a personalized nutrition plan that works for your goals.{" "}
-        <span className="font-semibold text-foreground">It’s easier than you think!</span>
+        Pare de adivinhar—obtenha um plano nutricional personalizado que funciona para seus objetivos.{" "}
+        <span className="font-semibold text-foreground">É mais fácil do que você imagina!</span>
       </motion.p>
       <motion.p
         className="text-lg mb-8 text-muted-foreground italic"
@@ -33,7 +33,7 @@ const LandingPage = ({ onStart }: LandingPageProps) => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.5 }}
       >
-        "No PhD in nutrition required. Just answer a few questions, and we’ll do the math for you!"
+        Não é preciso um PhD em nutrição. Basta responder algumas perguntas, e nós fazemos as contas para você!
       </motion.p>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -41,7 +41,7 @@ const LandingPage = ({ onStart }: LandingPageProps) => {
         transition={{ delay: 0.9, duration: 0.5 }}
       >
         <Button onClick={onStart} size="lg" className="text-lg">
-          Start Your Journey
+          Comece Sua Jornada
         </Button>
       </motion.div>
     </div>
