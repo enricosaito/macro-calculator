@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import LandingPage from "@/components/steps/landing-page";
 import BMRCalculation from "@/components/steps/bmr-calculation";
 import ActivityLevel from "@/components/steps/activity-level";
@@ -14,6 +15,11 @@ const steps = ["landing", "bmr", "activity", "goal", "results"];
 
 const App = () => {
   const { userData, currentStep, handleNext, handlePrevious, updateUserData, handleStartOver } = useMacroCalculator();
+
+  const steps = ["landing", "bmr", "activity", "goal", "results"];
+
+  // Calculate progress percentage
+  const progress = ((currentStep + 1) / steps.length) * 100;
 
   const renderStep = () => {
     switch (steps[currentStep]) {
@@ -36,6 +42,9 @@ const App = () => {
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 p-4">
       <Card className="w-full max-w-4xl">
         <CardContent className="p-6">
+          {/* Add the Progress component here */}
+          <Progress value={progress} className="mb-6 h-2" />
+
           <motion.div
             key={currentStep}
             initial={{ opacity: 0, x: 20 }}
