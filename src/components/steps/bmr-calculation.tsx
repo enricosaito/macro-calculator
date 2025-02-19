@@ -30,16 +30,16 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
     const age = Number.parseInt(userData.age);
 
     if (isNaN(weight) || weight < 30 || weight > 300) {
-      newErrors.weight = "Weight must be between 30 and 300 kg";
+      newErrors.weight = "Peso deve estar entre 30 e 300 kg";
     }
     if (isNaN(height) || height < 100 || height > 250) {
-      newErrors.height = "Height must be between 100 and 250 cm";
+      newErrors.height = "Altura deve estar entre 100 e 250 cm";
     }
     if (isNaN(age) || age < 18 || age > 120) {
-      newErrors.age = "Age must be between 18 and 120 years";
+      newErrors.age = "Idade deve estar entre 18 e 120 anos";
     }
     if (userData.sex === null) {
-      newErrors.sex = "Please select your sex";
+      newErrors.sex = "Por favor escolha o seu sexo";
     }
 
     setErrors(newErrors);
@@ -55,11 +55,13 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <h2 className="text-2xl font-bold text-center">Let's Calculate Your BMR</h2>
-      <p className="text-center">Your Basal Metabolic Rate (BMR) is the number of calories you burn at rest.</p>
+      <h2 className="text-2xl font-bold text-center">Vamos Calcular Seu Metabolismo Basal (BMR)</h2>
+      <p className="text-center">
+        Sua Taxa de Metabolismo Basal (TMB ou BMR) é o número de calorias que você queima em repouso.
+      </p>
       <div className="space-y-4">
         <div>
-          <Label htmlFor="weight">Weight (kg)</Label>
+          <Label htmlFor="weight">Peso (kg)</Label>
           <Input
             id="weight"
             type="number"
@@ -72,7 +74,7 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
           />
         </div>
         <div>
-          <Label htmlFor="height">Height (cm)</Label>
+          <Label htmlFor="height">Altura (cm)</Label>
           <Input
             id="height"
             type="number"
@@ -85,7 +87,7 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
           />
         </div>
         <div>
-          <Label htmlFor="age">Age</Label>
+          <Label htmlFor="age">Idade</Label>
           <Input
             id="age"
             type="number"
@@ -98,7 +100,7 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
           />
         </div>
         <div>
-          <Label>Sex</Label>
+          <Label>Sexo</Label>
           <RadioGroup
             value={userData.sex || undefined}
             onValueChange={(value: "male" | "female") => updateUserData({ sex: value })}
@@ -106,11 +108,11 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="male" id="male" />
-              <Label htmlFor="male">Male</Label>
+              <Label htmlFor="male">Homem</Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="female" id="female" />
-              <Label htmlFor="female">Female</Label>
+              <Label htmlFor="female">Mulher</Label>
             </div>
           </RadioGroup>
         </div>

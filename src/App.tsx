@@ -1,60 +1,26 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import LandingPage from "@/components/steps/landing-page";
 import BMRCalculation from "@/components/steps/bmr-calculation";
 import ActivityLevel from "@/components/steps/activity-level";
 import GoalSelection from "@/components/steps/goal-selection";
 import ResultsPage from "@/components/steps/results-page";
-
-const steps = ["landing", "bmr", "activity", "goal", "results"];
-
-interface UserData {
-  weight: string;
-  height: string;
-  age: string;
-  sex: "male" | "female" | null;
-  activityLevel: string;
-  goal: string;
-}
+import useMacroCalculator from "@/hooks/useMacroCalculator";
 
 const App = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [userData, setUserData] = useState<UserData>({
-    weight: "",
-    height: "",
-    age: "",
-    sex: null,
-    activityLevel: "",
-    goal: "",
-  });
+  const { userData, currentStep, handleNext, handlePrevious, updateUserData, handleStartOver } = useMacroCalculator();
 
-  const handleNext = () => {
-    setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
-  };
+  const steps = ["landing", "bmr", "activity", "goal", "results"];
 
-  const handlePrevious = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 0));
-  };
-
-  const updateUserData = (data: Partial<UserData>) => {
-    setUserData((prev) => ({ ...prev, ...data }));
-  };
-
-  const handleStartOver = () => {
-    setCurrentStep(0);
-    setUserData({
-      weight: "",
-      height: "",
-      age: "",
-      sex: null,
-      activityLevel: "",
-      goal: "",
-    });
-  };
+  // Calculate progress percentage (excluding the first and last steps)
+  const progress =
+    currentStep === 0
+      ? 0 // No progress on the landing page
+      : (currentStep / (steps.length - 1)) * 100; // Exclude the results page
 
   const renderStep = () => {
     switch (steps[currentStep]) {
@@ -77,6 +43,9 @@ const App = () => {
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 p-4">
       <Card className="w-full max-w-4xl">
         <CardContent className="p-6">
+          {/* Show the Progress component only after the landing page and before the results page */}
+          {currentStep > 0 && currentStep < steps.length - 1 && <Progress value={progress} className="mb-6 h-2" />}
+
           <motion.div
             key={currentStep}
             initial={{ opacity: 0, x: 20 }}
