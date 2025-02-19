@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Flame, Dumbbell, Croissant, Droplet } from "lucide-react";
+import { ptBR } from "@/locales/pt-BR";
 
 interface ResultsPageProps {
   userData: {
@@ -66,15 +67,14 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
 
   return (
     <div>
-      <h2 className="text-3xl font-bold mb-6 text-center">Seu Plano de Macros Personalizado</h2>
-      <p className="text-lg mb-8 text-center text-muted-foreground">
-        Com base nas suas informações, aqui está sua ingestão diária recomendada:
-      </p>
+      <h2 className="text-3xl font-bold mb-6 text-center">{ptBR.yourPersonalizedMacroPlan}</h2>
+      <p className="text-lg mb-8 text-center text-muted-foreground">{ptBR.basedOnYourInfo}</p>
 
       {/* Macro Breakdown Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {Object.entries(macros).map(([key, value], index) => {
           const Icon = macroIcons[key as keyof typeof macroIcons];
+          const translatedKey = ptBR[key as keyof typeof ptBR]; // Get the translated text
           return (
             <motion.div
               key={key}
@@ -84,7 +84,9 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
             >
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{key.charAt(0).toUpperCase() + key.slice(1)}</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    {translatedKey} {/* Use the translated text */}
+                  </CardTitle>
                   <Icon className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -106,8 +108,7 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
       >
-        Lembre-se, estas são diretrizes gerais. Ajuste sua ingestão com base no seu progresso e consulte um
-        nutricionista para orientação personalizada.
+        {ptBR.rememberGuidelines}
       </motion.p>
 
       {/* Subtle CTA for Future Upsells */}
@@ -118,15 +119,13 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
         transition={{ delay: 0.7 }}
       >
         <p className="text-lg mb-4">
-          Quer levar sua nutrição para o próximo nível?{" "}
-          <span className="font-semibold text-primary">
-            Desbloqueie planos de refeições personalizados e consultoria focada em você!
-          </span>
+          {ptBR.takeNutritionToNextLevel}{" "}
+          <span className="font-semibold text-primary">{ptBR.unlockPersonalizedPlans}</span>
         </p>
         <Button variant="outline" className="mr-4">
-          Saiba Mais
+          {ptBR.learnMore}
         </Button>
-        <Button onClick={onStartOver}>Voltar do Início</Button>
+        <Button onClick={onStartOver}>{ptBR.startOver}</Button>
       </motion.div>
     </div>
   );
