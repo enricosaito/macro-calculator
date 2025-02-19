@@ -126,7 +126,7 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
         <Button variant="outline" className="mr-4">
           Saiba Mais
         </Button>
-        <Button onClick={onStartOver}>Start Over</Button>
+        <Button onClick={onStartOver}>Voltar do Início</Button>
       </motion.div>
     </div>
   );
