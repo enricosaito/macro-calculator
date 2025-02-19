@@ -11,15 +11,16 @@ import GoalSelection from "@/components/steps/goal-selection";
 import ResultsPage from "@/components/steps/results-page";
 import useMacroCalculator from "@/hooks/useMacroCalculator";
 
-const steps = ["landing", "bmr", "activity", "goal", "results"];
-
 const App = () => {
   const { userData, currentStep, handleNext, handlePrevious, updateUserData, handleStartOver } = useMacroCalculator();
 
   const steps = ["landing", "bmr", "activity", "goal", "results"];
 
-  // Calculate progress percentage
-  const progress = ((currentStep + 1) / steps.length) * 100;
+  // Calculate progress percentage (excluding the first and last steps)
+  const progress =
+    currentStep === 0
+      ? 0 // No progress on the landing page
+      : (currentStep / (steps.length - 1)) * 100; // Exclude the results page
 
   const renderStep = () => {
     switch (steps[currentStep]) {
@@ -42,8 +43,8 @@ const App = () => {
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 p-4">
       <Card className="w-full max-w-4xl">
         <CardContent className="p-6">
-          {/* Add the Progress component here */}
-          <Progress value={progress} className="mb-6 h-2" />
+          {/* Show the Progress component only after the landing page and before the results page */}
+          {currentStep > 0 && currentStep < steps.length - 1 && <Progress value={progress} className="mb-6 h-2" />}
 
           <motion.div
             key={currentStep}
