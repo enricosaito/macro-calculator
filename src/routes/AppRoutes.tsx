@@ -1,9 +1,9 @@
 // src/routes/AppRoutes.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "@/pages/Home";
-import MacroCalculator from "@/pages/MacroCalculator";
-import RecipePlanner from "@/pages/RecipePlanner";
-import Navbar from "@/components/ui/Navbar";
+import MacroCalculator from "@/pages/macro-calculator";
+import RecipePlanner from "@/pages/recipe-planner";
+import Navbar from "@/components/ui/navbar";
 
 const AppRoutes = () => {
   return (
