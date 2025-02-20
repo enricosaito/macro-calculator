@@ -27,12 +27,10 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   const signIn = async (email: string, password: string) => {
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      console.log("Sign in successful:", result.user.email);
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       console.error("Sign in error:", error);
       throw error;
@@ -41,8 +39,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUp = async (email: string, password: string) => {
     try {
-      const result = await createUserWithEmailAndPassword(auth, email, password);
-      console.log("Sign up successful:", result.user.email);
+      await createUserWithEmailAndPassword(auth, email, password);
     } catch (error) {
       console.error("Sign up error:", error);
       throw error;
@@ -52,7 +49,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = async () => {
     try {
       await signOut(auth);
-      console.log("Sign out successful");
     } catch (error) {
       console.error("Sign out error:", error);
       throw error;
@@ -65,10 +61,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       provider.setCustomParameters({
         prompt: "select_account",
       });
-      const result = await signInWithPopup(auth, provider);
-      // Explicitly navigate after successful sign-in
-      navigate("/recipes");
-      return result;
+      return await signInWithPopup(auth, provider);
     } catch (error) {
       console.error("Google sign in error:", error);
       throw error;
@@ -77,7 +70,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log("Auth state changed. Current user:", user?.email);
       setCurrentUser(user);
       setLoading(false);
     });
