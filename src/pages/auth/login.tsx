@@ -70,6 +70,14 @@ const Login = () => {
             </Button>
           </form>
         </CardContent>
+        <CardFooter className="flex justify-center">
+          <p className="text-sm text-muted-foreground">
+            Não tem uma conta?{" "}
+            <Link to="/register" className="text-primary hover:underline">
+              Registre-se
+            </Link>
+          </p>
+        </CardFooter>
       </Card>
     </div>
   );
