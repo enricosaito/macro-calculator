@@ -29,22 +29,53 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const signIn = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      console.log("Sign in successful:", result.user.email);
+    } catch (error) {
+      console.error("Sign in error:", error);
+      throw error;
+    }
   };
 
   const signUp = async (email: string, password: string) => {
-    await createUserWithEmailAndPassword(auth, email, password);
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      console.log("Sign up successful:", result.user.email);
+    } catch (error) {
+      console.error("Sign up error:", error);
+      throw error;
+    }
   };
 
-  const logout = () => signOut(auth);
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      console.log("Sign out successful");
+    } catch (error) {
+      console.error("Sign out error:", error);
+      throw error;
+    }
+  };
 
   const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    try {
+      console.log("Starting Google sign in...");
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({
+        prompt: "select_account",
+      });
+      const result = await signInWithPopup(auth, provider);
+      console.log("Google sign in successful:", result.user.email);
+    } catch (error) {
+      console.error("Google sign in error:", error);
+      throw error;
+    }
   };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log("Auth state changed. Current user:", user?.email);
       setCurrentUser(user);
       setLoading(false);
     });
