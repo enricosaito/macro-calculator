@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import SettingsToggle from "@/components/ui/SettingsToggle";
-import LandingPage from "@/components/steps/landing-page";
-import BMRCalculation from "@/components/steps/bmr-calculation";
-import ActivityLevel from "@/components/steps/activity-level";
-import GoalSelection from "@/components/steps/goal-selection";
-import ResultsPage from "@/components/steps/results-page";
+import LandingPage from "@/components/macro-calculator/landing-page";
+import BMRCalculation from "@/components/macro-calculator/bmr-calculation";
+import ActivityLevel from "@/components/macro-calculator/activity-level";
+import GoalSelection from "@/components/macro-calculator/goal-selection";
+import ResultsPage from "@/components/macro-calculator/results-page";
 import useMacroCalculator from "@/hooks/useMacroCalculator";
 
 const App = () => {
