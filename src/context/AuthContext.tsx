@@ -27,6 +27,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -60,13 +61,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signInWithGoogle = async () => {
     try {
-      console.log("Starting Google sign in...");
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({
         prompt: "select_account",
       });
       const result = await signInWithPopup(auth, provider);
-      console.log("Google sign in successful:", result.user.email);
+      // Explicitly navigate after successful sign-in
+      navigate("/recipes");
+      return result;
     } catch (error) {
       console.error("Google sign in error:", error);
       throw error;
