@@ -1,4 +1,3 @@
-// src/pages/auth/login.tsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -21,6 +20,15 @@ const Login = () => {
       navigate("/recipes");
     } catch (error) {
       setError("Falha no login. Por favor, verifique suas credenciais.");
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+      navigate("/recipes");
+    } catch (error) {
+      setError("Erro ao fazer login com Google. Por favor, tente novamente.");
     }
   };
 
@@ -66,7 +74,7 @@ const Login = () => {
                 <span className="bg-background px-2 text-muted-foreground">Ou continue com</span>
               </div>
             </div>
-            <Button type="button" variant="outline" className="w-full" onClick={signInWithGoogle}>
+            <Button type="button" variant="outline" className="w-full" onClick={handleGoogleSignIn}>
               Google
             </Button>
           </form>
