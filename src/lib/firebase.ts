@@ -10,6 +10,12 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+// Debug: Log config (without sensitive data)
+console.log("Firebase initialization with domains:", {
+  authDomain: firebaseConfig.authDomain,
+  projectId: firebaseConfig.projectId,
+});
+
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export default app;
