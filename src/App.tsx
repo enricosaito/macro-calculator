@@ -1,9 +1,11 @@
+// src/App.tsx
 "use client";
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import SettingsToggle from "@/components/ui/SettingsToggle";
 import LandingPage from "@/components/steps/landing-page";
 import BMRCalculation from "@/components/steps/bmr-calculation";
 import ActivityLevel from "@/components/steps/activity-level";
@@ -21,6 +23,10 @@ const App = () => {
     currentStep === 0
       ? 0 // No progress on the landing page
       : (currentStep / (steps.length - 1)) * 100; // Exclude the results page
+
+  // Calculate current step for display (excluding landing page)
+  const displayStep = currentStep === 0 ? 0 : currentStep;
+  const totalSteps = steps.length - 2; // Exclude landing and results pages
 
   const renderStep = () => {
     switch (steps[currentStep]) {
@@ -41,10 +47,18 @@ const App = () => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 p-4">
+      <SettingsToggle />
       <Card className="w-full max-w-4xl">
         <CardContent className="p-6">
-          {/* Show the Progress component only after the landing page and before the results page */}
-          {currentStep > 0 && currentStep < steps.length - 1 && <Progress value={progress} className="mb-6 h-2" />}
+          {/* Show step indicator and Progress component only after landing page and before results page */}
+          {currentStep > 0 && currentStep < steps.length - 1 && (
+            <div className="mb-6">
+              <p className="text-sm text-muted-foreground text-left mb-2">
+                Passo {displayStep} de {totalSteps}
+              </p>
+              <Progress value={progress} className="h-2" />
+            </div>
+          )}
 
           <motion.div
             key={currentStep}
@@ -59,9 +73,9 @@ const App = () => {
           {currentStep > 0 && currentStep < steps.length - 1 && (
             <div className="flex justify-between mt-6">
               <Button onClick={handlePrevious} variant="outline">
-                Previous
+                Anterior
               </Button>
-              <Button onClick={handleNext}>Next</Button>
+              <Button onClick={handleNext}>Próximo</Button>
             </div>
           )}
         </CardContent>

@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 const activityLevels = [
   { value: "1.2", label: "Sedentário(a)", description: "Pouco ou nenhum exercício" },
   { value: "1.375", label: "Levemente Ativo(a)", description: "Exercício leve 1-3 dias/semana" },
-  { value: "1.55", label: "Moderately Ativo(a)", description: "Exercício moderado 3-5 dias/semana" },
+  { value: "1.55", label: "Moderadamente Ativo(a)", description: "Exercício moderado 3-5 dias/semana" },
   { value: "1.725", label: "Muito Ativo(a)", description: "Exercício intenso 6-7 dias/semana" },
   {
     value: "1.9",
