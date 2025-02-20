@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import SettingsToggle from "@/components/ui/SettingsToggle";
 import LandingPage from "@/components/steps/landing-page";
 import BMRCalculation from "@/components/steps/bmr-calculation";
 import ActivityLevel from "@/components/steps/activity-level";
@@ -46,6 +47,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 p-4">
+      <SettingsToggle />
       <Card className="w-full max-w-4xl">
         <CardContent className="p-6">
           {/* Show step indicator and Progress component only after landing page and before results page */}
