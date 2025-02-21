@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, query, where, orderBy, getDocs, Timestamp } from "firebase/firestore";
+import { deleteDoc, doc } from "firebase/firestore";
 import { useAuth } from "@/context/AuthContext";
 import type { MacroCalculation } from "@/types/calculations";
 
@@ -61,10 +62,24 @@ export const useCalculations = () => {
     fetchCalculations();
   }, [currentUser]);
 
+  const deleteCalculation = async (calculationId: string) => {
+    if (!currentUser) return;
+
+    try {
+      console.log("Deleting calculation:", calculationId);
+      await deleteDoc(doc(db, "calculations", calculationId));
+      await fetchCalculations(); // Refresh the list
+    } catch (error) {
+      console.error("Error deleting calculation:", error);
+      throw error;
+    }
+  };
+
   return {
     calculations,
     loading,
     saveCalculation,
+    deleteCalculation,
     refreshCalculations: fetchCalculations,
   };
 };
