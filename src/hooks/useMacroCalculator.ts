@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { MacroCalculation } from "@/types/calculations";
 
 interface UserData {
   weight: string;
@@ -9,20 +10,20 @@ interface UserData {
   goal: string;
 }
 
-const useMacroCalculator = () => {
+const useMacroCalculator = (initialData?: MacroCalculation) => {
   const [userData, setUserData] = useState<UserData>({
-    weight: "",
-    height: "",
-    age: "",
-    sex: null,
-    activityLevel: "",
-    goal: "",
+    weight: initialData?.data.weight.toString() || "",
+    height: initialData?.data.height.toString() || "",
+    age: initialData?.data.age.toString() || "",
+    sex: initialData?.data.sex || null,
+    activityLevel: initialData?.data.activityLevel || "",
+    goal: initialData?.data.goal || "",
   });
 
   const [currentStep, setCurrentStep] = useState(0);
 
   const handleNext = () => {
-    setCurrentStep((prev) => Math.min(prev + 1, 4)); // 4 steps total (landing, bmr, activity, goal, results)
+    setCurrentStep((prev) => Math.min(prev + 1, 4));
   };
 
   const handlePrevious = () => {
