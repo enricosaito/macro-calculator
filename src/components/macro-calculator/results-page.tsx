@@ -49,24 +49,70 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
     return bmr * Number.parseFloat(userData.activityLevel);
   };
 
+  const validateMacros = (macros: { calories: number; protein: number; carbs: number; fats: number }) => {
+    const minProteinPercentage = 0.2; // Minimum 20% calories from protein
+    const maxProteinPercentage = 0.4; // Maximum 40% calories from protein
+    const minFatPercentage = 0.15; // Minimum 15% calories from fat
+    const maxFatPercentage = 0.3; // Maximum 30% calories from fat
+
+    const proteinCalories = macros.protein * 4;
+    const fatCalories = macros.fats * 9;
+    const proteinPercentage = proteinCalories / macros.calories;
+    const fatPercentage = fatCalories / macros.calories;
+
+    if (proteinPercentage < minProteinPercentage || proteinPercentage > maxProteinPercentage) {
+      console.warn("Protein ratio outside recommended range");
+    }
+
+    if (fatPercentage < minFatPercentage || fatPercentage > maxFatPercentage) {
+      console.warn("Fat ratio outside recommended range");
+    }
+
+    return macros;
+  };
+
   // Calculate macros
   const calculateMacros = () => {
     let tdee = calculateTDEE();
+    const weight = parseFloat(userData.weight);
 
+    // Adjust TDEE based on goal
     if (userData.goal === "lose") {
-      tdee -= 500;
+      tdee -= 500; // Caloric deficit
     } else if (userData.goal === "gain") {
-      tdee += 500;
+      tdee += 500; // Caloric surplus
     }
 
-    const protein = (tdee * 0.3) / 4;
-    const fats = (tdee * 0.3) / 9;
-    const carbs = (tdee * 0.4) / 4;
+    // Calculate protein (2.2g per kg of body weight)
+    const protein = weight * 2.2;
 
-    return { calories: tdee, protein, carbs, fats };
+    // Calculate fats based on goal
+    let fatPercentage;
+    if (userData.goal === "lose") {
+      fatPercentage = 0.2; // 20% (middle of 15-25% range for cutting)
+    } else if (userData.goal === "gain") {
+      fatPercentage = 0.25; // 25% (middle of 20-30% range for bulking)
+    } else {
+      fatPercentage = 0.225; // 22.5% (middle ground for maintenance)
+    }
+
+    const fats = (tdee * fatPercentage) / 9; // 9 calories per gram of fat
+
+    // Calculate remaining calories for carbs
+    const proteinCalories = protein * 4; // 4 calories per gram of protein
+    const fatCalories = fats * 9;
+    const remainingCalories = tdee - proteinCalories - fatCalories;
+    const carbs = remainingCalories / 4; // 4 calories per gram of carbs
+
+    return {
+      calories: tdee,
+      protein: Math.round(protein),
+      carbs: Math.round(carbs),
+      fats: Math.round(fats),
+    };
   };
 
-  const macros = calculateMacros();
+  const macros = validateMacros(calculateMacros());
   const bmr = calculateBMR();
   const tdee = calculateTDEE();
 
