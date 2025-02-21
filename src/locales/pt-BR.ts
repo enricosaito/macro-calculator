@@ -22,4 +22,9 @@ export const ptBR = {
   female: "Feminino",
   activityLevelLabel: "Nível de Atividade",
   goalLabel: "Objetivo",
+  calculateAgain: "Calcular Novamente",
+  loginToSave: "Fazer login para salvar resultados",
+  savedCalculations: "Cálculos Salvos",
+  noCalculations: "Nenhum cálculo salvo ainda",
+  loadingCalculations: "Carregando histórico...",
 };

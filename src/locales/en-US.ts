@@ -22,4 +22,9 @@ export const enUS = {
   female: "Female",
   activityLevelLabel: "Activity Level",
   goalLabel: "Goal",
+  calculateAgain: "Calculate Again",
+  loginToSave: "Login to save results",
+  savedCalculations: "Saved Calculations",
+  noCalculations: "No calculations saved yet",
+  loadingCalculations: "Loading history...",
 };
