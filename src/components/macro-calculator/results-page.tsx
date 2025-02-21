@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,6 +27,7 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const { saveCalculation } = useCalculations();
+  const saveAttemptedRef = useRef(false);
 
   // Calculate BMR
   const calculateBMR = () => {
@@ -71,9 +72,10 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
 
   useEffect(() => {
     const saveResults = async () => {
-      if (!currentUser) return;
+      if (!currentUser || saveAttemptedRef.current) return; // Check if we already tried to save
 
       try {
+        saveAttemptedRef.current = true; // Mark that we're attempting to save
         await saveCalculation({
           data: {
             weight: Number(userData.weight),
