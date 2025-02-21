@@ -11,11 +11,11 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-const db = getFirestore(app);
-export { db };
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+const db = getFirestore(app);
+export { db };
 
 // Update the auth settings
 auth.useDeviceLanguage(); // Use browser's language
