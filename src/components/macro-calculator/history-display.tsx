@@ -10,7 +10,7 @@ export const HistoryDisplay = () => {
     return <div className="text-center">Carregando histórico...</div>;
   }
 
-  if (calculations.length === 0) {
+  if (!calculations || calculations.length === 0) {
     return (
       <Card className="mt-6">
         <CardContent className="p-6">
@@ -29,7 +29,14 @@ export const HistoryDisplay = () => {
         <Card key={calc.id} className="hover:shadow-md transition-shadow">
           <CardHeader className="p-4">
             <CardTitle className="text-sm font-medium flex justify-between items-center">
-              <span>{format(new Date(calc.timestamp), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</span>
+              <span>
+                {format(
+                  // Handle both Date objects and Firestore Timestamps
+                  calc.timestamp instanceof Date ? calc.timestamp : new Date(calc.timestamp.seconds * 1000),
+                  "dd 'de' MMMM 'de' yyyy",
+                  { locale: ptBR }
+                )}
+              </span>
               <span className="text-muted-foreground">
                 {calc.data.goal === "lose"
                   ? "Perder Peso"

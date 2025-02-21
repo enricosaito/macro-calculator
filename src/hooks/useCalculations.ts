@@ -1,6 +1,7 @@
+// src/hooks/useCalculations.ts
 import { useState, useEffect } from "react";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, query, where, orderBy, getDocs } from "firebase/firestore";
+import { collection, addDoc, query, where, orderBy, getDocs, Timestamp } from "firebase/firestore";
 import { useAuth } from "@/context/AuthContext";
 import type { MacroCalculation } from "@/types/calculations";
 
@@ -10,7 +11,10 @@ export const useCalculations = () => {
   const { currentUser } = useAuth();
 
   const fetchCalculations = async () => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      setLoading(false);
+      return;
+    }
 
     try {
       const q = query(
@@ -28,6 +32,8 @@ export const useCalculations = () => {
       setCalculations(fetchedCalcs);
     } catch (error) {
       console.error("Error fetching calculations:", error);
+      // Set empty array on error to avoid undefined
+      setCalculations([]);
     } finally {
       setLoading(false);
     }
@@ -39,7 +45,7 @@ export const useCalculations = () => {
     try {
       const newCalc = {
         userId: currentUser.uid,
-        timestamp: new Date(),
+        timestamp: Timestamp.now(), // Use Firestore Timestamp
         ...calculationData,
       };
 

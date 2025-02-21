@@ -1,7 +1,10 @@
+// src/types/calculations.ts
+import { Timestamp } from "firebase/firestore";
+
 export interface MacroCalculation {
   id?: string;
   userId: string;
-  timestamp: Date;
+  timestamp: Timestamp;
   data: {
     weight: number;
     height: number;
