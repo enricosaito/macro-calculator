@@ -27,4 +27,7 @@ export const enUS = {
   savedCalculations: "Saved Calculations",
   noCalculations: "No calculations saved yet",
   loadingCalculations: "Loading history...",
+  waterIntakeTitle: "Daily Water Intake",
+  waterIntakeDescription: "Recommended daily intake based on your weight and activity level",
+  enterDataForWater: "Enter your information to calculate water intake",
 };
