@@ -27,4 +27,7 @@ export const ptBR = {
   savedCalculations: "Cálculos Salvos",
   noCalculations: "Nenhum cálculo salvo ainda",
   loadingCalculations: "Carregando histórico...",
+  waterIntakeTitle: "Consumo Diário de Água",
+  waterIntakeDescription: "Consumo diário recomendado baseado no seu peso e nível de atividade",
+  enterDataForWater: "Preencha suas informações para calcular o consumo de água",
 };
