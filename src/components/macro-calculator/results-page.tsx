@@ -10,6 +10,7 @@ import { ptBR } from "@/locales/pt-BR";
 import { useCalculations } from "@/hooks/useCalculations";
 import { useAuth } from "@/context/AuthContext";
 import HistoryDisplay from "./history-display";
+import WaterCalculator from "./water-calculator";
 
 interface ResultsPageProps {
   userData: {
@@ -184,6 +185,11 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
             </motion.div>
           );
         })}
+      </div>
+
+      {/* Water Calculator */}
+      <div className="mb-8">
+        <WaterCalculator weight={userData.weight} activityLevel={userData.activityLevel} />
       </div>
 
       {/* Motivational Message */}
