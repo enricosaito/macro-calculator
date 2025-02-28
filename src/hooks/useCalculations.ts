@@ -1,5 +1,4 @@
-// src/hooks/useCalculations.ts
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, query, where, orderBy, getDocs, Timestamp } from "firebase/firestore";
 import { deleteDoc, doc } from "firebase/firestore";
@@ -11,12 +10,14 @@ export const useCalculations = () => {
   const [loading, setLoading] = useState(true);
   const { currentUser } = useAuth();
 
-  const fetchCalculations = async () => {
+  const fetchCalculations = useCallback(async () => {
     if (!currentUser) {
+      setCalculations([]);
       setLoading(false);
       return;
     }
 
+    setLoading(true);
     try {
       const q = query(
         collection(db, "calculations"),
@@ -38,7 +39,7 @@ export const useCalculations = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentUser]);
 
   const saveCalculation = async (calculationData: Omit<MacroCalculation, "id" | "userId" | "timestamp">) => {
     if (!currentUser) return;
@@ -60,13 +61,12 @@ export const useCalculations = () => {
 
   useEffect(() => {
     fetchCalculations();
-  }, [currentUser]);
+  }, [fetchCalculations]);
 
   const deleteCalculation = async (calculationId: string) => {
     if (!currentUser) return;
 
     try {
-      console.log("Deleting calculation:", calculationId);
       await deleteDoc(doc(db, "calculations", calculationId));
       await fetchCalculations(); // Refresh the list
     } catch (error) {

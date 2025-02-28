@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,10 +11,25 @@ import BMRCalculation from "@/components/macro-calculator/bmr-calculation";
 import ActivityLevel from "@/components/macro-calculator/activity-level";
 import GoalSelection from "@/components/macro-calculator/goal-selection";
 import ResultsPage from "@/components/macro-calculator/results-page";
+import Dashboard from "@/components/macro-calculator/dashboard";
 import useMacroCalculator from "@/hooks/useMacroCalculator";
+import { useAuth } from "@/context/AuthContext";
+import { useCalculations } from "@/hooks/useCalculations";
 
-const App = () => {
+const MacroCalculator = () => {
   const { userData, currentStep, handleNext, handlePrevious, updateUserData, handleStartOver } = useMacroCalculator();
+  const { currentUser } = useAuth();
+  const { calculations, loading } = useCalculations();
+  const [showCalculator, setShowCalculator] = useState(false);
+
+  // Decide whether to show the dashboard or calculator on initial load
+  useEffect(() => {
+    if (!loading && currentUser && calculations && calculations.length > 0 && currentStep === 0) {
+      setShowCalculator(false);
+    } else {
+      setShowCalculator(true);
+    }
+  }, [loading, currentUser, calculations, currentStep]);
 
   const steps = ["landing", "bmr", "activity", "goal", "results"];
 
@@ -44,38 +60,51 @@ const App = () => {
     }
   };
 
+  const handleNewCalculation = () => {
+    setShowCalculator(true);
+    handleStartOver();
+    handleNext(); // Skip the landing page
+  };
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 p-4">
       <SettingsToggle />
       <Card className="w-full max-w-4xl">
         <CardContent className="p-6">
-          {/* Show step indicator and Progress component only after landing page and before results page */}
-          {currentStep > 0 && currentStep < steps.length - 1 && (
-            <div className="mb-6">
-              <p className="text-sm text-muted-foreground text-left mb-2">
-                Passo {displayStep} de {totalSteps}
-              </p>
-              <Progress value={progress} className="h-2" />
-            </div>
-          )}
+          {!showCalculator && currentUser && calculations && calculations.length > 0 ? (
+            <Dashboard onNewCalculation={handleNewCalculation} />
+          ) : (
+            <>
+              {/* Show step indicator and Progress component only after landing page and before results page */}
+              {currentStep > 0 && currentStep < steps.length - 1 && (
+                <div className="mb-6">
+                  <p className="text-sm text-muted-foreground text-left mb-2">
+                    Passo {displayStep} de {totalSteps}
+                  </p>
+                  <Progress value={progress} className="h-2" />
+                </div>
+              )}
 
-          <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-            className="w-full"
-          >
-            {renderStep()}
-          </motion.div>
-          {currentStep > 0 && currentStep < steps.length - 1 && (
-            <div className="flex justify-between mt-6">
-              <Button onClick={handlePrevious} variant="outline">
-                Anterior
-              </Button>
-              <Button onClick={handleNext}>Próximo</Button>
-            </div>
+              <motion.div
+                key={currentStep}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="w-full"
+              >
+                {renderStep()}
+              </motion.div>
+
+              {currentStep > 0 && currentStep < steps.length - 1 && (
+                <div className="flex justify-between mt-6">
+                  <Button onClick={handlePrevious} variant="outline">
+                    Anterior
+                  </Button>
+                  <Button onClick={handleNext}>Próximo</Button>
+                </div>
+              )}
+            </>
           )}
         </CardContent>
       </Card>
@@ -83,4 +112,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default MacroCalculator;
