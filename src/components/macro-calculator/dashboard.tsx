@@ -64,7 +64,7 @@ const Dashboard = ({ onNewCalculation }: { onNewCalculation: () => void }) => {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-3xl font-bold mb-2">Seu Plano de Macros Atual</h2>
+        <h2 className="text-3xl font-bold mb-2">Seu Plano de Macros Ideal</h2>
         <p className="text-muted-foreground mb-6">
           Baseado no seu último cálculo ({mostRecent.data.weight}kg,{" "}
           {mostRecent.data.goal === "lose"
@@ -82,7 +82,7 @@ const Dashboard = ({ onNewCalculation }: { onNewCalculation: () => void }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Flame className={`h-8 w-8 ${macroIcons.calories.color}`} />
-              <h3 className="text-xl font-semibold">Calorias Diárias</h3>
+              <h3 className="text-xl font-semibold">Calorias Diárias Recomendadas</h3>
             </div>
             <p className="text-4xl font-bold">
               {Math.round(macros.calories)} <span className="text-xl">kcal</span>
