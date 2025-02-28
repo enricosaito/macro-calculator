@@ -1,9 +1,10 @@
-// src/components/ui/navbar.tsx
+// src/components/ui/Navbar.tsx
 import { Calculator, Utensils, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import RecentResults from "@/components/macro-calculator/recent-results";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -56,12 +57,14 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-4">
+            {currentUser && <RecentResults />}
+
             {currentUser ? (
               <div className="flex items-center gap-4">
-                <span className="text-sm text-muted-foreground">{currentUser.email}</span>
+                <span className="text-sm text-muted-foreground hidden md:inline">{currentUser.email}</span>
                 <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2">
                   <LogOut className="h-4 w-4" />
-                  Sair
+                  <span className="hidden md:inline">Sair</span>
                 </Button>
               </div>
             ) : (
