@@ -45,12 +45,38 @@ const Dashboard = ({ onNewCalculation }: { onNewCalculation: () => void }) => {
   const carbsPercentage = Math.round((carbsCalories / totalCalories) * 100);
   const fatsPercentage = Math.round((fatsCalories / totalCalories) * 100);
 
+  // Calculate water intake recommendation
+  const calculateWaterIntake = () => {
+    const weightKg = mostRecent.data.weight;
+    if (isNaN(weightKg)) return null;
+
+    // Base calculation: 35ml per kg of body weight
+    let waterIntakeML = weightKg * 35;
+
+    // Adjust based on activity level
+    const activityMultiplier = parseFloat(mostRecent.data.activityLevel);
+    if (!isNaN(activityMultiplier)) {
+      if (activityMultiplier >= 1.55) {
+        waterIntakeML += 500; // Add 500ml for moderate to very active
+      }
+      if (activityMultiplier >= 1.725) {
+        waterIntakeML += 500; // Add another 500ml for very to extremely active
+      }
+    }
+
+    const waterIntakeL = (waterIntakeML / 1000).toFixed(1);
+    return waterIntakeL;
+  };
+
+  const waterIntake = calculateWaterIntake();
+
   // Define colors for the macro cards
   const macroColors = {
     calories: "bg-gradient-to-br from-orange-100 to-red-50 border-orange-200",
     protein: "bg-gradient-to-br from-blue-100 to-indigo-50 border-blue-200",
     carbs: "bg-gradient-to-br from-yellow-100 to-amber-50 border-yellow-200",
     fats: "bg-gradient-to-br from-green-100 to-emerald-50 border-green-200",
+    water: "bg-gradient-to-br from-sky-100 to-blue-50 border-sky-200",
   };
 
   // Define icons and their colors
@@ -59,6 +85,7 @@ const Dashboard = ({ onNewCalculation }: { onNewCalculation: () => void }) => {
     protein: { icon: Dumbbell, color: "text-blue-500" },
     carbs: { icon: Croissant, color: "text-yellow-500" },
     fats: { icon: Droplet, color: "text-green-500" },
+    water: { icon: Droplet, color: "text-sky-500" },
   };
 
   return (
@@ -135,6 +162,24 @@ const Dashboard = ({ onNewCalculation }: { onNewCalculation: () => void }) => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Water Intake Card */}
+      {waterIntake && (
+        <Card className={`shadow-md ${macroColors.water}`}>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Droplet className={`h-6 w-6 ${macroIcons.water.color}`} />
+                <h3 className="text-lg font-semibold">Consumo Diário de Água</h3>
+              </div>
+              <div className="text-right">
+                <p className="text-3xl font-bold">{waterIntake} L</p>
+                <p className="text-sm text-muted-foreground">Recomendado</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Action Buttons */}
       <div className="flex justify-center mt-4">
