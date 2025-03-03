@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Flame, Dumbbell, Croissant, Droplet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import HistoryDisplay from "./history-display";
+import MealTimingCalculator from "./meal-timing-calculator";
 
 const Dashboard = ({ onNewCalculation }: { onNewCalculation: () => void }) => {
   const { calculations, loading } = useCalculations();
@@ -180,6 +181,9 @@ const Dashboard = ({ onNewCalculation }: { onNewCalculation: () => void }) => {
           </CardContent>
         </Card>
       )}
+
+      {/* Meal Timing Calculator */}
+      <MealTimingCalculator goal={mostRecent.data.goal} activityLevel={mostRecent.data.activityLevel} />
 
       {/* Action Buttons */}
       <div className="flex justify-center mt-4">
