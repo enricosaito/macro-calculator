@@ -9,6 +9,7 @@ import { suggestRecipes } from "@/lib/recipe-suggestions";
 import IngredientCategory from "@/components/recipe-planner/ingredient-category";
 import RecipeCard from "@/components/recipe-planner/recipe-card";
 import RecipeDetailModal from "@/components/recipe-planner/recipe-detail-modal";
+import { useSavedRecipes } from "@/hooks/useSavedRecipes";
 import { useAuth } from "@/context/AuthContext";
 
 const RecipePlanner = () => {
@@ -19,6 +20,7 @@ const RecipePlanner = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [savedRecipes, setSavedRecipes] = useState<string[]>([]);
+  const { savedRecipeIds, toggleSavedRecipe, isSaved } = useSavedRecipes();
   const { currentUser } = useAuth();
 
   // Filter ingredients by category
@@ -55,9 +57,7 @@ const RecipePlanner = () => {
 
   // Toggle saved recipe
   const handleToggleSavedRecipe = (recipe: Recipe) => {
-    setSavedRecipes((prev) =>
-      prev.includes(recipe.id) ? prev.filter((id) => id !== recipe.id) : [...prev, recipe.id]
-    );
+    toggleSavedRecipe(recipe.id);
   };
 
   return (
@@ -189,7 +189,7 @@ const RecipePlanner = () => {
         open={isDetailModalOpen}
         onOpenChange={setIsDetailModalOpen}
         onSave={currentUser ? handleToggleSavedRecipe : undefined}
-        isSaved={selectedRecipe ? savedRecipes.includes(selectedRecipe.id) : false}
+        isSaved={selectedRecipe ? isSaved(selectedRecipe.id) : false}
       />
     </div>
   );
