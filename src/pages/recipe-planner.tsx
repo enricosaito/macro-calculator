@@ -1,9 +1,9 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, CookingPot, BookmarkIcon } from "lucide-react";
+import { Search, CookingPot } from "lucide-react";
 import { ingredients } from "@/lib/ingredients-data";
 import { Recipe } from "@/lib/recipes-data";
 import { suggestRecipes } from "@/lib/recipe-suggestions";
@@ -13,6 +13,9 @@ import RecipeDetailModal from "@/components/recipe-planner/recipe-detail-modal";
 import SavedRecipes from "@/components/recipe-planner/saved-recipes";
 import { useSavedRecipes } from "@/hooks/useSavedRecipes";
 import { useAuth } from "@/context/AuthContext";
+import { motion } from "framer-motion";
+import { InfoIcon } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const RecipePlanner = () => {
   const [activeTab, setActiveTab] = useState("explore");
@@ -24,6 +27,7 @@ const RecipePlanner = () => {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const { savedRecipeIds, toggleSavedRecipe, isSaved } = useSavedRecipes();
   const { currentUser } = useAuth();
+  const [isGeneratingRecipes, setIsGeneratingRecipes] = useState(false);
 
   // Filter ingredients by category
   const proteinIngredients = useMemo(() => ingredients.filter((ing) => ing.category === "protein"), []);
@@ -46,9 +50,15 @@ const RecipePlanner = () => {
 
   // Generate recipe suggestions
   const handleGenerateRecipes = () => {
-    const suggestions = suggestRecipes(selectedIngredients);
-    setSuggestedRecipes(suggestions);
-    setHasGeneratedRecipes(true);
+    setIsGeneratingRecipes(true);
+
+    // Simulate a loading delay for better UX
+    setTimeout(() => {
+      const suggestions = suggestRecipes(selectedIngredients);
+      setSuggestedRecipes(suggestions);
+      setHasGeneratedRecipes(true);
+      setIsGeneratingRecipes(false);
+    }, 1200);
   };
 
   // View recipe details
@@ -73,6 +83,15 @@ const RecipePlanner = () => {
         </TabsList>
 
         <TabsContent value="explore">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+            <Alert variant="default" className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
+              <InfoIcon className="h-4 w-4 text-blue-500" />
+              <AlertDescription>
+                Selecione os ingredientes que você tem disponíveis e descubra receitas que se encaixam perfeitamente nos
+                seus objetivos de macros!
+              </AlertDescription>
+            </Alert>
+          </motion.div>
           {/* Search Bar */}
           <div className="relative mb-6">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -161,12 +180,21 @@ const RecipePlanner = () => {
           <div className="flex justify-center mb-8">
             <Button
               size="lg"
-              disabled={selectedIngredients.length === 0}
+              disabled={selectedIngredients.length === 0 || isGeneratingRecipes}
               className="px-8"
               onClick={handleGenerateRecipes}
             >
-              <CookingPot className="mr-2 h-5 w-5" />
-              Gerar Ideias de Receitas
+              {isGeneratingRecipes ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Gerando Receitas...
+                </>
+              ) : (
+                <>
+                  <CookingPot className="mr-2 h-5 w-5" />
+                  Gerar Ideias de Receitas
+                </>
+              )}
             </Button>
           </div>
 
