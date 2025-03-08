@@ -1,20 +1,20 @@
 import { useState } from "react";
 import { useSavedRecipes } from "@/hooks/useSavedRecipes";
-import { recipes } from "@/lib/recipes-data";
+import { Recipe, recipes } from "@/lib/recipes-data";
 import RecipeCard from "./recipe-card";
 import RecipeDetailModal from "./recipe-detail-modal";
 import { Card, CardContent } from "@/components/ui/card";
 
 const SavedRecipes = () => {
   const { savedRecipeIds, toggleSavedRecipe, isSaved, loading } = useSavedRecipes();
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   // Get full recipe objects for saved recipes
   const savedRecipes = recipes.filter((recipe) => savedRecipeIds.includes(recipe.id));
 
   // Handle viewing recipe details
-  const handleViewRecipeDetails = (recipe) => {
+  const handleViewRecipeDetails = (recipe: Recipe) => {
     setSelectedRecipe(recipe);
     setIsDetailModalOpen(true);
   };
