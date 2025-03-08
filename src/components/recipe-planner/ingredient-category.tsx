@@ -1,4 +1,4 @@
-mport { useState } from "react";
+import { useState } from "react";
 import { Ingredient } from "@/lib/ingredients-data";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
