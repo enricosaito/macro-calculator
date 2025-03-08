@@ -26,6 +26,7 @@ const RecipePlanner = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const { savedRecipeIds, toggleSavedRecipe, isSaved } = useSavedRecipes();
+  const [recipeSearchTerm, setRecipeSearchTerm] = useState("");
   const { currentUser } = useAuth();
   const [isGeneratingRecipes, setIsGeneratingRecipes] = useState(false);
 
@@ -35,6 +36,17 @@ const RecipePlanner = () => {
   const carbIngredients = useMemo(() => ingredients.filter((ing) => ing.category === "carb"), []);
 
   const fatIngredients = useMemo(() => ingredients.filter((ing) => ing.category === "fat"), []);
+
+  // Filter recipes
+  const filteredSuggestedRecipes = useMemo(() => {
+    if (!recipeSearchTerm.trim()) return suggestedRecipes;
+
+    return suggestedRecipes.filter(
+      (recipe) =>
+        recipe.name.toLowerCase().includes(recipeSearchTerm.toLowerCase()) ||
+        recipe.description.toLowerCase().includes(recipeSearchTerm.toLowerCase())
+    );
+  }, [suggestedRecipes, recipeSearchTerm]);
 
   // Filter ingredients by search term
   const filteredIngredients = useMemo(() => {
@@ -203,18 +215,31 @@ const RecipePlanner = () => {
             <div className="mt-8">
               <h2 className="text-2xl font-bold mb-4">Receitas Sugeridas</h2>
 
-              {suggestedRecipes.length > 0 ? (
+              {hasGeneratedRecipes && suggestedRecipes.length > 0 && (
+                <div className="relative mb-6">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input
+                    type="text"
+                    placeholder="Buscar entre as receitas sugeridas..."
+                    className="pl-10"
+                    value={recipeSearchTerm}
+                    onChange={(e) => setRecipeSearchTerm(e.target.value)}
+                  />
+                </div>
+              )}
+
+              {filteredSuggestedRecipes.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {suggestedRecipes.map((recipe) => (
+                  {filteredSuggestedRecipes.map((recipe) => (
                     <RecipeCard key={recipe.id} recipe={recipe} onViewDetails={handleViewRecipeDetails} />
                   ))}
                 </div>
               ) : (
                 <Card>
                   <CardContent className="p-6 text-center">
-                    <p className="mb-2">Não encontramos receitas que correspondam a esses ingredientes.</p>
+                    <p className="mb-2">Não encontramos receitas que correspondam a sua busca.</p>
                     <p className="text-sm text-muted-foreground">
-                      Tente selecionar outros ingredientes ou uma combinação diferente.
+                      Tente outros termos ou gere novas receitas com diferentes ingredientes.
                     </p>
                   </CardContent>
                 </Card>
