@@ -1,15 +1,17 @@
-// src/components/ui/Navbar.tsx
-import { Calculator, Utensils, LogOut } from "lucide-react";
+// src/components/ui/navbar.tsx
+import { Calculator, Utensils, LogOut, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import RecentResults from "@/components/macro-calculator/recent-results";
+import { useState } from "react";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentUser, logout } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
     {
@@ -33,11 +35,23 @@ const Navbar = () => {
     }
   };
 
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
   return (
-    <nav className="border-b">
-      <div className="max-w-4xl mx-auto px-4">
+    <nav className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="max-w-5xl mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          <div className="flex gap-6">
+          {/* Logo and brand name */}
+          <div className="flex items-center">
+            <div className="text-primary font-bold text-xl cursor-pointer" onClick={() => navigate("/")}>
+              NutriMacros
+            </div>
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex md:gap-6">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -46,7 +60,12 @@ const Navbar = () => {
                 <Button
                   key={item.path}
                   variant={isActive ? "default" : "ghost"}
-                  className={cn("gap-2", isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground")}
+                  className={cn(
+                    "gap-2",
+                    isActive
+                      ? "bg-primary text-primary-foreground"
+                      : "text-foreground hover:text-primary hover:bg-accent"
+                  )}
                   onClick={() => navigate(item.path)}
                 >
                   <Icon className="h-4 w-4" />
@@ -56,15 +75,16 @@ const Navbar = () => {
             })}
           </div>
 
-          <div className="flex items-center gap-4">
+          {/* User actions / right side */}
+          <div className="hidden md:flex items-center gap-4">
             {currentUser && <RecentResults />}
 
             {currentUser ? (
               <div className="flex items-center gap-4">
-                <span className="text-sm text-muted-foreground hidden md:inline">{currentUser.email}</span>
-                <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2">
+                <span className="text-sm text-muted-foreground">{currentUser.email}</span>
+                <Button variant="outline" size="sm" onClick={handleLogout} className="gap-2">
                   <LogOut className="h-4 w-4" />
-                  <span className="hidden md:inline">Sair</span>
+                  <span>Sair</span>
                 </Button>
               </div>
             ) : (
@@ -73,8 +93,56 @@ const Navbar = () => {
               </Button>
             )}
           </div>
+
+          {/* Mobile menu button */}
+          <div className="flex md:hidden">
+            <Button variant="ghost" size="sm" onClick={toggleMobileMenu}>
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden p-4 pt-0 pb-6 border-b border-border/40">
+          <div className="flex flex-col gap-2">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+
+              return (
+                <Button
+                  key={item.path}
+                  variant={isActive ? "default" : "ghost"}
+                  className={cn(
+                    "gap-2 justify-start",
+                    isActive ? "bg-primary text-primary-foreground" : "text-foreground"
+                  )}
+                  onClick={() => {
+                    navigate(item.path);
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.label}
+                </Button>
+              );
+            })}
+
+            {currentUser ? (
+              <Button variant="outline" onClick={handleLogout} className="gap-2 mt-2 justify-start">
+                <LogOut className="h-4 w-4" />
+                <span>Sair</span>
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={() => navigate("/login")} className="mt-2">
+                Login
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
