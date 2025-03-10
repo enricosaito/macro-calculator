@@ -4,48 +4,101 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    /* Light mode - Green theme */
+    --background: 140 50% 98%;
+    --foreground: 140 10% 10%;
+
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 140 10% 10%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
+    --popover-foreground: 140 10% 10%;
+
+    --primary: 142 70% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 140 15% 94%;
+    --secondary-foreground: 140 25% 25%;
+
+    --muted: 140 10% 96%;
+    --muted-foreground: 140 5% 45%;
+
+    --accent: 142 35% 94%;
+    --accent-foreground: 140 40% 25%;
+
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
+
+    --border: 140 10% 90%;
+    --input: 140 10% 90%;
+    --ring: 142 70% 45%;
+
     --radius: 0.5rem;
+
+    /* Semantic colors */
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 98%;
+
+    --info: 220 80% 50%;
+    --info-foreground: 0 0% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+
+    /* Chart colors */
+    --chart-1: 142 70% 45%;
+    --chart-2: 160 84% 39%;
+    --chart-3: 180 80% 45%;
+    --chart-4: 200 75% 55%;
+    --chart-5: 220 70% 60%;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    /* Dark mode - Green theme */
+    --background: 140 15% 10%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+
+    --card: 140 15% 12%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+
+    --popover: 140 15% 12%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
+
+    --primary: 142 60% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 140 10% 20%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
+
+    --muted: 140 15% 18%;
+    --muted-foreground: 140 5% 65%;
+
+    --accent: 142 15% 25%;
     --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+
+    --destructive: 0 62% 40%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+
+    --border: 140 15% 25%;
+    --input: 140 15% 25%;
+    --ring: 142 60% 50%;
+
+    /* Semantic colors - dark mode */
+    --success: 160 70% 40%;
+    --success-foreground: 0 0% 98%;
+
+    --info: 220 70% 55%;
+    --info-foreground: 0 0% 98%;
+
+    --warning: 38 80% 50%;
+    --warning-foreground: 0 0% 98%;
+
+    /* Chart colors - dark mode */
+    --chart-1: 142 60% 50%;
+    --chart-2: 160 70% 45%;
+    --chart-3: 180 65% 50%;
+    --chart-4: 200 60% 55%;
+    --chart-5: 220 55% 60%;
   }
 }
 
@@ -54,6 +107,24 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading font-semibold;
+  }
+}
+
+/* Adding smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Improved focus styles */
+:focus-visible {
+  @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
 }
