@@ -1,8 +1,9 @@
+// src/components/ui/SettingsToggle.tsx
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Languages } from "lucide-react"; // Import the Languages icon
+import { Moon, Sun, Languages } from "lucide-react";
 import { useTheme } from "next-themes";
 
 const SettingsToggle = () => {
@@ -18,12 +19,24 @@ const SettingsToggle = () => {
   };
 
   return (
-    <div className="fixed top-4 right-4 flex gap-2">
-      <Button variant="outline" size="icon" onClick={toggleLanguage} aria-label="Change language">
+    <div className="fixed bottom-4 right-4 flex gap-2 z-50">
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={toggleLanguage}
+        aria-label="Change language"
+        className="bg-background/80 backdrop-blur-sm border border-border/50 shadow-sm hover:bg-accent"
+      >
         <Languages className="h-4 w-4" />
       </Button>
-      <Button variant="outline" size="icon" onClick={toggleDarkMode} aria-label="Toggle dark mode">
-        {theme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={toggleDarkMode}
+        aria-label="Toggle dark mode"
+        className="bg-background/80 backdrop-blur-sm border border-border/50 shadow-sm hover:bg-accent"
+      >
+        {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
       </Button>
     </div>
   );
