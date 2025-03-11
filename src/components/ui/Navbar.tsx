@@ -40,13 +40,14 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
       <div className="max-w-5xl mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo and brand name */}
           <div className="flex items-center">
-            <div className="text-primary font-bold text-xl cursor-pointer" onClick={() => navigate("/")}>
-              NutriMacros
+            <div className="text-xl cursor-pointer font-bold" onClick={() => navigate("/")}>
+              <span className="text-primary">Nutri</span>
+              <span className="text-foreground">Macros</span>
             </div>
           </div>
 
@@ -105,7 +106,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden p-4 pt-0 pb-6 border-b border-border/40">
+        <div className="md:hidden p-4 pt-0 pb-6 border-b border-border/40 bg-background">
           <div className="flex flex-col gap-2">
             {navItems.map((item) => {
               const Icon = item.icon;
