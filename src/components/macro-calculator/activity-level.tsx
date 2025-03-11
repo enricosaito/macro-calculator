@@ -1,7 +1,9 @@
+// src/components/macro-calculator/activity-level.tsx
 "use client";
 
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
+import { Check } from "lucide-react";
 
 const activityLevels = [
   { value: "1.2", label: "Sedentário(a)", description: "Pouco ou nenhum exercício" },
@@ -18,8 +20,8 @@ const activityLevels = [
 const ActivityLevel = ({ userData, updateUserData }) => {
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">Qual seu Nível de Atividade?</h2>
-      <p className="mb-6">Selecione a opção que melhor descreve sua semana típica:</p>
+      <h2 className="text-2xl font-bold mb-4 text-center">Qual seu Nível de Atividade?</h2>
+      <p className="mb-6 text-center text-muted-foreground">Selecione a opção que melhor descreve sua semana típica:</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {activityLevels.map((level, index) => (
           <motion.div
@@ -29,14 +31,28 @@ const ActivityLevel = ({ userData, updateUserData }) => {
             transition={{ delay: index * 0.1 }}
           >
             <Card
-              className={`cursor-pointer transition-all ${
-                userData.activityLevel === level.value ? "border-primary" : ""
+              className={`cursor-pointer transition-all hover:border-primary ${
+                userData.activityLevel === level.value
+                  ? "border-2 border-primary bg-accent/50"
+                  : "border border-border/50 hover:bg-accent/30"
               }`}
               onClick={() => updateUserData({ activityLevel: level.value })}
             >
-              <CardContent className="p-4">
-                <h3 className="font-semibold">{level.label}</h3>
-                <p className="text-sm text-muted-foreground">{level.description}</p>
+              <CardContent className="p-4 flex items-start gap-3">
+                <div
+                  className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center
+                  ${
+                    userData.activityLevel === level.value
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-muted-foreground"
+                  }`}
+                >
+                  {userData.activityLevel === level.value && <Check className="h-3 w-3" />}
+                </div>
+                <div>
+                  <h3 className="font-semibold">{level.label}</h3>
+                  <p className="text-sm text-muted-foreground">{level.description}</p>
+                </div>
               </CardContent>
             </Card>
           </motion.div>
