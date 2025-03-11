@@ -1,3 +1,4 @@
+// src/pages/macro-calculator.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -67,9 +68,9 @@ const MacroCalculator = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 p-4">
+    <div className="min-h-[calc(100vh-4rem)] py-8 px-4">
       <SettingsToggle />
-      <Card className="w-full max-w-4xl">
+      <Card className="w-full max-w-4xl mx-auto shadow-sm border border-border/50">
         <CardContent className="p-6">
           {!showCalculator && currentUser && calculations && calculations.length > 0 ? (
             <Dashboard onNewCalculation={handleNewCalculation} />
@@ -78,9 +79,12 @@ const MacroCalculator = () => {
               {/* Show step indicator and Progress component only after landing page and before results page */}
               {currentStep > 0 && currentStep < steps.length - 1 && (
                 <div className="mb-6">
-                  <p className="text-sm text-muted-foreground text-left mb-2">
-                    Passo {displayStep} de {totalSteps}
-                  </p>
+                  <div className="flex justify-between items-center mb-2">
+                    <p className="text-sm text-muted-foreground">
+                      Passo {displayStep} de {totalSteps}
+                    </p>
+                    <p className="text-sm font-medium text-primary">{Math.round(progress)}% completo</p>
+                  </div>
                   <Progress value={progress} className="h-2" />
                 </div>
               )}
@@ -98,10 +102,12 @@ const MacroCalculator = () => {
 
               {currentStep > 0 && currentStep < steps.length - 1 && (
                 <div className="flex justify-between mt-6">
-                  <Button onClick={handlePrevious} variant="outline">
+                  <Button onClick={handlePrevious} variant="outline" className="w-28">
                     Anterior
                   </Button>
-                  <Button onClick={handleNext}>Próximo</Button>
+                  <Button onClick={handleNext} className="w-28">
+                    Próximo
+                  </Button>
                 </div>
               )}
             </>
