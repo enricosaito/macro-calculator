@@ -16,9 +16,9 @@ const App = () => {
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <LanguageProvider>
           <AuthProvider>
-            <div className="min-h-screen bg-background">
+            <div className="min-h-screen bg-background flex flex-col">
               <Navbar />
-              <main className="max-w-4xl mx-auto p-4">
+              <main className="flex-1">
                 <SettingsToggle />
                 <Routes>
                   <Route path="/" element={<MacroCalculator />} />
