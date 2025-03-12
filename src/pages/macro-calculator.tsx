@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import PageTransition from "@/components/ui/page-transition";
 import SettingsToggle from "@/components/ui/SettingsToggle";
 import LandingPage from "@/components/macro-calculator/landing-page";
 import BMRCalculation from "@/components/macro-calculator/bmr-calculation";
@@ -68,53 +69,57 @@ const MacroCalculator = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] py-8 px-4">
-      <SettingsToggle />
-      <Card className="w-full max-w-4xl mx-auto shadow-sm border border-border/50">
-        <CardContent className="p-6">
-          {!showCalculator && currentUser && calculations && calculations.length > 0 ? (
-            <Dashboard onNewCalculation={handleNewCalculation} />
-          ) : (
-            <>
-              {/* Show step indicator and Progress component only after landing page and before results page */}
-              {currentStep > 0 && currentStep < steps.length - 1 && (
-                <div className="mb-6">
-                  <div className="flex justify-between items-center mb-2">
-                    <p className="text-sm text-muted-foreground">
-                      Passo {displayStep} de {totalSteps}
-                    </p>
-                    <p className="text-sm font-medium text-primary">{Math.round(progress)}% completo</p>
-                  </div>
-                  <Progress value={progress} className="h-2" />
-                </div>
-              )}
+    <PageTransition>
+      <div className="min-h-[calc(100vh-4rem)] py-8 px-4">
+        <div className="min-h-[calc(100vh-4rem)] py-8 px-4">
+          <SettingsToggle />
+          <Card className="w-full max-w-4xl mx-auto shadow-sm border border-border/50">
+            <CardContent className="p-6">
+              {!showCalculator && currentUser && calculations && calculations.length > 0 ? (
+                <Dashboard onNewCalculation={handleNewCalculation} />
+              ) : (
+                <>
+                  {/* Show step indicator and Progress component only after landing page and before results page */}
+                  {currentStep > 0 && currentStep < steps.length - 1 && (
+                    <div className="mb-6">
+                      <div className="flex justify-between items-center mb-2">
+                        <p className="text-sm text-muted-foreground">
+                          Passo {displayStep} de {totalSteps}
+                        </p>
+                        <p className="text-sm font-medium text-primary">{Math.round(progress)}% completo</p>
+                      </div>
+                      <Progress value={progress} className="h-2" />
+                    </div>
+                  )}
 
-              <motion.div
-                key={currentStep}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-                className="w-full"
-              >
-                {renderStep()}
-              </motion.div>
+                  <motion.div
+                    key={currentStep}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className="w-full"
+                  >
+                    {renderStep()}
+                  </motion.div>
 
-              {currentStep > 0 && currentStep < steps.length - 1 && (
-                <div className="flex justify-between mt-6">
-                  <Button onClick={handlePrevious} variant="outline" className="w-28">
-                    Anterior
-                  </Button>
-                  <Button onClick={handleNext} className="w-28">
-                    Próximo
-                  </Button>
-                </div>
+                  {currentStep > 0 && currentStep < steps.length - 1 && (
+                    <div className="flex justify-between mt-6">
+                      <Button onClick={handlePrevious} variant="outline" className="w-28">
+                        Anterior
+                      </Button>
+                      <Button onClick={handleNext} className="w-28">
+                        Próximo
+                      </Button>
+                    </div>
+                  )}
+                </>
               )}
-            </>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </PageTransition>
   );
 };
 
