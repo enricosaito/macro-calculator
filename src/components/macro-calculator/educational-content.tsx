@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Info, AlertTriangle, Target, ArrowUp, Zap } from "lucide-react";
+import { Info, AlertTriangle, Target, ArrowUp, Zap, CheckCircle } from "lucide-react";
 import CallToAction from "@/components/ui/call-to-action";
 
 const EducationalContent = () => {
@@ -20,53 +20,58 @@ const EducationalContent = () => {
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="font-bold text-3xl mb-3 flex items-center gap-2">
-          <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-lg">
+        <h2 className="font-bold text-3xl mb-3 flex items-start gap-2">
+          <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-lg flex-shrink-0 mt-1">
             1
           </span>
-          Essa calculadora funciona, e por que eu deveria confiar nela?
+          "Essa calculadora realmente funciona, ou é só mais um chute na internet?"
         </h2>
         <Card className="border border-border/50">
           <CardContent className="p-6">
-            <div className="flex items-start gap-3 mb-4">
-              <Info className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-              <p>
-                Nossa calculadora foi desenvolvida com base em fórmulas científicas estabelecidas para determinar suas
-                necessidades calóricas e a distribuição ideal de macronutrientes. Não usamos "achismos" ou regras
-                arbitrárias – cada número é gerado a partir de décadas de pesquisas em nutrição esportiva.
-              </p>
-            </div>
+            <p className="text-lg mb-6">
+              Sim, ela funciona! E vou te explicar exatamente por quê — sem enrolação e sem termos complicados.
+            </p>
 
-            <div className="pl-8 space-y-4 mb-6">
-              <div>
-                <h3 className="font-medium mb-1">Como seus macros são calculados:</h3>
-                <ol className="list-decimal pl-5 space-y-1">
-                  <li>Calculamos sua Taxa Metabólica Basal (TMB) usando a fórmula de Mifflin-St Jeor</li>
-                  <li>Aplicamos um multiplicador específico para seu nível de atividade física</li>
-                  <li>Ajustamos as calorias com base no seu objetivo (perda, manutenção ou ganho)</li>
-                  <li>Distribuímos os macronutrientes priorizando proteínas para preservação muscular</li>
-                </ol>
+            <div className="pl-2 space-y-6 mb-6">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-medium mb-1">Nada de achismos aqui</h3>
+                  <p>
+                    Nossa calculadora usa a fórmula de Mifflin-St Jeor, reconhecida cientificamente como a mais precisa
+                    para calcular seu gasto calórico. Não inventamos números mágicos — usamos matemática e ciência
+                    comprovada.
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <h3 className="font-medium mb-1">Por que você pode confiar:</h3>
-                <p className="mb-2">
-                  Esta calculadora foi criada por Enrico Saito, nutricionista esportivo com mais de 8 anos de
-                  experiência trabalhando com atletas e pessoas comuns em busca de transformação corporal.
-                </p>
-                <p>
-                  As fórmulas e distribuições de macros são baseadas não apenas na teoria nutricional, mas também
-                  refinadas através da experiência real com centenas de clientes que alcançaram resultados
-                  impressionantes.
-                </p>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-medium mb-1">Testada com pessoas reais</h3>
+                  <p>
+                    Estes cálculos foram refinados com base em resultados reais de centenas de pessoas. Desde atletas
+                    até pessoas comuns que nunca pisaram numa academia. E funcionou para elas!
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <CheckCircle className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-medium mb-1">Protegendo seu músculo</h3>
+                  <p>
+                    Nossa distribuição de macros prioriza proteína adequada — o segredo para manter (ou ganhar) músculo
+                    enquanto perde gordura. Esse é o erro que muitas calculadoras cometem!
+                  </p>
+                </div>
               </div>
             </div>
 
             <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-100 dark:border-blue-900/50">
-              <p className="text-sm">
-                <span className="font-medium">Nota importante:</span> Embora esta calculadora forneça um excelente ponto
-                de partida, cada pessoa é única. Os resultados reais podem variar devido a diferenças individuais em
-                metabolismo, composição corporal, genética e outros fatores.
+              <p>
+                <span className="font-medium">Direto ao ponto:</span> Estes números são um excelente ponto de partida.
+                São baseados em ciência sólida e experiência real. É como ter um mini-nutricionista no seu bolso.
               </p>
             </div>
           </CardContent>
@@ -79,49 +84,68 @@ const EducationalContent = () => {
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="font-bold text-3xl mb-3 flex items-center gap-2">
-          <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-lg">
+        <h2 className="font-bold text-3xl mb-3 flex items-start gap-2">
+          <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-lg flex-shrink-0 mt-1">
             2
           </span>
-          Você precisará ajustar esses macros, uma hora ou outra
+          "Certo, e agora? Preciso seguir estes números à risca para sempre?"
         </h2>
         <Card className="border border-border/50">
           <CardContent className="p-6">
-            <div className="flex items-start gap-3 mb-4">
-              <AlertTriangle className="h-5 w-5 text-amber-500 mt-1 flex-shrink-0" />
-              <p>
-                Por melhor que seja nossa calculadora, é apenas um ponto de partida. Seu corpo é um sistema dinâmico que
-                se adapta constantemente às mudanças – incluindo alterações na sua dieta e atividade física.
-              </p>
-            </div>
+            <p className="text-lg mb-6">
+              Não! Seu corpo é inteligente e se adapta constantemente. Você vai precisar ajustar esses números ao longo
+              da jornada.
+            </p>
 
-            <div className="pl-8 space-y-4 mb-6">
-              <div>
-                <h3 className="font-medium mb-1">Quando ajustar seus macros:</h3>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>Quando o progresso estagna por mais de 2 semanas</li>
-                  <li>Quando sua atividade física aumenta ou diminui significativamente</li>
-                  <li>Após perder ou ganhar quantidade substancial de peso</li>
-                  <li>Quando seus objetivos mudam (ex: de perda de peso para ganho muscular)</li>
+            <div className="pl-2 space-y-6 mb-6">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="h-5 w-5 text-amber-500 mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-medium mb-1">O erro que quase todo mundo comete</h3>
+                  <p>
+                    Mudar seus macros toda semana porque não viu resultado imediato. Isso é como trocar de rota a cada 5
+                    minutos durante uma viagem só porque ainda não chegou ao destino!
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-primary/10 p-4 rounded-lg border border-primary/20">
+                <h3 className="font-medium mb-2">Como saber quando ajustar:</h3>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="bg-primary text-primary-foreground w-5 h-5 rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                      ✓
+                    </span>
+                    <span>
+                      Quando seu peso estacionar por mais de 2-3 semanas (mesmo seguindo o plano corretamente)
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="bg-primary text-primary-foreground w-5 h-5 rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                      ✓
+                    </span>
+                    <span>Quando sua rotina mudar drasticamente (muito mais ou menos atividade física)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="bg-primary text-primary-foreground w-5 h-5 rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                      ✓
+                    </span>
+                    <span>Quando você ganhar ou perder mais de 5kg</span>
+                  </li>
                 </ul>
               </div>
 
-              <div>
-                <h3 className="font-medium mb-1">Como fazer ajustes eficazes:</h3>
-                <ol className="list-decimal pl-5 space-y-1">
-                  <li>Siga o plano atual por pelo menos 2-3 semanas antes de fazer alterações</li>
-                  <li>Monitore seu peso, medidas e fotos consistentemente</li>
-                  <li>Faça ajustes pequenos (5-10% das calorias totais)</li>
-                  <li>Dê ao seu corpo 1-2 semanas para se adaptar a cada ajuste</li>
-                </ol>
-              </div>
+              <p>
+                <span className="font-medium">Dica de ouro:</span> Faça pequenos ajustes de cada vez (cerca de 10% das
+                calorias). Isso permite que você veja exatamente o que está funcionando sem mudanças drásticas.
+              </p>
             </div>
 
             <div className="bg-amber-50 dark:bg-amber-950/20 p-4 rounded-lg border border-amber-100 dark:border-amber-900/50">
-              <p className="text-sm">
-                <span className="font-medium">Atenção:</span> Muitas pessoas cometem o erro de mudar seus macros com
-                frequência demais, sem dar tempo suficiente para o corpo responder. Seja paciente e metódico com os
-                ajustes para obter os melhores resultados a longo prazo.
+              <p>
+                <span className="font-medium">Lembre-se:</span> Paciência é tudo na transformação corporal. O corpo que
+                você quer demora tempo para ser construído — e os resultados duradouros vêm de quem entende que é uma
+                maratona, não uma corrida de 100 metros.
               </p>
             </div>
           </CardContent>
@@ -134,69 +158,184 @@ const EducationalContent = () => {
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="font-bold text-3xl mb-3 flex items-center gap-2">
-          <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-lg">
+        <h2 className="font-bold text-3xl mb-3 flex items-start gap-2">
+          <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-lg flex-shrink-0 mt-1">
             3
           </span>
-          Agora você deve estar se perguntando, "Qual é uma taxa desejável de perda/ganho de peso?"
+          "Quanta gordura posso perder por semana sem prejudicar minha saúde?"
         </h2>
         <Card className="border border-border/50">
           <CardContent className="p-6">
-            <div className="flex items-start gap-3 mb-4">
-              <Target className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-              <p>
-                Definir expectativas realistas é crucial para o sucesso a longo prazo. Muitas pessoas abandonam dietas
-                eficazes por esperarem resultados irrealisticamente rápidos.
+            <p className="text-lg mb-6">
+              Esta é a pergunta que todos fazem, mas poucos respondem com honestidade. Vamos falar a verdade aqui.
+            </p>
+
+            <div className="mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-green-50 dark:bg-green-950/20 p-4 rounded-lg border border-green-100 dark:border-green-900/50 h-full">
+                  <h3 className="font-medium mb-3 flex items-center gap-2">
+                    <Target className="h-5 w-5 text-green-600" />
+                    Meta de perda ideal
+                  </h3>
+                  <p className="text-2xl font-bold text-green-600 mb-3">0,5 a 1kg por semana</p>
+                  <p>
+                    Este ritmo permite que você preserve músculo, mantenha sua energia e metabolismo, e o mais
+                    importante: <span className="font-medium">não sofra o efeito sanfona</span> depois.
+                  </p>
+                </div>
+
+                <div className="bg-red-50 dark:bg-red-950/20 p-4 rounded-lg border border-red-100 dark:border-red-900/50 h-full">
+                  <h3 className="font-medium mb-3 flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-red-600" />O que acontece se for mais rápido
+                  </h3>
+                  <p className="mb-2">Tentou perder 2kg+ por semana? Prepare-se para:</p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li>Perda de músculo (que diminui seu metabolismo)</li>
+                    <li>Cansaço constante e irritabilidade</li>
+                    <li>Fome incontrolável levando a compulsões</li>
+                    <li>Recuperar tudo de volta (e mais um pouco)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="pl-2 mb-6">
+              <h3 className="font-medium mb-2">Para quem quer ganhar massa muscular:</h3>
+              <p className="mb-4">O ganho muscular natural é um processo lento, mas consistente:</p>
+              <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-100 dark:border-blue-900/50">
+                <p className="mb-1">
+                  <span className="font-medium">Iniciantes:</span> Até 900g de músculo por mês (nos primeiros 6 meses)
+                </p>
+                <p className="mb-1">
+                  <span className="font-medium">Intermediários:</span> 400-500g por mês
+                </p>
+                <p>
+                  <span className="font-medium">Avançados:</span> 200-300g por mês (após anos de treino)
+                </p>
+              </div>
+            </div>
+
+            <p>
+              <span className="font-medium">A verdade:</span> Transformações impressionantes levam tempo. Aquele "antes
+              e depois" de 30 dias que você viu no Instagram? Provavelmente envolveu desidratação, iluminação favorável,
+              ou não foi feito em apenas um mês.
+            </p>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="font-bold text-3xl mb-3 flex items-start gap-2">
+          <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-lg flex-shrink-0 mt-1">
+            4
+          </span>
+          "Como isso muda dependendo do meu nível de experiência?"
+        </h2>
+        <Card className="border border-border/50">
+          <CardContent className="p-6">
+            <p className="text-lg mb-6">
+              Seu nível de experiência com treino e dieta muda completamente como você deve abordar sua nutrição.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div className="bg-gradient-to-b from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/20 p-5 rounded-lg border border-blue-200 dark:border-blue-800/50">
+                <h3 className="font-medium mb-3 text-blue-700 dark:text-blue-400">Iniciante</h3>
+                <p className="text-sm mb-3">Menos de 1 ano de treino consistente</p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <span>Foque em consistência, não perfeição</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <span>Ajustes a cada 3-4 semanas são suficientes</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <span>Seu corpo responderá bem a quase qualquer estímulo</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="bg-gradient-to-b from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/20 p-5 rounded-lg border border-purple-200 dark:border-purple-800/50">
+                <h3 className="font-medium mb-3 text-purple-700 dark:text-purple-400">Intermediário</h3>
+                <p className="text-sm mb-3">1-3 anos de treino estruturado</p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                    <span>Precisão maior com macros se torna importante</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                    <span>Ciclagem de carboidratos pode trazer benefícios</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                    <span>Considere timing nutricional ao redor dos treinos</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="bg-gradient-to-b from-amber-50 to-amber-100 dark:from-amber-950/30 dark:to-amber-900/20 p-5 rounded-lg border border-amber-200 dark:border-amber-800/50">
+                <h3 className="font-medium mb-3 text-amber-700 dark:text-amber-400">Avançado</h3>
+                <p className="text-sm mb-3">3+ anos de treino sério e dieta estruturada</p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                    <span>Ajustes mais frequentes e precisos são necessários</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                    <span>Periodização nutricional alinhada aos ciclos de treino</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                    <span>Microajustes fazem grande diferença nos resultados</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="bg-primary/10 p-5 rounded-lg border border-primary/20">
+              <h3 className="font-medium mb-2">Qual é a maior diferença entre níveis?</h3>
+              <p className="mb-3">
+                O <span className="font-medium">detalhamento</span> e <span className="font-medium">precisão</span>{" "}
+                necessários para continuar progredindo:
               </p>
-            </div>
-
-            <div className="pl-8 space-y-6 mb-6">
-              <div className="bg-red-50 dark:bg-red-950/20 p-4 rounded-lg border border-red-100 dark:border-red-900/50">
-                <h3 className="font-medium mb-1">Para perda de peso saudável:</h3>
-                <p className="mb-2">
-                  <span className="font-medium">0,5kg a 1kg por semana</span> é o intervalo ideal para a maioria das
-                  pessoas.
-                </p>
-                <ul className="list-disc pl-5 space-y-1 text-sm">
-                  <li>Preserva a massa muscular, que mantém seu metabolismo ativo</li>
-                  <li>Permite que seu corpo e hormônios se ajustem gradualmente</li>
-                  <li>É mais sustentável psicologicamente e menos restritivo</li>
-                  <li>Resulta em menor efeito rebote ("efeito sanfona")</li>
-                </ul>
-              </div>
-
-              <div className="bg-green-50 dark:bg-green-950/20 p-4 rounded-lg border border-green-100 dark:border-green-900/50">
-                <h3 className="font-medium mb-1">Para ganho de massa muscular:</h3>
-                <p className="mb-2">
-                  <span className="font-medium">0,25kg a 0,5kg por semana</span> representa um ganho de massa magra
-                  ideal.
-                </p>
-                <ul className="list-disc pl-5 space-y-1 text-sm">
-                  <li>Maximiza o ganho muscular enquanto minimiza o acúmulo de gordura</li>
-                  <li>Permite progresso consistente nos treinos</li>
-                  <li>Dá tempo para adaptações musculares e estruturais</li>
-                  <li>Lembre-se: a genética impõe limites ao ganho muscular natural</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="pl-8 mb-6">
-              <h3 className="font-medium mb-2">Por que taxas mais rápidas geralmente falham?</h3>
-              <p className="mb-3">A perda de peso muito rápida (mais de 1kg por semana) geralmente leva a:</p>
-              <ul className="list-disc pl-5 space-y-1">
-                <li>Perda significativa de massa muscular</li>
-                <li>Desaceleração metabólica excessiva</li>
-                <li>Desequilíbrios hormonais</li>
-                <li>Maior risco de recuperar todo o peso perdido (e mais)</li>
+              <ul className="space-y-1">
+                <li className="flex items-start gap-2">
+                  <span className="bg-primary text-primary-foreground w-5 h-5 rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                    1
+                  </span>
+                  <span>
+                    <span className="font-medium">Iniciantes:</span> Podem progredir mesmo com abordagens simples e
+                    margem para erros
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="bg-primary text-primary-foreground w-5 h-5 rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                    2
+                  </span>
+                  <span>
+                    <span className="font-medium">Intermediários:</span> Precisam de maior atenção a macronutrientes e
+                    timing nutricional
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="bg-primary text-primary-foreground w-5 h-5 rounded-full flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                    3
+                  </span>
+                  <span>
+                    <span className="font-medium">Avançados:</span> Necessitam estratégias personalizadas e
+                    acompanhamento profissional frequente
+                  </span>
+                </li>
               </ul>
-            </div>
-
-            <div className="bg-primary/10 p-4 rounded-lg border border-primary/20">
-              <p className="text-sm">
-                <span className="font-medium">Lembre-se:</span> Seu peso pode flutuar diariamente devido à retenção de
-                água, conteúdo intestinal e outros fatores. É a tendência ao longo do tempo que realmente importa, não
-                os números diários na balança.
-              </p>
             </div>
           </CardContent>
         </Card>
