@@ -13,7 +13,7 @@ const EducationalContent = () => {
   };
 
   return (
-    <div id="educational-content" className="space-y-12 mt-16 mb-24 relative">
+    <div id="educational-content" className="space-y-12 mt-32 pt-16 mb-24 relative border-t border-border/20">
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
