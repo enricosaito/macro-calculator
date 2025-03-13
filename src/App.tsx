@@ -6,6 +6,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Navbar from "@/components/ui/navbar";
 import MacroCalculator from "@/pages/macro-calculator";
 import RecipePlanner from "@/pages/recipe-planner";
+import AboutPage from "@/pages/about";
 import Login from "@/pages/auth/login";
 import Register from "@/pages/auth/register";
 import SettingsToggle from "@/components/ui/SettingsToggle";
@@ -24,6 +25,7 @@ const App = () => {
                   <Route path="/" element={<MacroCalculator />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
+                  <Route path="/about" element={<AboutPage />} /> {/* Add the new route */}
                   <Route
                     path="/recipes"
                     element={
