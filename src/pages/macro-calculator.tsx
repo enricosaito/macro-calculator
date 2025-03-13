@@ -1,4 +1,3 @@
-// src/pages/macro-calculator.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -13,6 +12,7 @@ import BMRCalculation from "@/components/macro-calculator/bmr-calculation";
 import ActivityLevel from "@/components/macro-calculator/activity-level";
 import GoalSelection from "@/components/macro-calculator/goal-selection";
 import ResultsPage from "@/components/macro-calculator/results-page";
+import EducationalContent from "@/components/macro-calculator/educational-content";
 import Dashboard from "@/components/macro-calculator/dashboard";
 import useMacroCalculator from "@/hooks/useMacroCalculator";
 import { useAuth } from "@/context/AuthContext";
@@ -117,6 +117,9 @@ const MacroCalculator = () => {
               )}
             </CardContent>
           </Card>
+          <div className="max-w-4xl mx-auto">
+            <EducationalContent />
+          </div>
         </div>
       </div>
     </PageTransition>
