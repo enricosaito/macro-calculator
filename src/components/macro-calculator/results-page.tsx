@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Flame, Dumbbell, Croissant, Droplet } from "lucide-react";
 import { ptBR } from "@/locales/pt-BR";
 import { useCalculations } from "@/hooks/useCalculations";
+import CallToAction from "@/components/ui/call-to-action";
 import { useAuth } from "@/context/AuthContext";
 import HistoryDisplay from "./history-display";
 import WaterCalculator from "./water-calculator";
@@ -206,17 +207,10 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
       {currentUser && <HistoryDisplay />}
 
       {/* CTA Section */}
-      <motion.div
-        className="mt-8 text-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
-      >
-        <p className="text-lg mb-4">
-          {ptBR.takeNutritionToNextLevel}{" "}
-          <span className="font-semibold text-primary">{ptBR.unlockPersonalizedPlans}</span>
-        </p>
-        <div className="flex flex-col sm:flex-row justify-center gap-4">
+      <motion.div className="mt-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
+        <CallToAction className="mb-6" />
+
+        <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
           <Button onClick={onStartOver} variant="outline">
             {ptBR.calculateAgain}
           </Button>
