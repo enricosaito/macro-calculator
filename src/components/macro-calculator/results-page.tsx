@@ -182,12 +182,12 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
   };
 
   return (
-    <div>
-      <h2 className="text-3xl font-bold mb-6 text-center">{ptBR.yourPersonalizedMacroPlan}</h2>
-      <p className="text-lg mb-8 text-center text-muted-foreground">{ptBR.basedOnYourInfo}</p>
+    <div className="max-w-4xl mx-auto px-4">
+      <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-center">{ptBR.yourPersonalizedMacroPlan}</h2>
+      <p className="text-base md:text-lg mb-6 md:mb-8 text-center text-muted-foreground">{ptBR.basedOnYourInfo}</p>
 
       {/* Macro Breakdown Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
         {Object.entries(macros).map(([key, value], index) => {
           const Icon = macroIcons[key as keyof typeof macroIcons];
           const translatedKey = ptBR[key as keyof typeof ptBR];
@@ -199,14 +199,14 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
               transition={{ delay: index * 0.1 }}
             >
               <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{translatedKey}</CardTitle>
-                  <Icon className="h-4 w-4 text-muted-foreground" />
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 md:pb-2">
+                  <CardTitle className="text-xs md:text-sm font-medium">{translatedKey}</CardTitle>
+                  <Icon className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
                 </CardHeader>
-                <CardContent>
-                  <p className="text-2xl font-bold">
+                <CardContent className="p-3 md:pt-2">
+                  <p className="text-xl md:text-2xl font-bold">
                     {Math.round(value)}
-                    {key === "calories" ? " kcal" : "g"}
+                    <span className="text-sm md:text-base">{key === "calories" ? " kcal" : "g"}</span>
                   </p>
                 </CardContent>
               </Card>
@@ -216,13 +216,13 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
       </div>
 
       {/* Water Calculator */}
-      <div className="mb-8">
+      <div className="mb-6 md:mb-8">
         <WaterCalculator weight={userData.weight} activityLevel={userData.activityLevel} />
       </div>
 
       {/* Motivational Message */}
       <motion.p
-        className="mt-6 text-center text-muted-foreground"
+        className="mt-4 md:mt-6 text-center text-muted-foreground text-sm md:text-base"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
@@ -235,20 +235,24 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
 
       {/* CTA Section */}
       <motion.div
-        className="mt-8 text-center"
+        className="mt-6 md:mt-8 text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
       >
-        <p className="text-lg mb-4">
+        <p className="text-base md:text-lg mb-4">
           {ptBR.takeNutritionToNextLevel}{" "}
           <span className="font-semibold text-primary">{ptBR.unlockPersonalizedPlans}</span>
         </p>
-        <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Button onClick={onStartOver} variant="outline">
+        <div className="flex flex-col sm:flex-row justify-center gap-3 md:gap-4">
+          <Button onClick={onStartOver} variant="outline" className="w-full sm:w-auto">
             {ptBR.calculateAgain}
           </Button>
-          {!currentUser && <Button onClick={() => navigate("/login")}>Fazer login para salvar resultados</Button>}
+          {!currentUser && (
+            <Button onClick={() => navigate("/login")} className="w-full sm:w-auto mt-2 sm:mt-0">
+              Fazer login para salvar resultados
+            </Button>
+          )}
           <Button onClick={scrollToEducationalContent} variant="secondary">
             Saiba Mais <ChevronDown className="ml-1 h-4 w-4" />
           </Button>
