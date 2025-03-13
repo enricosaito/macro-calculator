@@ -24,12 +24,12 @@ const EducationalContent = () => {
           <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-lg flex-shrink-0 mt-1">
             1
           </span>
-          "Essa calculadora realmente funciona, ou é só mais um chute na internet?"
+          "Essa calculadora realmente funciona, e porque eu deveria confiar nela?"
         </h2>
         <Card className="border border-border/50">
           <CardContent className="p-6">
             <p className="text-lg mb-6">
-              Sim, ela funciona! E vou te explicar exatamente por quê — sem enrolação e sem termos complicados.
+              Bom, você está certo(a) de questionar o que você acha na internet, especialmente na indústria fitness.
             </p>
 
             <div className="pl-2 space-y-6 mb-6">
@@ -38,9 +38,17 @@ const EducationalContent = () => {
                 <div>
                   <h3 className="font-medium mb-1">Nada de achismos aqui</h3>
                   <p>
-                    Nossa calculadora usa a fórmula de Mifflin-St Jeor, reconhecida cientificamente como a mais precisa
-                    para calcular seu gasto calórico. Não inventamos números mágicos — usamos matemática e ciência
-                    comprovada.
+                    Nossa calculadora usa a fórmula de{" "}
+                    <a
+                      href="https://nutrium.com/blog/pt-br/equacao-de-mifflin-st-jeor-para-profissionais-de-nutricao/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline hover:text-blue-800"
+                    >
+                      Mifflin-St Jeor
+                    </a>
+                    , reconhecida cientificamente como a mais precisa para calcular seu gasto calórico. Não inventamos
+                    números mágicos — usamos matemática e ciência comprovada.
                   </p>
                 </div>
               </div>
@@ -88,13 +96,13 @@ const EducationalContent = () => {
           <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-lg flex-shrink-0 mt-1">
             2
           </span>
-          "Certo, e agora? Preciso seguir estes números à risca para sempre?"
+          Você vai precisar ajustar esses macros cedo ou tarde para atingir seus objetivos desejados
         </h2>
         <Card className="border border-border/50">
           <CardContent className="p-6">
             <p className="text-lg mb-6">
-              Não! Seu corpo é inteligente e se adapta constantemente. Você vai precisar ajustar esses números ao longo
-              da jornada.
+              Seu corpo é inteligente e se adapta constantemente. Você vai precisar ajustar esses números ao longo da
+              jornada.
             </p>
 
             <div className="pl-2 space-y-6 mb-6">
