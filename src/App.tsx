@@ -6,7 +6,7 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { CardHeightProvider } from "@/context/CardHeightContext";
 // import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import Navbar from "@/components/ui/navbar";
+import Navbar from "@/components/ui/navbar-fixed";
 import LoadingScreen from "@/components/ui/loading";
 import MacroCalculator from "@/pages/macro-calculator";
 import RecipePlanner from "@/pages/recipe-planner";
