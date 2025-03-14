@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, CookingPot, Lock } from "lucide-react";
 import { ingredients } from "@/lib/ingredients-data";
-import { Recipe, recipes } from "@/lib/recipes-data";
+import { Recipe } from "@/lib/recipes-data";
 import { suggestRecipes } from "@/lib/recipe-suggestions";
 import IngredientCategory from "@/components/recipe-planner/ingredient-category";
 import RecipeCard from "@/components/recipe-planner/recipe-card";
