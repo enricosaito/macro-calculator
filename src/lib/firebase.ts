@@ -2,9 +2,8 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { getAnalytics, isSupported } from "firebase/analytics";
 
-// Firebase configuration
+// Firebase configuration - using a simpler approach to avoid dynamic imports
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -20,21 +19,10 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Initialize Analytics if supported and in production
-const initializeAnalytics = async () => {
-  const supported = await isSupported();
-  if (supported && import.meta.env.PROD) {
-    return getAnalytics(app);
-  }
-  return null;
-};
-
-// Initialize analytics
-const analytics = initializeAnalytics();
-
 // Update auth settings
 auth.useDeviceLanguage(); // Use browser's language
+auth.settings.appVerificationDisabledForTesting = false; // Enable production settings
 
 // Export the Firebase services
-export { db, auth, analytics };
+export { db, auth };
 export default app;
