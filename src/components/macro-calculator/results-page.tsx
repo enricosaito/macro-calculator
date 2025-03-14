@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Flame, Dumbbell, Croissant, Droplet, ChevronDown } from "lucide-react";
 import { ptBR } from "@/locales/pt-BR";
 import { useCalculations } from "@/hooks/useCalculations";
-import CallToAction from "@/components/ui/call-to-action";
 import { useAuth } from "@/context/AuthContext";
 import HistoryDisplay from "./history-display";
 import WaterCalculator from "./water-calculator";

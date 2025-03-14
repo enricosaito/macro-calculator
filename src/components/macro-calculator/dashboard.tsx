@@ -1,5 +1,4 @@
 // src/components/macro-calculator/dashboard.tsx
-import { motion } from "framer-motion";
 import { useCalculations } from "@/hooks/useCalculations";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,7 +9,6 @@ import MealTimingCalculator from "./meal-timing-calculator";
 
 const Dashboard = ({ onNewCalculation }: { onNewCalculation: () => void }) => {
   const { calculations, loading } = useCalculations();
-  const navigate = useNavigate();
 
   if (loading) {
     return (
