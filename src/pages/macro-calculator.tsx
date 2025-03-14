@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -70,61 +70,60 @@ const MacroCalculator = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-[calc(100vh-4rem)] py-8 px-4">
-        <div className="py-8 px-4">
-          <SettingsToggle />
-          <Card className="w-full max-w-4xl mx-auto shadow-sm border border-border/50 min-h-[600px]">
-            <CardContent className="p-6 h-full flex flex-col">
-              {!showCalculator && currentUser && calculations && calculations.length > 0 ? (
-                <Dashboard onNewCalculation={handleNewCalculation} />
-              ) : (
-                <div className="flex flex-col flex-grow">
-                  {/* Show step indicator and Progress component only after landing page and before results page */}
-                  {currentStep > 0 && currentStep < steps.length - 1 && (
-                    <div className="mb-6">
-                      <div className="flex justify-between items-center mb-2">
-                        <p className="text-sm text-muted-foreground">
-                          Passo {displayStep} de {totalSteps}
-                        </p>
-                        <p className="text-sm font-medium text-primary">{Math.round(progress)}% completo</p>
-                      </div>
-                      <Progress value={progress} className="h-2" />
+      <div className="py-8 px-4">
+        <SettingsToggle />
+        <Card className="w-full max-w-4xl mx-auto shadow-sm border border-border/50 min-h-[600px]">
+          <CardContent className="p-6 flex flex-col h-full">
+            {!showCalculator && currentUser && calculations && calculations.length > 0 ? (
+              <Dashboard onNewCalculation={handleNewCalculation} />
+            ) : (
+              <div className="flex flex-col h-full">
+                {/* Progress indicator */}
+                {currentStep > 0 && currentStep < steps.length - 1 && (
+                  <div className="mb-6">
+                    <div className="flex justify-between items-center mb-2">
+                      <p className="text-sm text-muted-foreground">
+                        Passo {displayStep} de {totalSteps}
+                      </p>
+                      <p className="text-sm font-medium text-primary">{Math.round(progress)}% completo</p>
                     </div>
-                  )}
-
-                  <div className="flex-grow flex flex-col justify-center">
-                    <motion.div
-                      key={currentStep}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{ duration: 0.3 }}
-                      className="flex-grow flex flex-col justify-center"
-                    >
-                      {renderStep()}
-                    </motion.div>
+                    <Progress value={progress} className="h-2" />
                   </div>
+                )}
 
-                  {/* Only show the navigation buttons here if we're not on the landing or results page */}
-                  {currentStep > 0 && currentStep < steps.length - 1 && (
-                    <div className="flex justify-between mt-6">
-                      <Button onClick={handlePrevious} variant="outline" className="w-28">
-                        Anterior
-                      </Button>
-                      <Button onClick={handleNext} className="w-28">
-                        Próximo
-                      </Button>
-                    </div>
-                  )}
+                {/* Main content */}
+                <div className="flex-grow flex items-center justify-center">
+                  <motion.div
+                    key={currentStep}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className="w-full"
+                  >
+                    {renderStep()}
+                  </motion.div>
                 </div>
-              )}
-            </CardContent>
-          </Card>
 
-          {/* Educational content */}
-          <div className="max-w-4xl mx-auto">
-            <EducationalContent />
-          </div>
+                {/* Navigation buttons */}
+                {currentStep > 0 && currentStep < steps.length - 1 && (
+                  <div className="flex justify-between mt-6">
+                    <Button onClick={handlePrevious} variant="outline" className="w-28">
+                      Anterior
+                    </Button>
+                    <Button onClick={handleNext} className="w-28">
+                      Próximo
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Educational content */}
+        <div className="max-w-4xl mx-auto">
+          <EducationalContent />
         </div>
       </div>
     </PageTransition>
