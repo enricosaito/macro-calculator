@@ -1,18 +1,9 @@
-// src/components/recipe-planner/recipe-detail-modal.tsx (partial update)
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-
+import { useRef, useEffect } from "react";
 import { Recipe, calculateRecipeMacros } from "@/lib/recipes-data";
 import { ingredients } from "@/lib/ingredients-data";
 import { Clock, ChefHat, Flame, Dumbbell, Croissant, Droplet, Heart, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import React from "react";
 
 interface RecipeDetailModalProps {
   recipe: Recipe | null;
@@ -25,6 +16,7 @@ interface RecipeDetailModalProps {
 const RecipeDetailModal = ({ recipe, open, onOpenChange, onSave, isSaved = false }: RecipeDetailModalProps) => {
   if (!recipe) return null;
 
+  const contentRef = useRef<HTMLDivElement>(null);
   const macros = calculateRecipeMacros(recipe, ingredients);
 
   // Calculate macro percentages
@@ -46,8 +38,19 @@ const RecipeDetailModal = ({ recipe, open, onOpenChange, onSave, isSaved = false
     }
   };
 
-  // Create a ref for the content to detect clicks
-  const contentRef = React.useRef<HTMLDivElement>(null);
+  // Handle ESC key to close modal
+  useEffect(() => {
+    if (!open) return;
+
+    const handleEscKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onOpenChange(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleEscKey);
+    return () => window.removeEventListener("keydown", handleEscKey);
+  }, [open, onOpenChange]);
 
   // Handle overlay click (backdrop)
   const handleOverlayClick = (e: React.MouseEvent) => {
@@ -66,6 +69,7 @@ const RecipeDetailModal = ({ recipe, open, onOpenChange, onSave, isSaved = false
         className="bg-background border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto mx-4"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Rest of your component stays the same */}
         {/* Sticky header with close and save buttons */}
         <div className="sticky top-0 z-10 bg-card pt-4 px-6 pb-2 flex justify-between items-center border-b border-border/20">
           <h2 className="text-2xl font-semibold">{recipe.name}</h2>
@@ -103,9 +107,6 @@ const RecipeDetailModal = ({ recipe, open, onOpenChange, onSave, isSaved = false
                 {recipe.difficulty === "easy" ? "Fácil" : recipe.difficulty === "medium" ? "Médio" : "Difícil"}
               </span>
             </div>
-
-            {/* Rest of the content stays the same */}
-            {/* ... */}
 
             {/* Macros with Progress Bars */}
             <div className="space-y-4 mb-6">

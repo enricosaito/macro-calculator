@@ -1,17 +1,7 @@
-import React from "react";
+import { useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Lock, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
 interface LoginPromptProps {
   open?: boolean;
@@ -22,6 +12,7 @@ interface LoginPromptProps {
 const LoginPrompt = ({ open, onOpenChange, message }: LoginPromptProps) => {
   const navigate = useNavigate();
   const isModal = open !== undefined && onOpenChange !== undefined;
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const handleLogin = () => {
     navigate("/login");
@@ -31,16 +22,28 @@ const LoginPrompt = ({ open, onOpenChange, message }: LoginPromptProps) => {
     navigate("/register");
   };
 
-  if (isModal) {
-    const contentRef = React.useRef<HTMLDivElement>(null);
+  // Handle ESC key to close modal
+  useEffect(() => {
+    if (!isModal || !open) return;
 
-    const handleOverlayClick = (e: React.MouseEvent) => {
-      // If clicking on the overlay directly (not the content)
-      if (contentRef.current && !contentRef.current.contains(e.target as Node)) {
+    const handleEscKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
         onOpenChange?.(false);
       }
     };
 
+    window.addEventListener("keydown", handleEscKey);
+    return () => window.removeEventListener("keydown", handleEscKey);
+  }, [isModal, open, onOpenChange]);
+
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    // If clicking on the overlay directly (not the content)
+    if (contentRef.current && !contentRef.current.contains(e.target as Node)) {
+      onOpenChange?.(false);
+    }
+  };
+
+  if (isModal) {
     if (!open) return null;
 
     return (

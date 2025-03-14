@@ -5,8 +5,8 @@ import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { CardHeightProvider } from "@/context/CardHeightContext";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import Navbar from "@/components/ui/navbar"; // Note the lowercase 'n'
+// import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import Navbar from "@/components/ui/navbar";
 import LoadingScreen from "@/components/ui/loading";
 import MacroCalculator from "@/pages/macro-calculator";
 import RecipePlanner from "@/pages/recipe-planner";

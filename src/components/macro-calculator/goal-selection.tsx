@@ -5,7 +5,7 @@ import { Check, TrendingDown, ArrowRight, TrendingUp } from "lucide-react";
 interface GoalSelectionProps {
   userData: {
     goal: string;
-    [key: string]: any;
+    [key: string]: string | null;
   };
   updateUserData: (data: { goal: string }) => void;
 }
