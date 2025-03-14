@@ -17,7 +17,7 @@ interface RecipeDetailModalProps {
   recipe: Recipe | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave?: (recipe: Recipe) => void;
+  onSave?: (recipeId: string) => void;
   isSaved?: boolean;
 }
 
@@ -142,7 +142,7 @@ const RecipeDetailModal = ({ recipe, open, onOpenChange, onSave, isSaved = false
 
         <AlertDialogFooter>
           {onSave && (
-            <Button variant={isSaved ? "outline" : "default"} onClick={() => onSave(recipe)} className="mr-auto">
+            <Button variant={isSaved ? "outline" : "default"} onClick={() => onSave(recipe.id)} className="mr-auto">
               {isSaved ? "Remover dos Favoritos" : "Salvar Receita"}
             </Button>
           )}

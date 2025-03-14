@@ -1,16 +1,13 @@
 // src/components/macro-calculator/dashboard.tsx
-import { motion } from "framer-motion";
 import { useCalculations } from "@/hooks/useCalculations";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Flame, Dumbbell, Croissant, Droplet } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import HistoryDisplay from "./history-display";
 import MealTimingCalculator from "./meal-timing-calculator";
 
 const Dashboard = ({ onNewCalculation }: { onNewCalculation: () => void }) => {
   const { calculations, loading } = useCalculations();
-  const navigate = useNavigate();
 
   if (loading) {
     return (

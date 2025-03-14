@@ -1,83 +1,91 @@
-# Macro Calculator
+# NutriMacros - Calculadora de Macronutrientes
 
-Macro Calculator is a web application that helps users calculate their daily macronutrient needs based on their personal information and fitness goals. This tool provides a step-by-step guide to determine the optimal balance of proteins, carbohydrates, and fats for an individual's diet.
+NutriMacros é uma aplicação web que ajuda usuários a calcular suas necessidades diárias de macronutrientes com base em informações pessoais e objetivos de condicionamento físico.
 
-## Features
+![NutriMacros Screenshot](./src/assets/screenshot.png)
 
-- Calculate Basal Metabolic Rate (BMR)
-- Determine Total Daily Energy Expenditure (TDEE)
-- Customize macronutrient ratios based on fitness goals
-- User-friendly interface with step-by-step guidance
-- Responsive design for desktop and mobile devices
+## ✨ Características
 
-## Technologies Used
+- 📊 Cálculo de Taxa Metabólica Basal (TMB)
+- 🔥 Determinação do Gasto Energético Total Diário (TDEE)
+- 🥗 Personalização da distribuição de macronutrientes baseada em objetivos de fitness
+- 👤 Interface amigável com orientações passo a passo
+- 📱 Design responsivo para desktop e dispositivos móveis
+- 🍲 Planejador de receitas com base nos ingredientes disponíveis
+- 🔐 Sistema de autenticação de usuários
 
-- React
-- TypeScript
+## 🚀 Tecnologias Utilizadas
+
+- React + TypeScript
 - Tailwind CSS
 - shadcn/ui components
-- Framer Motion for animations
+- Framer Motion para animações
+- Firebase (Autenticação e Firestore)
 
-## Getting Started
+## 🛠️ Instalação e Uso
 
-### Prerequisites
+### Requisitos
 
-- Node.js (v14 or later)
-- npm (v6 or later)
+- Node.js (v14 ou superior)
+- npm (v6 ou superior)
+- Conta Firebase
 
-### Installation
+### 1. Clone o repositório
 
-1. Clone the repository:
-   \`\`\`
-   git clone https://github.com/your-username/macro-calculator.git
-   \`\`\`
+```bash
+git clone https://github.com/seu-usuario/nutri-macros.git
+cd nutri-macros
+```
 
-2. Navigate to the project directory:
-   \`\`\`
-   cd macro-calculator
-   \`\`\`
+### 2. Instale as dependências
 
-3. Install the dependencies:
-   \`\`\`
-   npm install
-   \`\`\`
+```bash
+npm install
+```
 
-4. Start the development server:
-   \`\`\`
-   npm run dev
-   \`\`\`
+### 3. Configure as variáveis de ambiente
 
-5. Open your browser and visit \`http://localhost:3000\` to view the app.
+Crie um arquivo `.env.local` na raiz do projeto com as seguintes variáveis:
 
-## Usage
+```
+VITE_FIREBASE_API_KEY=sua_chave_api_aqui
+VITE_FIREBASE_AUTH_DOMAIN=seu_dominio_auth_aqui
+VITE_FIREBASE_PROJECT_ID=seu_project_id_aqui
+VITE_FIREBASE_STORAGE_BUCKET=seu_storage_bucket_aqui
+VITE_FIREBASE_MESSAGING_SENDER_ID=seu_messaging_sender_id_aqui
+VITE_FIREBASE_APP_ID=seu_app_id_aqui
+```
 
-1. On the landing page, click "Start Your Journey" to begin.
-2. Enter your personal information:
-   - Weight (30-300 kg)
-   - Height (100-250 cm)
-   - Age (18-120 years)
-   - Sex (Male/Female)
-3. Select your activity level from the options provided.
-4. Choose your fitness goal (Lose Weight, Maintain Weight, or Gain Weight).
-5. Review your personalized macro plan, which includes:
-   - Total Daily Energy Expenditure (TDEE)
-   - Recommended daily calorie intake
-   - Macronutrient breakdown (proteins, carbohydrates, and fats)
+### 4. Execute o projeto em modo de desenvolvimento
 
-## Contributing
+```bash
+npm run dev
+```
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+### 5. Build para produção
 
-## License
+```bash
+npm run build
+```
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 📐 Implantação
 
-## Acknowledgments
+Para implantar o projeto, consulte o [Guia de Implantação](./DEPLOYMENT.md) para instruções detalhadas.
 
-- [shadcn/ui](https://ui.shadcn.com/) for the beautiful UI components
-- [Framer Motion](https://www.framer.com/motion/) for the smooth animations
-- [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
+## 🧪 Testes
 
-## Contact
+```bash
+npm run test
+```
 
-If you have any questions, feel free to reach out to me at [enricosaito@gmail.com].
+## 🤝 Contribuição
+
+Contribuições são bem-vindas! Por favor, sinta-se à vontade para enviar um Pull Request.
+
+## 📄 Licença
+
+Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## 📞 Contato
+
+Para qualquer dúvida, entre em contato pelo email [enricosaito@gmail.com].

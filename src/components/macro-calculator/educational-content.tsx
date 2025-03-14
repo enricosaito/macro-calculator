@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Info, AlertTriangle, Target, ArrowUp, Zap, CheckCircle } from "lucide-react";
+import { AlertTriangle, Target, ArrowUp, Zap, CheckCircle } from "lucide-react";
 import CallToAction from "@/components/ui/call-to-action";
 
 const EducationalContent = () => {

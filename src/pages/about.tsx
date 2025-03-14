@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import PageTransition from "@/components/ui/page-transition";
-import { ExternalLink, ArrowRight, Info, Zap, Target, TrendingUp, ShieldCheck } from "lucide-react";
+import { ArrowRight, Info, Zap, Target, TrendingUp, ShieldCheck } from "lucide-react";
 
 const AboutPage = () => {
   return (
