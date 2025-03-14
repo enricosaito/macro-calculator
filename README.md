@@ -1,83 +1,149 @@
-# Macro Calculator
+# NutriMacros - Calculadora de Macronutrientes
 
-Macro Calculator is a web application that helps users calculate their daily macronutrient needs based on their personal information and fitness goals. This tool provides a step-by-step guide to determine the optimal balance of proteins, carbohydrates, and fats for an individual's diet.
+NutriMacros é uma aplicação web que ajuda usuários a calcular suas necessidades diárias de macronutrientes com base em informações pessoais e objetivos de condicionamento físico.
 
-## Features
+## Características
 
-- Calculate Basal Metabolic Rate (BMR)
-- Determine Total Daily Energy Expenditure (TDEE)
-- Customize macronutrient ratios based on fitness goals
-- User-friendly interface with step-by-step guidance
-- Responsive design for desktop and mobile devices
+- Cálculo de Taxa Metabólica Basal (TMB)
+- Determinação do Gasto Energético Total Diário (TDEE)
+- Personalização da distribuição de macronutrientes baseada em objetivos de fitness
+- Interface amigável com orientações passo a passo
+- Design responsivo para desktop e dispositivos móveis
+- Planejador de receitas com base nos ingredientes disponíveis
+- Sistema de autenticação de usuários
 
-## Technologies Used
+## Tecnologias Utilizadas
 
 - React
 - TypeScript
 - Tailwind CSS
 - shadcn/ui components
-- Framer Motion for animations
+- Framer Motion para animações
+- Firebase (Autenticação e Firestore)
 
-## Getting Started
+## Requisitos
 
-### Prerequisites
+- Node.js (v14 ou superior)
+- npm (v6 ou superior)
+- Conta Firebase
 
-- Node.js (v14 or later)
-- npm (v6 or later)
+## Configuração do Ambiente
 
-### Installation
+1. Clone o repositório:
 
-1. Clone the repository:
-   \`\`\`
-   git clone https://github.com/your-username/macro-calculator.git
-   \`\`\`
+   ```
+   git clone https://github.com/seu-usuario/nutri-macros.git
+   ```
 
-2. Navigate to the project directory:
-   \`\`\`
-   cd macro-calculator
-   \`\`\`
+2. Navegue até o diretório do projeto:
 
-3. Install the dependencies:
-   \`\`\`
+   ```
+   cd nutri-macros
+   ```
+
+3. Instale as dependências:
+
+   ```
    npm install
-   \`\`\`
+   ```
 
-4. Start the development server:
-   \`\`\`
-   npm run dev
-   \`\`\`
+4. Crie um arquivo `.env.local` na raiz do projeto com as seguintes variáveis:
+   ```
+   VITE_FIREBASE_API_KEY=sua_chave_api_aqui
+   VITE_FIREBASE_AUTH_DOMAIN=seu_dominio_auth_aqui
+   VITE_FIREBASE_PROJECT_ID=seu_project_id_aqui
+   VITE_FIREBASE_STORAGE_BUCKET=seu_storage_bucket_aqui
+   VITE_FIREBASE_MESSAGING_SENDER_ID=seu_messaging_sender_id_aqui
+   VITE_FIREBASE_APP_ID=seu_app_id_aqui
+   VITE_GA_MEASUREMENT_ID=seu_id_analytics_aqui  # Opcional
+   ```
 
-5. Open your browser and visit \`http://localhost:3000\` to view the app.
+## Desenvolvimento
 
-## Usage
+Inicie o servidor de desenvolvimento:
 
-1. On the landing page, click "Start Your Journey" to begin.
-2. Enter your personal information:
-   - Weight (30-300 kg)
-   - Height (100-250 cm)
-   - Age (18-120 years)
-   - Sex (Male/Female)
-3. Select your activity level from the options provided.
-4. Choose your fitness goal (Lose Weight, Maintain Weight, or Gain Weight).
-5. Review your personalized macro plan, which includes:
-   - Total Daily Energy Expenditure (TDEE)
-   - Recommended daily calorie intake
-   - Macronutrient breakdown (proteins, carbohydrates, and fats)
+```
+npm run dev
+```
 
-## Contributing
+Acesse `http://localhost:5173` no seu navegador para visualizar a aplicação.
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+## Build para Produção
 
-## License
+Para criar a versão de produção:
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```
+npm run build
+```
 
-## Acknowledgments
+Os arquivos serão gerados na pasta `dist`, prontos para serem implantados.
 
-- [shadcn/ui](https://ui.shadcn.com/) for the beautiful UI components
-- [Framer Motion](https://www.framer.com/motion/) for the smooth animations
-- [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
+## Implantação
 
-## Contact
+### Utilizando Firebase Hosting
 
-If you have any questions, feel free to reach out to me at [enricosaito@gmail.com].
+1. Instale o Firebase CLI globalmente (se ainda não tiver):
+
+   ```
+   npm install -g firebase-tools
+   ```
+
+2. Faça login no Firebase:
+
+   ```
+   firebase login
+   ```
+
+3. Inicialize o Firebase no projeto (primeira vez apenas):
+
+   ```
+   firebase init
+   ```
+
+   Selecione Hosting e aponte para a pasta `dist` como diretório público.
+
+4. Implante a aplicação:
+   ```
+   npm run deploy
+   ```
+
+### Utilizando Vercel
+
+1. Instale a Vercel CLI:
+
+   ```
+   npm install -g vercel
+   ```
+
+2. Implante o projeto:
+
+   ```
+   vercel
+   ```
+
+3. Para ambiente de produção:
+   ```
+   vercel --prod
+   ```
+
+## Estrutura do Projeto
+
+- `/src/components`: Componentes React organizados por funcionalidade
+- `/src/context`: Contextos para gerenciamento de estado global
+- `/src/hooks`: Hooks personalizados
+- `/src/lib`: Utilitários, configurações e dados
+- `/src/locales`: Arquivos de tradução
+- `/src/pages`: Componentes de página
+- `/src/types`: Definições de tipos TypeScript
+
+## Contribuindo
+
+Contribuições são bem-vindas! Por favor, sinta-se à vontade para enviar um Pull Request.
+
+## Licença
+
+Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## Contato
+
+Para qualquer dúvida, entre em contato pelo email [enricosaito@gmail.com].
