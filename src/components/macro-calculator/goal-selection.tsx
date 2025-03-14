@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, TrendingDown, ArrowRight, TrendingUp } from "lucide-react";
-import { UserData } from "@/types/calculations";
+import { UserData } from "@/hooks/useMacroCalculator";
 
 interface GoalSelectionProps {
   userData: UserData;

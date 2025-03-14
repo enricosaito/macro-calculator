@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { MacroCalculation } from "@/types/calculations";
 
-interface UserData {
+export interface UserData {
   weight: string;
   height: string;
   age: string;

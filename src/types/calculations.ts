@@ -24,13 +24,3 @@ export interface MacroCalculation {
     };
   };
 }
-
-export interface UserData {
-  weight: string;
-  height: string;
-  age: string;
-  sex: "male" | "female" | null;
-  activityLevel: string;
-  goal: string;
-  [key: string]: string | null;
-}

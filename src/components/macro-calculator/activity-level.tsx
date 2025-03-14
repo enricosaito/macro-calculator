@@ -4,7 +4,7 @@
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check } from "lucide-react";
-import { UserData } from "@/types/calculations";
+import { UserData } from "@/hooks/useMacroCalculator";
 
 interface ActivityLevelProps {
   userData: UserData;
