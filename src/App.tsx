@@ -1,3 +1,4 @@
+// src/App.tsx
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
@@ -51,14 +52,8 @@ const App = () => {
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="/terms" element={<TermsPage />} />
                     <Route path="/privacy" element={<PrivacyPage />} />
-                    <Route
-                      path="/recipes"
-                      element={
-                        <ProtectedRoute>
-                          <RecipePlanner />
-                        </ProtectedRoute>
-                      }
-                    />
+                    {/* Changed from ProtectedRoute to a regular Route */}
+                    <Route path="/recipes" element={<RecipePlanner />} />
                     {/* Catch all route for 404 */}
                     <Route path="*" element={<NotFoundPage />} />
                   </Routes>
