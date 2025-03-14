@@ -14,9 +14,26 @@ interface RecipeDetailModalProps {
 }
 
 const RecipeDetailModal = ({ recipe, open, onOpenChange, onSave, isSaved = false }: RecipeDetailModalProps) => {
+  // Always define refs at the top level
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Always run useEffect at the top level
+  useEffect(() => {
+    if (!open) return;
+
+    const handleEscKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onOpenChange(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleEscKey);
+    return () => window.removeEventListener("keydown", handleEscKey);
+  }, [open, onOpenChange]);
+
+  // Return early if no recipe
   if (!recipe) return null;
 
-  const contentRef = useRef<HTMLDivElement>(null);
   const macros = calculateRecipeMacros(recipe, ingredients);
 
   // Calculate macro percentages
@@ -37,20 +54,6 @@ const RecipeDetailModal = ({ recipe, open, onOpenChange, onSave, isSaved = false
       onSave(recipe.id);
     }
   };
-
-  // Handle ESC key to close modal
-  useEffect(() => {
-    if (!open) return;
-
-    const handleEscKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onOpenChange(false);
-      }
-    };
-
-    window.addEventListener("keydown", handleEscKey);
-    return () => window.removeEventListener("keydown", handleEscKey);
-  }, [open, onOpenChange]);
 
   // Handle overlay click (backdrop)
   const handleOverlayClick = (e: React.MouseEvent) => {
