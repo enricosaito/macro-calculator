@@ -60,7 +60,7 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 h-full flex flex-col justify-center">
       <h2 className="text-2xl font-bold text-center">
         {language === "pt-BR"
           ? "Vamos Calcular Seu Metabolismo Basal (BMR)"
