@@ -1,5 +1,4 @@
 import { Recipe, recipes } from "./recipes-data";
-import { Ingredient, ingredients } from "./ingredients-data";
 
 // Function to suggest recipes based on selected ingredients
 export const suggestRecipes = (selectedIngredientIds: string[]): Recipe[] => {

@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { useCalculations } from "@/hooks/useCalculations";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Flame, Dumbbell, Croissant, Droplet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import HistoryDisplay from "./history-display";

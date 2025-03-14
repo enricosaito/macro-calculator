@@ -25,7 +25,7 @@ const RecipePlanner = () => {
   const [hasGeneratedRecipes, setHasGeneratedRecipes] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const { savedRecipeIds, toggleSavedRecipe, isSaved } = useSavedRecipes();
+  const { toggleSavedRecipe, isSaved } = useSavedRecipes();
   const [recipeSearchTerm, setRecipeSearchTerm] = useState("");
   const { currentUser } = useAuth();
   const [isGeneratingRecipes, setIsGeneratingRecipes] = useState(false);
@@ -258,7 +258,7 @@ const RecipePlanner = () => {
         recipe={selectedRecipe}
         open={isDetailModalOpen}
         onOpenChange={setIsDetailModalOpen}
-        onSave={currentUser ? toggleSavedRecipe : undefined}
+        onSave={currentUser ? (recipeId) => toggleSavedRecipe(recipeId) : undefined}
         isSaved={selectedRecipe ? isSaved(selectedRecipe.id) : false}
       />
     </div>

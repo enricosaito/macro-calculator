@@ -54,7 +54,7 @@ const SavedRecipes = () => {
         recipe={selectedRecipe}
         open={isDetailModalOpen}
         onOpenChange={setIsDetailModalOpen}
-        onSave={toggleSavedRecipe}
+        onSave={(recipeId) => toggleSavedRecipe(recipeId)} // Updated to pass the recipeId
         isSaved={selectedRecipe ? isSaved(selectedRecipe.id) : false}
       />
     </div>

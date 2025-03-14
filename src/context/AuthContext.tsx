@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import {
-  Auth,
   User,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -8,6 +7,7 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  UserCredential, // Add this import
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
@@ -17,7 +17,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: () => Promise<UserCredential>; // Changed return type from void to UserCredential
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
