@@ -3,9 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, CookingPot } from "lucide-react";
+import { Search, CookingPot, Lock } from "lucide-react";
 import { ingredients } from "@/lib/ingredients-data";
-import { Recipe } from "@/lib/recipes-data";
+import { Recipe, recipes } from "@/lib/recipes-data";
 import { suggestRecipes } from "@/lib/recipe-suggestions";
 import IngredientCategory from "@/components/recipe-planner/ingredient-category";
 import RecipeCard from "@/components/recipe-planner/recipe-card";
@@ -16,6 +16,7 @@ import { useAuth } from "@/context/AuthContext";
 import { motion } from "framer-motion";
 import { InfoIcon } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import LoginPrompt from "@/components/recipe-planner/login-prompt";
 
 const RecipePlanner = () => {
   const [activeTab, setActiveTab] = useState("explore");
@@ -29,12 +30,14 @@ const RecipePlanner = () => {
   const [recipeSearchTerm, setRecipeSearchTerm] = useState("");
   const { currentUser } = useAuth();
   const [isGeneratingRecipes, setIsGeneratingRecipes] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
+  // Define number of free recipes for demo mode
+  const FREE_RECIPE_LIMIT = 3;
 
   // Filter ingredients by category
   const proteinIngredients = useMemo(() => ingredients.filter((ing) => ing.category === "protein"), []);
-
   const carbIngredients = useMemo(() => ingredients.filter((ing) => ing.category === "carb"), []);
-
   const fatIngredients = useMemo(() => ingredients.filter((ing) => ing.category === "fat"), []);
 
   // Filter recipes
@@ -47,6 +50,14 @@ const RecipePlanner = () => {
         recipe.description.toLowerCase().includes(recipeSearchTerm.toLowerCase())
     );
   }, [suggestedRecipes, recipeSearchTerm]);
+
+  // Mark recipes as free or premium
+  const processedRecipes = useMemo(() => {
+    return filteredSuggestedRecipes.map((recipe, index) => ({
+      ...recipe,
+      isPremium: !currentUser && index >= FREE_RECIPE_LIMIT,
+    }));
+  }, [filteredSuggestedRecipes, currentUser]);
 
   // Filter ingredients by search term
   const filteredIngredients = useMemo(() => {
@@ -73,8 +84,13 @@ const RecipePlanner = () => {
     }, 1200);
   };
 
-  // View recipe details
-  const handleViewRecipeDetails = (recipe: Recipe) => {
+  // View recipe details - now with premium check
+  const handleViewRecipeDetails = (recipe: Recipe, isPremium: boolean) => {
+    if (isPremium) {
+      setShowLoginPrompt(true);
+      return;
+    }
+
     setSelectedRecipe(recipe);
     setIsDetailModalOpen(true);
   };
@@ -90,7 +106,7 @@ const RecipePlanner = () => {
         <TabsList className="grid w-full grid-cols-2 mb-8">
           <TabsTrigger value="explore">Explorar Receitas</TabsTrigger>
           <TabsTrigger value="saved" disabled={!currentUser}>
-            Receitas Salvas
+            Receitas Salvas {!currentUser && <Lock className="ml-1 h-3 w-3" />}
           </TabsTrigger>
         </TabsList>
 
@@ -101,6 +117,12 @@ const RecipePlanner = () => {
               <AlertDescription>
                 Selecione os ingredientes que você tem disponíveis e descubra receitas que se encaixam perfeitamente nos
                 seus objetivos de macros!
+                {!currentUser && (
+                  <span className="block mt-2 font-medium">
+                    Modo demonstração: Acesse {FREE_RECIPE_LIMIT} receitas gratuitamente. Faça login para desbloquear
+                    todas as receitas!
+                  </span>
+                )}
               </AlertDescription>
             </Alert>
           </motion.div>
@@ -129,7 +151,7 @@ const RecipePlanner = () => {
                     onClick={() => toggleIngredient(ingredient.id)}
                     className="h-auto py-1 px-3"
                   >
-                    {ingredient.name}
+                    {ingredient.emoji} {ingredient.name}
                   </Button>
                 ))}
               </div>
@@ -178,7 +200,7 @@ const RecipePlanner = () => {
                     className="h-auto py-1 px-3"
                     onClick={() => toggleIngredient(id)}
                   >
-                    {ingredient?.name} ✕
+                    {ingredient?.emoji} {ingredient?.name} ✕
                   </Button>
                 );
               })}
@@ -215,7 +237,7 @@ const RecipePlanner = () => {
             <div className="mt-8">
               <h2 className="text-2xl font-bold mb-4">Receitas Sugeridas</h2>
 
-              {hasGeneratedRecipes && suggestedRecipes.length > 0 && (
+              {hasGeneratedRecipes && filteredSuggestedRecipes.length > 0 && (
                 <div className="relative mb-6">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                   <Input
@@ -228,10 +250,15 @@ const RecipePlanner = () => {
                 </div>
               )}
 
-              {filteredSuggestedRecipes.length > 0 ? (
+              {processedRecipes.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredSuggestedRecipes.map((recipe) => (
-                    <RecipeCard key={recipe.id} recipe={recipe} onViewDetails={handleViewRecipeDetails} />
+                  {processedRecipes.map((recipe) => (
+                    <RecipeCard
+                      key={recipe.id}
+                      recipe={recipe}
+                      isPremium={recipe.isPremium}
+                      onViewDetails={() => handleViewRecipeDetails(recipe, recipe.isPremium)}
+                    />
                   ))}
                 </div>
               ) : (
@@ -249,7 +276,11 @@ const RecipePlanner = () => {
         </TabsContent>
 
         <TabsContent value="saved">
-          <SavedRecipes />
+          {currentUser ? (
+            <SavedRecipes />
+          ) : (
+            <LoginPrompt message="Faça login para salvar suas receitas favoritas e acessá-las de qualquer dispositivo." />
+          )}
         </TabsContent>
       </Tabs>
 
@@ -260,6 +291,13 @@ const RecipePlanner = () => {
         onOpenChange={setIsDetailModalOpen}
         onSave={currentUser ? (recipeId) => toggleSavedRecipe(recipeId) : undefined}
         isSaved={selectedRecipe ? isSaved(selectedRecipe.id) : false}
+      />
+
+      {/* Login Prompt Modal */}
+      <LoginPrompt
+        open={showLoginPrompt}
+        onOpenChange={setShowLoginPrompt}
+        message="Faça login para acessar todas as nossas receitas premium e recursos avançados!"
       />
     </div>
   );
