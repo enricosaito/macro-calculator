@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, CookingPot, Lock } from "lucide-react";
 import { ingredients } from "@/lib/ingredients-data";
-import { Recipe } from "@/lib/recipes-data";
+import { Recipe, recipes } from "@/lib/recipes-data";
 import { suggestRecipes } from "@/lib/recipe-suggestions";
 import IngredientCategory from "@/components/recipe-planner/ingredient-category";
 import RecipeCard from "@/components/recipe-planner/recipe-card";
@@ -210,6 +210,19 @@ const RecipePlanner = () => {
             </div>
           </div>
 
+          {/* Information about total recipes */}
+          <div className="flex justify-center mb-8">
+            <div className="bg-primary/5 rounded-lg p-3 text-center max-w-lg">
+              <p className="text-sm text-muted-foreground">
+                Nossa base de dados contém {recipes.length} receitas balanceadas para ajudar você a atingir seus
+                objetivos.
+                {!currentUser && (
+                  <span className="text-primary font-medium"> Faça login para desbloquear todas as receitas!</span>
+                )}
+              </p>
+            </div>
+          </div>
+
           {/* Generate Button */}
           <div className="flex justify-center mb-8">
             <Button
@@ -238,15 +251,31 @@ const RecipePlanner = () => {
               <h2 className="text-2xl font-bold mb-4">Receitas Sugeridas</h2>
 
               {hasGeneratedRecipes && filteredSuggestedRecipes.length > 0 && (
-                <div className="relative mb-6">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                  <Input
-                    type="text"
-                    placeholder="Buscar entre as receitas sugeridas..."
-                    className="pl-10"
-                    value={recipeSearchTerm}
-                    onChange={(e) => setRecipeSearchTerm(e.target.value)}
-                  />
+                <div className="space-y-4">
+                  <div className="relative mb-2">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                    <Input
+                      type="text"
+                      placeholder="Buscar entre as receitas sugeridas..."
+                      className="pl-10"
+                      value={recipeSearchTerm}
+                      onChange={(e) => setRecipeSearchTerm(e.target.value)}
+                    />
+                  </div>
+
+                  {/* Recipe Count Info */}
+                  <div className="flex justify-between items-center mb-4">
+                    <p className="text-muted-foreground">
+                      {filteredSuggestedRecipes.length}{" "}
+                      {filteredSuggestedRecipes.length === 1 ? "receita encontrada" : "receitas encontradas"}
+                    </p>
+                    {!currentUser && processedRecipes.some((r) => r.isPremium) && (
+                      <p className="text-sm text-primary font-medium">
+                        <Lock className="h-3 w-3 inline mr-1" />
+                        {processedRecipes.filter((r) => r.isPremium).length} receitas premium disponíveis após login
+                      </p>
+                    )}
+                  </div>
                 </div>
               )}
 
