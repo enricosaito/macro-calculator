@@ -3,6 +3,7 @@ import { Recipe, calculateRecipeMacros } from "@/lib/recipes-data";
 import { ingredients } from "@/lib/ingredients-data";
 import { Clock, ChefHat, Flame, Dumbbell, Croissant, Droplet, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -14,26 +15,29 @@ const RecipeCard = ({ recipe, isPremium = false, onViewDetails }: RecipeCardProp
   const macros = calculateRecipeMacros(recipe, ingredients);
 
   return (
-    <Card
-      className={`h-full flex flex-col hover:shadow-md transition-shadow relative overflow-hidden ${
-        isPremium
-          ? "bg-gradient-to-br from-slate-200/70 to-slate-100/70 dark:from-slate-800/70 dark:to-slate-900/70"
-          : ""
-      }`}
-    >
+    <Card className="h-full flex flex-col hover:shadow-md transition-shadow relative overflow-hidden">
       {isPremium && (
-        <div className="absolute inset-0 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-6">
-          <div className="bg-primary/10 p-3 rounded-full mb-4">
-            <Lock className="h-6 w-6 text-primary" />
-          </div>
-          <h3 className="text-lg font-semibold mb-2">Receita Premium</h3>
-          <p className="text-sm text-center mb-4">Faça login para desbloquear esta e outras receitas premium!</p>
-          <Button onClick={() => onViewDetails(recipe)}>Desbloquear</Button>
+        <div className="absolute inset-0 backdrop-blur-[6px] z-10 flex flex-col items-center justify-center p-6 bg-background/50">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="bg-primary/10 p-3 rounded-full mb-4"
+          >
+            <Lock className="h-8 w-8 text-primary" />
+          </motion.div>
+          <h3 className="text-xl font-semibold mb-2">Receita Premium</h3>
+          <p className="text-sm text-center mb-4">
+            Esta deliciosa receita está disponível apenas para usuários registrados.
+          </p>
+          <Button onClick={() => onViewDetails(recipe)} className="bg-primary hover:bg-primary/90">
+            Desbloquear
+          </Button>
         </div>
       )}
 
       <CardHeader className="pb-2">
-        <CardTitle className="text-xl">
+        <CardTitle className="text-xl flex items-center">
           {recipe.name}
           {recipe.isNew && (
             <span className="ml-2 text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">Novo</span>
@@ -100,6 +104,19 @@ const RecipeCard = ({ recipe, isPremium = false, onViewDetails }: RecipeCardProp
               })}
             </div>
           </div>
+
+          {/* Tags */}
+          {recipe.tags && recipe.tags.length > 0 && (
+            <div className="mb-4">
+              <div className="flex flex-wrap gap-1">
+                {recipe.tags.map((tag, index) => (
+                  <span key={index} className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <Button variant="outline" onClick={() => onViewDetails(recipe)}>
