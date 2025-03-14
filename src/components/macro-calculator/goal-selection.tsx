@@ -1,9 +1,14 @@
-// src/components/macro-calculator/goal-selection.tsx
-"use client";
-
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, TrendingDown, ArrowRight, TrendingUp } from "lucide-react";
+
+interface GoalSelectionProps {
+  userData: {
+    goal: string;
+    [key: string]: any;
+  };
+  updateUserData: (data: { goal: string }) => void;
+}
 
 const goals = [
   {
@@ -26,7 +31,7 @@ const goals = [
   },
 ];
 
-const GoalSelection = ({ userData, updateUserData }) => {
+const GoalSelection: React.FC<GoalSelectionProps> = ({ userData, updateUserData }) => {
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4 text-center">Qual é o Seu Objetivo?</h2>
