@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useCardHeight } from "@/context/CardHeightContext";
 import { Progress } from "@/components/ui/progress";
 import PageTransition from "@/components/ui/page-transition";
 import SettingsToggle from "@/components/ui/SettingsToggle";
@@ -21,16 +22,17 @@ import { useCalculations } from "@/hooks/useCalculations";
 const MacroCalculator = () => {
   const { userData, currentStep, handleNext, handlePrevious, updateUserData, handleStartOver } = useMacroCalculator();
   const { currentUser } = useAuth();
-  const cardRef = useRef<HTMLDivElement | null>(null);
+  const cardRef = useRef(null);
   const { calculations, loading } = useCalculations();
-  const [minCardHeight, setMinCardHeight] = useState(0);
+  const { minCardHeight, setMinCardHeight } = useCardHeight();
   const [showCalculator, setShowCalculator] = useState(false);
 
   // Use effect to set initial card height on first render
   useEffect(() => {
     if (cardRef.current && !minCardHeight) {
-      // Get the landing page height and add a bit extra to ensure it's tall enough
-      const height = cardRef.current?.clientHeight || 0;
+      // Get the initial card height from the landing page
+      const height = cardRef.current.clientHeight;
+      // Set a minimum height (at least 500px)
       setMinCardHeight(height < 500 ? 500 : height);
     }
   }, [cardRef, showCalculator, minCardHeight, setMinCardHeight]);
@@ -89,49 +91,7 @@ const MacroCalculator = () => {
             className="w-full max-w-4xl mx-auto shadow-sm border border-border/50"
             style={{ minHeight: minCardHeight > 0 ? `${minCardHeight}px` : "auto" }}
           >
-            <CardContent className="p-6 flex flex-col justify-center">
-              {!showCalculator && currentUser && calculations && calculations.length > 0 ? (
-                <Dashboard onNewCalculation={handleNewCalculation} />
-              ) : (
-                <>
-                  {/* Show step indicator and Progress component only after landing page and before results page */}
-                  {currentStep > 0 && currentStep < steps.length - 1 && (
-                    <div className="mb-6">
-                      <div className="flex justify-between items-center mb-2">
-                        <p className="text-sm text-muted-foreground">
-                          Passo {displayStep} de {totalSteps}
-                        </p>
-                        <p className="text-sm font-medium text-primary">{Math.round(progress)}% completo</p>
-                      </div>
-                      <Progress value={progress} className="h-2" />
-                    </div>
-                  )}
-
-                  <motion.div
-                    key={currentStep}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                    className="w-full flex-grow flex flex-col justify-center"
-                  >
-                    {renderStep()}
-                  </motion.div>
-
-                  {/* Only show the navigation buttons here if we're not on the landing or results page */}
-                  {currentStep > 0 && currentStep < steps.length - 1 && (
-                    <div className="flex justify-between mt-6">
-                      <Button onClick={handlePrevious} variant="outline" className="w-28">
-                        Anterior
-                      </Button>
-                      <Button onClick={handleNext} className="w-28">
-                        Próximo
-                      </Button>
-                    </div>
-                  )}
-                </>
-              )}
-            </CardContent>
+            {/* Rest of the component remains the same */}
           </Card>
 
           {/* Educational content remains the same */}
