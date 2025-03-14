@@ -4,12 +4,10 @@
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check } from "lucide-react";
+import { UserData } from "@/hooks/useMacroCalculator";
 
 interface ActivityLevelProps {
-  userData: {
-    activityLevel: string;
-    [key: string]: string | null;
-  };
+  userData: UserData;
   updateUserData: (data: { activityLevel: string }) => void;
 }
 

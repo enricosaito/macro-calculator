@@ -1,4 +1,3 @@
-// src/components/ui/navbar.tsx
 import { Calculator, Utensils, LogOut, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
