@@ -1,21 +1,44 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Recipe, calculateRecipeMacros } from "@/lib/recipes-data";
 import { ingredients } from "@/lib/ingredients-data";
-import { Clock, ChefHat, Flame, Dumbbell, Croissant, Droplet } from "lucide-react";
+import { Clock, ChefHat, Flame, Dumbbell, Croissant, Droplet, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface RecipeCardProps {
   recipe: Recipe;
+  isPremium?: boolean;
   onViewDetails: (recipe: Recipe) => void;
 }
 
-const RecipeCard = ({ recipe, onViewDetails }: RecipeCardProps) => {
+const RecipeCard = ({ recipe, isPremium = false, onViewDetails }: RecipeCardProps) => {
   const macros = calculateRecipeMacros(recipe, ingredients);
 
   return (
-    <Card className="h-full flex flex-col hover:shadow-md transition-shadow">
+    <Card
+      className={`h-full flex flex-col hover:shadow-md transition-shadow relative overflow-hidden ${
+        isPremium
+          ? "bg-gradient-to-br from-slate-200/70 to-slate-100/70 dark:from-slate-800/70 dark:to-slate-900/70"
+          : ""
+      }`}
+    >
+      {isPremium && (
+        <div className="absolute inset-0 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-6">
+          <div className="bg-primary/10 p-3 rounded-full mb-4">
+            <Lock className="h-6 w-6 text-primary" />
+          </div>
+          <h3 className="text-lg font-semibold mb-2">Receita Premium</h3>
+          <p className="text-sm text-center mb-4">Faça login para desbloquear esta e outras receitas premium!</p>
+          <Button onClick={() => onViewDetails(recipe)}>Desbloquear</Button>
+        </div>
+      )}
+
       <CardHeader className="pb-2">
-        <CardTitle className="text-xl">{recipe.name}</CardTitle>
+        <CardTitle className="text-xl">
+          {recipe.name}
+          {recipe.isNew && (
+            <span className="ml-2 text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">Novo</span>
+          )}
+        </CardTitle>
         <p className="text-sm text-muted-foreground mt-1">{recipe.description}</p>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col justify-between">
@@ -71,7 +94,7 @@ const RecipeCard = ({ recipe, onViewDetails }: RecipeCardProps) => {
                 const ingredient = ingredients.find((ing) => ing.id === item.ingredientId);
                 return (
                   <span key={item.ingredientId} className="text-xs bg-secondary px-2 py-1 rounded-md">
-                    {ingredient?.name}
+                    {ingredient?.emoji} {ingredient?.name}
                   </span>
                 );
               })}
