@@ -1,11 +1,12 @@
+// src/App.tsx
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { CardHeightProvider } from "@/context/CardHeightContext";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import Navbar from "@/components/ui/navbar"; // Note the lowercase 'n'
+// import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import Navbar from "@/components/ui/navbar";
 import LoadingScreen from "@/components/ui/loading";
 import MacroCalculator from "@/pages/macro-calculator";
 import RecipePlanner from "@/pages/recipe-planner";
@@ -51,14 +52,8 @@ const App = () => {
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="/terms" element={<TermsPage />} />
                     <Route path="/privacy" element={<PrivacyPage />} />
-                    <Route
-                      path="/recipes"
-                      element={
-                        <ProtectedRoute>
-                          <RecipePlanner />
-                        </ProtectedRoute>
-                      }
-                    />
+                    {/* Changed from ProtectedRoute to a regular Route */}
+                    <Route path="/recipes" element={<RecipePlanner />} />
                     {/* Catch all route for 404 */}
                     <Route path="*" element={<NotFoundPage />} />
                   </Routes>

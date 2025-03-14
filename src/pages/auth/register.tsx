@@ -26,11 +26,17 @@ const Register = () => {
     try {
       await signUp(email, password);
       navigate("/recipes");
-    } catch (error: any) {
-      if (error.code === "auth/email-already-in-use") {
-        setError("Este email já está em uso.");
-      } else if (error.code === "auth/weak-password") {
-        setError("A senha deve ter pelo menos 6 caracteres.");
+    } catch (error: unknown) {
+      // Using unknown instead of any
+      if (error instanceof Error) {
+        const errorCode = (error as { code?: string }).code;
+        if (errorCode === "auth/email-already-in-use") {
+          setError("Este email já está em uso.");
+        } else if (errorCode === "auth/weak-password") {
+          setError("A senha deve ter pelo menos 6 caracteres.");
+        } else {
+          setError("Ocorreu um erro ao criar sua conta.");
+        }
       } else {
         setError("Ocorreu um erro ao criar sua conta.");
       }

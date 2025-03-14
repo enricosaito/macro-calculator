@@ -32,7 +32,7 @@ const IngredientCategory = ({
               onClick={() => onToggleIngredient(ingredient.id)}
               className="h-auto py-2 px-3"
             >
-              {ingredient.name}
+              {ingredient.emoji} {ingredient.name}
             </Button>
           </motion.div>
         ))}

@@ -8,7 +8,7 @@ import { Check } from "lucide-react";
 interface ActivityLevelProps {
   userData: {
     activityLevel: string;
-    [key: string]: any;
+    [key: string]: string | null;
   };
   updateUserData: (data: { activityLevel: string }) => void;
 }

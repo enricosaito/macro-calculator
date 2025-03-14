@@ -20,7 +20,8 @@ const Login = () => {
     try {
       await signIn(email, password);
       navigate("/recipes");
-    } catch (error) {
+    } catch (err) {
+      console.error("Login error:", err);
       setError("Falha no login. Por favor, verifique suas credenciais.");
     }
   };
@@ -29,7 +30,8 @@ const Login = () => {
     try {
       await signInWithGoogle();
       navigate("/recipes");
-    } catch (error) {
+    } catch (err) {
+      console.error("Google sign-in error:", err);
       setError("Erro ao fazer login com Google. Por favor, tente novamente.");
     }
   };

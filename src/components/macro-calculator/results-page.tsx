@@ -160,7 +160,19 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
     };
 
     saveResults();
-  }, []);
+  }, [
+    currentUser,
+    saveCalculation,
+    bmr,
+    tdee,
+    macros,
+    userData.weight,
+    userData.height,
+    userData.age,
+    userData.sex,
+    userData.activityLevel,
+    userData.goal,
+  ]);
 
   const macroIcons = {
     calories: Flame,
