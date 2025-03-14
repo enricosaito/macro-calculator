@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,8 +21,19 @@ import { useCalculations } from "@/hooks/useCalculations";
 const MacroCalculator = () => {
   const { userData, currentStep, handleNext, handlePrevious, updateUserData, handleStartOver } = useMacroCalculator();
   const { currentUser } = useAuth();
+  const cardRef = useRef<HTMLDivElement | null>(null);
   const { calculations, loading } = useCalculations();
+  const [minCardHeight, setMinCardHeight] = useState(0);
   const [showCalculator, setShowCalculator] = useState(false);
+
+  // Use effect to set initial card height on first render
+  useEffect(() => {
+    if (cardRef.current && !minCardHeight) {
+      // Get the landing page height and add a bit extra to ensure it's tall enough
+      const height = cardRef.current?.clientHeight || 0;
+      setMinCardHeight(height < 500 ? 500 : height);
+    }
+  }, [cardRef, showCalculator, minCardHeight, setMinCardHeight]);
 
   // Decide whether to show the dashboard or calculator on initial load
   useEffect(() => {
@@ -65,7 +76,7 @@ const MacroCalculator = () => {
   const handleNewCalculation = () => {
     setShowCalculator(true);
     handleStartOver();
-    handleNext(); // Skip the landing page
+    handleNext();
   };
 
   return (
@@ -73,8 +84,12 @@ const MacroCalculator = () => {
       <div className="min-h-[calc(100vh-4rem)] py-8 px-4">
         <div className="min-h-[calc(100vh-4rem)] py-8 px-4">
           <SettingsToggle />
-          <Card className="w-full max-w-4xl mx-auto shadow-sm border border-border/50">
-            <CardContent className="p-6">
+          <Card
+            ref={cardRef}
+            className="w-full max-w-4xl mx-auto shadow-sm border border-border/50"
+            style={{ minHeight: minCardHeight > 0 ? `${minCardHeight}px` : "auto" }}
+          >
+            <CardContent className="p-6 flex flex-col justify-center">
               {!showCalculator && currentUser && calculations && calculations.length > 0 ? (
                 <Dashboard onNewCalculation={handleNewCalculation} />
               ) : (
@@ -98,11 +113,12 @@ const MacroCalculator = () => {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.3 }}
-                    className="w-full"
+                    className="w-full flex-grow flex flex-col justify-center"
                   >
                     {renderStep()}
                   </motion.div>
 
+                  {/* Only show the navigation buttons here if we're not on the landing or results page */}
                   {currentStep > 0 && currentStep < steps.length - 1 && (
                     <div className="flex justify-between mt-6">
                       <Button onClick={handlePrevious} variant="outline" className="w-28">
@@ -117,6 +133,8 @@ const MacroCalculator = () => {
               )}
             </CardContent>
           </Card>
+
+          {/* Educational content remains the same */}
           <div className="max-w-4xl mx-auto">
             <EducationalContent />
           </div>
