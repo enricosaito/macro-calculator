@@ -1,9 +1,17 @@
-// src/components/macro-calculator/activity-level.tsx
-"use client";
+// src/components/macro-calculator/activity-level.tsx (update)
 
+// Make sure the component is properly typed
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check } from "lucide-react";
+
+interface ActivityLevelProps {
+  userData: {
+    activityLevel: string;
+    [key: string]: any;
+  };
+  updateUserData: (data: { activityLevel: string }) => void;
+}
 
 const activityLevels = [
   { value: "1.2", label: "Sedentário(a)", description: "Pouco ou nenhum exercício" },
@@ -17,7 +25,7 @@ const activityLevels = [
   },
 ];
 
-const ActivityLevel = ({ userData, updateUserData }) => {
+const ActivityLevel: React.FC<ActivityLevelProps> = ({ userData, updateUserData }) => {
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4 text-center">Qual seu Nível de Atividade?</h2>

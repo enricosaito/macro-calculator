@@ -5,9 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Flame, Dumbbell, Croissant, Droplet } from "lucide-react";
+import { Flame, Dumbbell, Croissant, Droplet, ChevronDown } from "lucide-react";
 import { ptBR } from "@/locales/pt-BR";
 import { useCalculations } from "@/hooks/useCalculations";
+import CallToAction from "@/components/ui/call-to-action";
 import { useAuth } from "@/context/AuthContext";
 import HistoryDisplay from "./history-display";
 import WaterCalculator from "./water-calculator";
@@ -117,6 +118,22 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
   const bmr = calculateBMR();
   const tdee = calculateTDEE();
 
+  const scrollToEducationalContent = () => {
+    // Add a small delay to ensure the component is fully rendered
+    setTimeout(() => {
+      const educationalContent = document.querySelector("#educational-content");
+      if (educationalContent) {
+        educationalContent.scrollIntoView({ behavior: "smooth" });
+      } else {
+        // Fallback if the element isn't found - just scroll down
+        window.scrollTo({
+          top: window.innerHeight,
+          behavior: "smooth",
+        });
+      }
+    }, 100);
+  };
+
   useEffect(() => {
     const saveResults = async () => {
       if (!currentUser || saveAttemptedRef.current) return; // Check if we already tried to save
@@ -221,6 +238,9 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
             {ptBR.calculateAgain}
           </Button>
           {!currentUser && <Button onClick={() => navigate("/login")}>Fazer login para salvar resultados</Button>}
+          <Button onClick={scrollToEducationalContent} variant="secondary">
+            Saiba Mais <ChevronDown className="ml-1 h-4 w-4" />
+          </Button>
         </div>
       </motion.div>
     </div>
