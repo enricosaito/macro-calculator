@@ -24,11 +24,11 @@ const Navbar = () => {
       path: "/recipes",
       icon: Utensils,
     },
-    {
-      label: "Sobre",
-      path: "/about",
-      icon: Info,
-    },
+    // {
+    //   label: "Sobre",
+    //   path: "/about",
+    //   icon: Info,
+    // },
   ];
 
   const handleLogout = async () => {
