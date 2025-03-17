@@ -1,6 +1,3 @@
-// src/components/macro-calculator/activity-level.tsx (update)
-
-// Make sure the component is properly typed
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check } from "lucide-react";
