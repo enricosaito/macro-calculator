@@ -29,7 +29,7 @@ const EducationalContent = () => {
         <Card className="border border-border/50">
           <CardContent className="p-6">
             <p className="text-lg mb-6">
-              Bom, você está certo(a) de questionar o queencontra na internet, especialmente na indústria fitness.
+              Bom, você está certo(a) de questionar o que encontra na internet, especialmente na indústria fitness.
             </p>
 
             <div className="pl-2 space-y-6 mb-6">
