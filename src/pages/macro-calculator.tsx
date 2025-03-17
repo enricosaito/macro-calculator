@@ -31,7 +31,6 @@ const MacroCalculator = () => {
   // Function to validate BMR step
   const validateBMRStep = () => {
     const { weight, height, age, sex } = userData;
-    const errors = {};
 
     const weightNum = Number.parseFloat(weight);
     const heightNum = Number.parseFloat(height);

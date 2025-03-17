@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { ptBR, enUS } from "@/locales";
 import { Label } from "@/components/ui/label";
@@ -22,19 +22,13 @@ interface BMRCalculationProps {
   showErrors?: boolean;
 }
 
-const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserData, onNext, showErrors = false }) => {
+const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserData, showErrors = false }) => {
   const { language } = useLanguage();
   const t = language === "pt-BR" ? ptBR : enUS; // Get the correct translations
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  useEffect(() => {
-    if (showErrors) {
-      validateInputs();
-    }
-  }, [showErrors]);
-
-  const validateInputs = (): boolean => {
+  const validateInputs = useCallback((): boolean => {
     const newErrors: { [key: string]: string } = {};
     const weight = Number.parseFloat(userData.weight);
     const height = Number.parseFloat(userData.height);
@@ -52,13 +46,20 @@ const BMRCalculation: React.FC<BMRCalculationProps> = ({ userData, updateUserDat
       newErrors.age =
         language === "pt-BR" ? "A idade deve estar entre 18 e 120 anos" : "Age must be between 18 and 120 years";
     }
-    if (userData.sex === null) {
+    if (userData.sex == null) {
       newErrors.sex = language === "pt-BR" ? "Por favor, selecione seu sexo" : "Please select your sex";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [userData, language, setErrors]);
+
+  // Now useEffect will not cause an infinite loop
+  useEffect(() => {
+    if (showErrors) {
+      validateInputs();
+    }
+  }, [showErrors, validateInputs]);
 
   // Animation variants
   const container = {
