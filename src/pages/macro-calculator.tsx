@@ -79,7 +79,17 @@ const MacroCalculator = () => {
 
   // Decide whether to show the dashboard or calculator on initial load
   useEffect(() => {
-    if (!loading && currentUser && calculations && calculations.length > 0 && currentStep === 0) {
+    // If we have stored calculation at step 4 (results), show it instead of dashboard
+    const hasCompletedCalculation = currentStep === 4;
+
+    if (
+      !loading &&
+      currentUser &&
+      calculations &&
+      calculations.length > 0 &&
+      currentStep === 0 &&
+      !hasCompletedCalculation
+    ) {
       setShowCalculator(false);
     } else {
       setShowCalculator(true);
