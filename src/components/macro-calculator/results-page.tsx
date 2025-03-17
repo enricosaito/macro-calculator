@@ -1,16 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Flame, Dumbbell, Croissant, Droplet, ChevronDown } from "lucide-react";
-import { ptBR } from "@/locales/pt-BR";
+import { Flame, Dumbbell, Croissant, Droplet, ArrowLeft, Share2 } from "lucide-react";
 import { useCalculations } from "@/hooks/useCalculations";
 import { useAuth } from "@/context/AuthContext";
-import HistoryDisplay from "./history-display";
-import WaterCalculator from "./water-calculator";
 
 interface ResultsPageProps {
   userData: {
@@ -28,7 +25,6 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const { saveCalculation } = useCalculations();
-  const saveAttemptedRef = useRef(false);
 
   // Calculate BMR
   const calculateBMR = () => {
@@ -48,28 +44,6 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
   const calculateTDEE = () => {
     const bmr = calculateBMR();
     return bmr * Number.parseFloat(userData.activityLevel);
-  };
-
-  const validateMacros = (macros: { calories: number; protein: number; carbs: number; fats: number }) => {
-    const minProteinPercentage = 0.2; // Minimum 20% calories from protein
-    const maxProteinPercentage = 0.4; // Maximum 40% calories from protein
-    const minFatPercentage = 0.15; // Minimum 15% calories from fat
-    const maxFatPercentage = 0.3; // Maximum 30% calories from fat
-
-    const proteinCalories = macros.protein * 4;
-    const fatCalories = macros.fats * 9;
-    const proteinPercentage = proteinCalories / macros.calories;
-    const fatPercentage = fatCalories / macros.calories;
-
-    if (proteinPercentage < minProteinPercentage || proteinPercentage > maxProteinPercentage) {
-      console.warn("Protein ratio outside recommended range");
-    }
-
-    if (fatPercentage < minFatPercentage || fatPercentage > maxFatPercentage) {
-      console.warn("Fat ratio outside recommended range");
-    }
-
-    return macros;
   };
 
   // Calculate macros
@@ -113,32 +87,51 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
     };
   };
 
-  const macros = validateMacros(calculateMacros());
+  const macros = calculateMacros();
   const bmr = calculateBMR();
   const tdee = calculateTDEE();
 
-  const scrollToEducationalContent = () => {
-    // Add a small delay to ensure the component is fully rendered
-    setTimeout(() => {
-      const educationalContent = document.querySelector("#educational-content");
-      if (educationalContent) {
-        educationalContent.scrollIntoView({ behavior: "smooth" });
-      } else {
-        // Fallback if the element isn't found - just scroll down
-        window.scrollTo({
-          top: window.innerHeight,
-          behavior: "smooth",
+  // Calculate percentages for display
+  const totalCalories = macros.calories;
+  const proteinCalories = macros.protein * 4;
+  const carbsCalories = macros.carbs * 4;
+  const fatsCalories = macros.fats * 9;
+
+  const proteinPercentage = Math.round((proteinCalories / totalCalories) * 100);
+  const carbsPercentage = Math.round((carbsCalories / totalCalories) * 100);
+  const fatsPercentage = Math.round((fatsCalories / totalCalories) * 100);
+
+  // Handle sharing results
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "Meus Resultados NutriMacros",
+          text: `Minhas necessidades diárias: ${Math.round(macros.calories)} calorias, ${macros.protein}g proteína, ${
+            macros.carbs
+          }g carboidratos, ${macros.fats}g gorduras`,
+          url: window.location.href,
+        })
+        .catch((error) => console.log("Error sharing", error));
+    } else {
+      // Fallback for browsers that don't support the Web Share API
+      navigator.clipboard
+        .writeText(
+          `Minhas necessidades diárias: ${Math.round(macros.calories)} calorias, ${macros.protein}g proteína, ${
+            macros.carbs
+          }g carboidratos, ${macros.fats}g gorduras`
+        )
+        .then(() => {
+          alert("Resultados copiados para a área de transferência!");
         });
-      }
-    }, 100);
+    }
   };
 
   useEffect(() => {
     const saveResults = async () => {
-      if (!currentUser || saveAttemptedRef.current) return; // Check if we already tried to save
+      if (!currentUser) return;
 
       try {
-        saveAttemptedRef.current = true; // Mark that we're attempting to save
         await saveCalculation({
           data: {
             weight: Number(userData.weight),
@@ -174,91 +167,108 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
     userData.goal,
   ]);
 
-  const macroIcons = {
-    calories: Flame,
-    protein: Dumbbell,
-    carbs: Croissant,
-    fats: Droplet,
+  const goalText =
+    userData.goal === "lose" ? "perder peso" : userData.goal === "maintain" ? "manter peso" : "ganhar massa muscular";
+
+  // Animation variants
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const item = {
+    hidden: { y: 20, opacity: 0 },
+    show: { y: 0, opacity: 1 },
+  };
+
+  const scale = {
+    hidden: { scale: 0.8, opacity: 0 },
+    show: { scale: 1, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 20 } },
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4">
-      <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-center">{ptBR.yourPersonalizedMacroPlan}</h2>
-      <p className="text-base md:text-lg mb-6 md:mb-8 text-center text-muted-foreground">{ptBR.basedOnYourInfo}</p>
+    <motion.div className="w-full max-w-2xl mx-auto" initial="hidden" animate="show" variants={container}>
+      <motion.div variants={item} className="text-center mb-8">
+        <div className="inline-block p-3 bg-primary/20 rounded-full mb-4">
+          <Flame className="h-8 w-8 text-primary" />
+        </div>
+        <h2 className="text-3xl font-bold mb-2">Seu Plano de Macros Personalizado</h2>
+        <p className="text-muted-foreground">Baseado no seu perfil para {goalText}</p>
+      </motion.div>
 
-      {/* Macro Breakdown Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
-        {Object.entries(macros).map(([key, value], index) => {
-          const Icon = macroIcons[key as keyof typeof macroIcons];
-          const translatedKey = ptBR[key as keyof typeof ptBR];
-          return (
-            <motion.div
-              key={key}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 p-3 md:pb-2">
-                  <CardTitle className="text-xs md:text-sm font-medium">{translatedKey}</CardTitle>
-                  <Icon className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent className="p-3 md:pt-2">
-                  <p className="text-xl md:text-2xl font-bold">
-                    {Math.round(value)}
-                    <span className="text-sm md:text-base">{key === "calories" ? " kcal" : "g"}</span>
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          );
-        })}
-      </div>
+      {/* Main Calories Card */}
+      <motion.div variants={scale} className="mb-8">
+        <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/10 to-primary/5 shadow-md overflow-hidden">
+          <CardContent className="p-6">
+            <div className="flex flex-col items-center">
+              <p className="text-muted-foreground uppercase text-sm tracking-wide mb-1">Calorias Diárias</p>
+              <h3 className="text-5xl font-bold text-primary mb-1">{Math.round(macros.calories)}</h3>
+              <p className="text-lg">kcal</p>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
 
-      {/* Water Calculator */}
-      <div className="mb-6 md:mb-8">
-        <WaterCalculator weight={userData.weight} activityLevel={userData.activityLevel} />
-      </div>
+      {/* Macronutrient Cards */}
+      <motion.div variants={item} className="grid grid-cols-3 gap-4 mb-8">
+        {/* Protein Card */}
+        <Card className="shadow-sm bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30">
+          <CardContent className="p-4 flex flex-col items-center text-center">
+            <Dumbbell className="h-6 w-6 text-blue-500 mb-1" />
+            <h4 className="text-sm font-medium mb-1">Proteínas</h4>
+            <p className="text-2xl font-bold">{macros.protein}g</p>
+            <p className="text-xs text-muted-foreground">{proteinPercentage}%</p>
+          </CardContent>
+        </Card>
 
-      {/* Motivational Message */}
-      <motion.p
-        className="mt-4 md:mt-6 text-center text-muted-foreground text-sm md:text-base"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-      >
-        {ptBR.rememberGuidelines}
-      </motion.p>
+        {/* Fats Card */}
+        <Card className="shadow-sm bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/30">
+          <CardContent className="p-4 flex flex-col items-center text-center">
+            <Droplet className="h-6 w-6 text-green-500 mb-1" />
+            <h4 className="text-sm font-medium mb-1">Gorduras</h4>
+            <p className="text-2xl font-bold">{macros.fats}g</p>
+            <p className="text-xs text-muted-foreground">{fatsPercentage}%</p>
+          </CardContent>
+        </Card>
 
-      {/* History Display for authenticated users */}
-      {currentUser && <HistoryDisplay />}
+        {/* Carbs Card */}
+        <Card className="shadow-sm bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/30">
+          <CardContent className="p-4 flex flex-col items-center text-center">
+            <Croissant className="h-6 w-6 text-yellow-500 mb-1" />
+            <h4 className="text-sm font-medium mb-1">Carboidratos</h4>
+            <p className="text-2xl font-bold">{macros.carbs}g</p>
+            <p className="text-xs text-muted-foreground">{carbsPercentage}%</p>
+          </CardContent>
+        </Card>
+      </motion.div>
 
-      {/* CTA Section */}
-      <motion.div
-        className="mt-6 md:mt-8 text-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
-      >
-        <p className="text-base md:text-lg mb-4">
-          {ptBR.takeNutritionToNextLevel}{" "}
-          <span className="font-semibold text-primary">{ptBR.unlockPersonalizedPlans}</span>
-        </p>
-        <div className="flex flex-col sm:flex-row justify-center gap-3 md:gap-4">
-          <Button onClick={onStartOver} variant="outline" className="w-full sm:w-auto">
-            {ptBR.calculateAgain}
+      {/* Action Buttons */}
+      <motion.div variants={item} className="flex flex-col gap-3 mt-8">
+        <Button onClick={handleShare} variant="outline" size="lg" className="gap-2 w-full">
+          <Share2 className="h-4 w-4" />
+          Compartilhar Resultados
+        </Button>
+
+        <div className="grid grid-cols-2 gap-3">
+          <Button onClick={onStartOver} variant="outline" size="lg" className="gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Recalcular
           </Button>
+
           {!currentUser && (
-            <Button onClick={() => navigate("/login")} className="w-full sm:w-auto mt-2 sm:mt-0">
-              Fazer login para salvar resultados
+            <Button onClick={() => navigate("/login")} size="lg">
+              Salvar Resultados
             </Button>
           )}
-          <Button onClick={scrollToEducationalContent} variant="secondary">
-            Saiba Mais <ChevronDown className="ml-1 h-4 w-4" />
-          </Button>
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };
 
