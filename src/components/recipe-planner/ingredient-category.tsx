@@ -2,6 +2,7 @@ import { Ingredient } from "@/lib/ingredients-data";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface IngredientCategoryProps {
   title: string;
@@ -21,8 +22,12 @@ const IngredientCategory = ({
   // Sort ingredients by commonality (highest first)
   const sortedIngredients = [...ingredients].sort((a, b) => (b.commonality || 0) - (a.commonality || 0));
 
-  // If we have many ingredients, only show the top 12 initially
-  const displayedIngredients = showAll ? sortedIngredients : sortedIngredients.slice(0, 12);
+  // Calculate how many ingredients to show in a row based on screen size
+  // For this example, we'll use a fixed number, but you could use a more responsive approach
+  const itemsPerRow = 4;
+
+  // Only show the first row initially
+  const displayedIngredients = showAll ? sortedIngredients : sortedIngredients.slice(0, itemsPerRow);
 
   return (
     <div className="space-y-3">
@@ -51,13 +56,23 @@ const IngredientCategory = ({
           </motion.div>
         ))}
 
-        {sortedIngredients.length > 12 && (
+        {sortedIngredients.length > itemsPerRow && (
           <Button
             variant="ghost"
             onClick={() => setShowAll(!showAll)}
-            className="h-auto py-3 border border-dashed border-border/40 hover:border-primary/40"
+            className="h-auto py-3 border border-dashed border-border/40 hover:border-primary/40 flex items-center gap-2"
           >
-            {showAll ? "Mostrar menos ↑" : `Ver mais +${sortedIngredients.length - 12} ingredientes ↓`}
+            {showAll ? (
+              <>
+                <span>Mostrar menos</span>
+                <ChevronUp className="h-4 w-4" />
+              </>
+            ) : (
+              <>
+                <span>Ver mais {sortedIngredients.length - itemsPerRow} ingredientes</span>
+                <ChevronDown className="h-4 w-4" />
+              </>
+            )}
           </Button>
         )}
       </div>
