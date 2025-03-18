@@ -1,29 +1,24 @@
 import { useState, useMemo } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { CookingPot, ShoppingBasket, ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight, CookingPot } from "lucide-react";
 import { motion } from "framer-motion";
-import { ingredients, Ingredient } from "@/lib/ingredients-data";
-import { Recipe } from "@/lib/recipes-data";
+import { ingredients } from "@/lib/ingredients-data";
 import { suggestRecipes } from "@/lib/recipe-suggestions";
-import RecipeCard from "@/components/recipe-planner/recipe-card";
-import RecipeDetailModal from "@/components/recipe-planner/recipe-detail-modal";
-import { useSavedRecipes } from "@/hooks/useSavedRecipes";
+import RecipeDetailModal from "./recipe-detail-modal";
 import { useAuth } from "@/context/AuthContext";
-import LoginPrompt from "@/components/recipe-planner/login-prompt";
+import { useSavedRecipes } from "@/hooks/useSavedRecipes";
+import LoginPrompt from "./login-prompt";
+import { RecipeStep, SpiceIngredient } from "./types";
+import { Recipe } from "@/lib/recipes-data";
 
-// Create a new type for the steps
-type RecipeStep = "landing" | "proteins" | "carbs" | "fats" | "spices" | "results";
-
-// Define a type for spice ingredients
-interface SpiceIngredient {
-  id: string;
-  name: string;
-  category: string;
-  emoji: string;
-  commonality: number;
-}
+// Import step components
+import LandingPage from "./landing-page";
+import ProteinSelection from "./protein-selection";
+import CarbSelection from "./carb-selection";
+import FatSelection from "./fat-selection";
+import SpiceSelection from "./spice-selection";
+import ResultsPage from "./results-page";
 
 const GuidedRecipePlanner = () => {
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
@@ -31,16 +26,13 @@ const GuidedRecipePlanner = () => {
   const [suggestedRecipes, setSuggestedRecipes] = useState<Recipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [recipeSearchTerm] = useState("");
   const [isGeneratingRecipes, setIsGeneratingRecipes] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const { toggleSavedRecipe, isSaved } = useSavedRecipes();
+
   const { currentUser } = useAuth();
+  const { toggleSavedRecipe, isSaved } = useSavedRecipes();
 
-  // Define number of free recipes for demo mode
-  const FREE_RECIPE_LIMIT = 3;
-
-  // Filter ingredients by category
+  // Get filtered ingredients for different categories
   const proteinIngredients = useMemo(
     () =>
       ingredients
@@ -61,7 +53,7 @@ const GuidedRecipePlanner = () => {
     []
   );
 
-  // Define a special "spices" category (ingredients that should be considered spices or flavorings)
+  // Define spice ingredients
   const spiceIngredients = useMemo<SpiceIngredient[]>(
     () => [
       { id: "salt", name: "Sal", category: "spice", emoji: "🧂", commonality: 99 },
@@ -82,25 +74,6 @@ const GuidedRecipePlanner = () => {
     ],
     []
   );
-
-  // Filter recipes
-  const filteredSuggestedRecipes = useMemo(() => {
-    if (!recipeSearchTerm.trim()) return suggestedRecipes;
-
-    return suggestedRecipes.filter(
-      (recipe) =>
-        recipe.name.toLowerCase().includes(recipeSearchTerm.toLowerCase()) ||
-        recipe.description.toLowerCase().includes(recipeSearchTerm.toLowerCase())
-    );
-  }, [suggestedRecipes, recipeSearchTerm]);
-
-  // Mark recipes as free or premium
-  const processedRecipes = useMemo(() => {
-    return filteredSuggestedRecipes.map((recipe, index) => ({
-      ...recipe,
-      isPremium: !currentUser && index >= FREE_RECIPE_LIMIT,
-    }));
-  }, [filteredSuggestedRecipes, currentUser]);
 
   // Toggle ingredient selection
   const toggleIngredient = (id: string) => {
@@ -140,7 +113,7 @@ const GuidedRecipePlanner = () => {
     setSuggestedRecipes([]);
   };
 
-  // View recipe details - now with premium check
+  // View recipe details with premium check
   const handleViewRecipeDetails = (recipe: Recipe, isPremium: boolean) => {
     if (isPremium) {
       setShowLoginPrompt(true);
@@ -171,7 +144,7 @@ const GuidedRecipePlanner = () => {
     }
   };
 
-  // Get step number (for display)
+  // Get step number for display
   const getStepNumber = () => {
     switch (step) {
       case "proteins":
@@ -187,289 +160,133 @@ const GuidedRecipePlanner = () => {
     }
   };
 
-  // Get step title
-  const getStepTitle = () => {
+  // Render the current step component
+  const renderStep = () => {
     switch (step) {
       case "landing":
-        return "Comece sua jornada culinária";
+        return <LandingPage onStart={handleNext} />;
       case "proteins":
-        return "Selecione suas proteínas";
+        return (
+          <ProteinSelection
+            selectedIngredients={selectedIngredients}
+            toggleIngredient={toggleIngredient}
+            onNext={handleNext}
+            onPrevious={handlePrevious}
+          />
+        );
       case "carbs":
-        return "Adicione carboidratos";
+        return (
+          <CarbSelection
+            selectedIngredients={selectedIngredients}
+            toggleIngredient={toggleIngredient}
+            onNext={handleNext}
+            onPrevious={handlePrevious}
+          />
+        );
       case "fats":
-        return "Escolha suas gorduras";
+        return (
+          <FatSelection
+            selectedIngredients={selectedIngredients}
+            toggleIngredient={toggleIngredient}
+            onNext={handleNext}
+            onPrevious={handlePrevious}
+          />
+        );
       case "spices":
-        return "Finalize com temperos";
+        return (
+          <SpiceSelection
+            selectedIngredients={selectedIngredients}
+            toggleIngredient={toggleIngredient}
+            onNext={handleNext}
+            onPrevious={handlePrevious}
+          />
+        );
       case "results":
-        return "Suas receitas personalizadas";
+        return (
+          <ResultsPage
+            selectedIngredients={selectedIngredients}
+            suggestedRecipes={suggestedRecipes}
+            proteinIngredients={proteinIngredients}
+            carbIngredients={carbIngredients}
+            fatIngredients={fatIngredients}
+            spiceIngredients={spiceIngredients}
+            onStartOver={handleStartOver}
+            onViewRecipeDetails={handleViewRecipeDetails}
+            currentUser={currentUser}
+          />
+        );
       default:
-        return "";
+        return null;
     }
   };
-
-  // Get step description
-  const getStepDescription = () => {
-    switch (step) {
-      case "landing":
-        return "Vamos criar receitas baseadas nos ingredientes que você tem disponíveis.";
-      case "proteins":
-        return "Proteínas são a base da sua refeição. Selecione as que você tem disponíveis:";
-      case "carbs":
-        return "Carboidratos dão energia e complementam seu prato:";
-      case "fats":
-        return "Gorduras saudáveis adicionam sabor e são essenciais para seu corpo:";
-      case "spices":
-        return "Temperos e condimentos que transformam seu prato:";
-      case "results":
-        return `Encontramos ${suggestedRecipes.length} receitas baseadas nos seus ${selectedIngredients.length} ingredientes:`;
-      default:
-        return "";
-    }
-  };
-
-  // Render the ingredients selection step
-  const renderIngredientsSelection = (
-    ingredientsList: (Ingredient | SpiceIngredient)[],
-    title: string,
-    description: string
-  ) => {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        className="w-full"
-      >
-        <div className="text-center mb-6">
-          <div className="flex justify-center mb-4">
-            <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-semibold">
-              {getStepNumber()}
-            </div>
-          </div>
-          <h2 className="text-2xl font-bold mb-2">{title}</h2>
-          <p className="text-muted-foreground">{description}</p>
-        </div>
-
-        <Card className="mb-8">
-          <CardContent className="p-6">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {ingredientsList.map((ingredient) => (
-                <Button
-                  key={ingredient.id}
-                  variant={selectedIngredients.includes(ingredient.id) ? "default" : "outline"}
-                  size="lg"
-                  onClick={() => toggleIngredient(ingredient.id)}
-                  className={`h-auto py-3 px-4 rounded-xl transition-all justify-start ${
-                    selectedIngredients.includes(ingredient.id)
-                      ? "border-2 border-primary bg-primary/90 hover:bg-primary/80"
-                      : "border border-border/50 hover:bg-accent/50"
-                  }`}
-                >
-                  <span className="text-lg mr-2">{ingredient.emoji}</span>
-                  <span className="truncate">{ingredient.name}</span>
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Selected count */}
-        <div className="text-center mb-8">
-          <p className="text-sm text-muted-foreground">
-            {selectedIngredients.filter((id) => ingredientsList.some((ing) => ing.id === id)).length}{" "}
-            {title.toLowerCase()} selecionados
-          </p>
-        </div>
-      </motion.div>
-    );
-  };
-
-  // Render landing page
-  const renderLanding = () => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="text-center py-12 max-w-3xl mx-auto"
-    >
-      <div className="mb-8">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-          Descubra receitas com os <span className="text-primary">ingredientes que você tem</span>
-        </h1>
-        <p className="text-xl mb-6 text-muted-foreground">
-          Sem precisar ir ao supermercado—encontre receitas deliciosas usando o que já está na sua cozinha.
-        </p>
-      </div>
-
-      <div className="bg-card border border-border/50 rounded-xl p-6 mb-10 shadow-sm">
-        <h2 className="text-xl font-medium mb-4">Como funciona:</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
-          <div className="bg-accent p-4 rounded-lg">
-            <div className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center mb-3 font-bold">
-              1
-            </div>
-            <h3 className="font-medium mb-2">Selecione ingredientes</h3>
-            <p className="text-sm text-muted-foreground">Informe o que você tem disponível em sua cozinha.</p>
-          </div>
-          <div className="bg-accent p-4 rounded-lg">
-            <div className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center mb-3 font-bold">
-              2
-            </div>
-            <h3 className="font-medium mb-2">Descubra receitas</h3>
-            <p className="text-sm text-muted-foreground">Nosso sistema encontrará as melhores combinações.</p>
-          </div>
-          <div className="bg-accent p-4 rounded-lg">
-            <div className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center mb-3 font-bold">
-              3
-            </div>
-            <h3 className="font-medium mb-2">Cozinhe e desfrute</h3>
-            <p className="text-sm text-muted-foreground">Receitas detalhadas com macros e informações nutricionais.</p>
-          </div>
-        </div>
-      </div>
-
-      <Button onClick={handleNext} size="lg" className="text-lg px-8 py-6">
-        Começar
-      </Button>
-    </motion.div>
-  );
-
-  // Render results page
-  const renderResults = () => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="w-full"
-    >
-      <div className="mb-8 text-center">
-        <CheckCircle className="h-16 w-16 text-primary mx-auto mb-4" />
-        <h2 className="text-2xl font-bold mb-2">{getStepTitle()}</h2>
-        <p className="text-muted-foreground">{getStepDescription()}</p>
-      </div>
-
-      {/* Selected Ingredients Summary */}
-      <div className="bg-gradient-to-r from-primary/5 to-transparent p-6 rounded-xl mb-10 border border-primary/10">
-        <h3 className="text-lg font-medium mb-4 flex items-center">
-          <ShoppingBasket className="h-5 w-5 mr-2 text-primary" />
-          Ingredientes Selecionados ({selectedIngredients.length})
-        </h3>
-
-        <div className="flex flex-wrap gap-2">
-          {selectedIngredients.map((id) => {
-            const ingredient = [...proteinIngredients, ...carbIngredients, ...fatIngredients, ...spiceIngredients].find(
-              (ing) => ing.id === id
-            );
-            return ingredient ? (
-              <Button
-                key={id}
-                variant="outline"
-                size="sm"
-                className="h-auto py-2 px-4 bg-background hover:bg-accent/30"
-              >
-                <span className="text-base mr-2">{ingredient.emoji}</span>
-                {ingredient.name}
-              </Button>
-            ) : null;
-          })}
-        </div>
-      </div>
-
-      {/* Recipe Results Section */}
-      {processedRecipes.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {processedRecipes.map((recipe) => (
-            <RecipeCard
-              key={recipe.id}
-              recipe={recipe}
-              isPremium={recipe.isPremium}
-              onViewDetails={() => handleViewRecipeDetails(recipe, recipe.isPremium)}
-            />
-          ))}
-        </div>
-      ) : (
-        <Card>
-          <CardContent className="p-6 text-center">
-            <p className="mb-2">Não encontramos receitas que correspondam aos seus ingredientes.</p>
-            <p className="text-sm text-muted-foreground">
-              Tente selecionar mais ingredientes ou ingredientes diferentes para obter melhores sugestões.
-            </p>
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="flex justify-center mt-10">
-        <Button onClick={handleStartOver} variant="outline" size="lg" className="text-lg px-8">
-          Começar Novamente
-        </Button>
-      </div>
-    </motion.div>
-  );
 
   return (
     <div className="container mx-auto py-6">
-      {/* Main Content */}
-      <div>
-        {step !== "landing" && step !== "results" && (
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-2">
-              <p className="text-sm text-muted-foreground">Passo {getStepNumber()} de 4</p>
-              <p className="text-sm font-medium text-primary">{getProgress()}% completo</p>
-            </div>
-            <Progress value={getProgress()} className="h-2" />
+      {/* Progress indicator */}
+      {step !== "landing" && step !== "results" && (
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-sm text-muted-foreground">Passo {getStepNumber()} de 4</p>
+            <p className="text-sm font-medium text-primary">{getProgress()}% completo</p>
           </div>
-        )}
-
-        <div className="flex-grow flex items-center justify-center">
-          {step === "landing" && renderLanding()}
-          {step === "proteins" && renderIngredientsSelection(proteinIngredients, getStepTitle(), getStepDescription())}
-          {step === "carbs" && renderIngredientsSelection(carbIngredients, getStepTitle(), getStepDescription())}
-          {step === "fats" && renderIngredientsSelection(fatIngredients, getStepTitle(), getStepDescription())}
-          {step === "spices" && renderIngredientsSelection(spiceIngredients, getStepTitle(), getStepDescription())}
-          {step === "results" && renderResults()}
+          <Progress value={getProgress()} className="h-2" />
         </div>
+      )}
 
-        {/* Navigation buttons */}
-        {step !== "landing" && step !== "results" && (
-          <div className="flex justify-between mt-8">
-            <Button
-              onClick={handlePrevious}
-              variant="outline"
-              size="lg"
-              className="min-w-32 py-6 text-lg flex items-center gap-2"
-              disabled={step === "proteins"}
-            >
-              <ArrowLeft className="h-5 w-5" />
-              Anterior
-            </Button>
-            <Button
-              onClick={handleNext}
-              size="lg"
-              className="min-w-32 py-6 text-lg flex items-center gap-2"
-              disabled={isGeneratingRecipes}
-            >
-              {step === "spices" ? (
-                isGeneratingRecipes ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Gerando...
-                  </>
-                ) : (
-                  <>
-                    <CookingPot className="h-5 w-5 mr-2" />
-                    Gerar Receitas
-                  </>
-                )
+      {/* Main Content */}
+      <div className="flex-grow flex items-center justify-center">
+        <motion.div
+          key={step}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.3 }}
+          className="w-full"
+        >
+          {renderStep()}
+        </motion.div>
+      </div>
+
+      {/* Navigation buttons */}
+      {step !== "landing" && step !== "results" && (
+        <div className="flex justify-between mt-8">
+          <Button
+            onClick={handlePrevious}
+            variant="outline"
+            size="lg"
+            className="min-w-32 py-6 text-lg flex items-center gap-2"
+            disabled={step === "proteins"}
+          >
+            <ArrowLeft className="h-5 w-5" />
+            Anterior
+          </Button>
+          <Button
+            onClick={handleNext}
+            size="lg"
+            className="min-w-32 py-6 text-lg flex items-center gap-2"
+            disabled={isGeneratingRecipes}
+          >
+            {step === "spices" ? (
+              isGeneratingRecipes ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Gerando...
+                </>
               ) : (
                 <>
-                  Próximo
-                  <ArrowRight className="h-5 w-5" />
+                  <CookingPot className="h-5 w-5 mr-2" />
+                  Gerar Receitas
                 </>
-              )}
-            </Button>
-          </div>
-        )}
-      </div>
+              )
+            ) : (
+              <>
+                Próximo
+                <ArrowRight className="h-5 w-5" />
+              </>
+            )}
+          </Button>
+        </div>
+      )}
 
       {/* Recipe Detail Modal */}
       <RecipeDetailModal
