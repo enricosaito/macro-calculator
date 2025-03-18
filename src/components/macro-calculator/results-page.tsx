@@ -91,16 +91,6 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
   const bmr = calculateBMR();
   const tdee = calculateTDEE();
 
-  // Calculate percentages for display
-  const totalCalories = macros.calories;
-  const proteinCalories = macros.protein * 4;
-  const carbsCalories = macros.carbs * 4;
-  const fatsCalories = macros.fats * 9;
-
-  const proteinPercentage = Math.round((proteinCalories / totalCalories) * 100);
-  const carbsPercentage = Math.round((carbsCalories / totalCalories) * 100);
-  const fatsPercentage = Math.round((fatsCalories / totalCalories) * 100);
-
   // Handle sharing results
   const handleShare = () => {
     if (navigator.share) {
@@ -223,7 +213,6 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
             <Croissant className="h-6 w-6 text-yellow-500 mb-1" />
             <h4 className="text-sm font-medium mb-1">Carboidratos</h4>
             <p className="text-2xl font-bold">{macros.carbs}g</p>
-            <p className="text-xs text-muted-foreground">{carbsPercentage}%</p>
           </CardContent>
         </Card>
 
@@ -233,7 +222,6 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
             <Dumbbell className="h-6 w-6 text-blue-500 mb-1" />
             <h4 className="text-sm font-medium mb-1">Proteínas</h4>
             <p className="text-2xl font-bold">{macros.protein}g</p>
-            <p className="text-xs text-muted-foreground">{proteinPercentage}%</p>
           </CardContent>
         </Card>
 
@@ -243,7 +231,6 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
             <Droplet className="h-6 w-6 text-red-500 mb-1" />
             <h4 className="text-sm font-medium mb-1">Gorduras</h4>
             <p className="text-2xl font-bold">{macros.fats}g</p>
-            <p className="text-xs text-muted-foreground">{fatsPercentage}%</p>
           </CardContent>
         </Card>
       </motion.div>
