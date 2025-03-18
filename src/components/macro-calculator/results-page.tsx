@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Flame, Dumbbell, Croissant, Droplet, ArrowLeft, Share2 } from "lucide-react";
+import { Flame, Dumbbell, Croissant, Droplet, ArrowLeft, Share2, Info } from "lucide-react";
 import { useCalculations } from "@/hooks/useCalculations";
 import { useAuth } from "@/context/AuthContext";
 
@@ -217,6 +217,16 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
 
       {/* Macronutrient Cards */}
       <motion.div variants={item} className="grid grid-cols-3 gap-4 mb-8">
+        {/* Carbs Card */}
+        <Card className="shadow-sm bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/30">
+          <CardContent className="p-4 flex flex-col items-center text-center">
+            <Croissant className="h-6 w-6 text-yellow-500 mb-1" />
+            <h4 className="text-sm font-medium mb-1">Carboidratos</h4>
+            <p className="text-2xl font-bold">{macros.carbs}g</p>
+            <p className="text-xs text-muted-foreground">{carbsPercentage}%</p>
+          </CardContent>
+        </Card>
+
         {/* Protein Card */}
         <Card className="shadow-sm bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30">
           <CardContent className="p-4 flex flex-col items-center text-center">
@@ -227,23 +237,13 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
           </CardContent>
         </Card>
 
-        {/* Fats Card */}
-        <Card className="shadow-sm bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/30">
+        {/* Fats Card - Changed to red */}
+        <Card className="shadow-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30">
           <CardContent className="p-4 flex flex-col items-center text-center">
-            <Droplet className="h-6 w-6 text-green-500 mb-1" />
+            <Droplet className="h-6 w-6 text-red-500 mb-1" />
             <h4 className="text-sm font-medium mb-1">Gorduras</h4>
             <p className="text-2xl font-bold">{macros.fats}g</p>
             <p className="text-xs text-muted-foreground">{fatsPercentage}%</p>
-          </CardContent>
-        </Card>
-
-        {/* Carbs Card */}
-        <Card className="shadow-sm bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/30">
-          <CardContent className="p-4 flex flex-col items-center text-center">
-            <Croissant className="h-6 w-6 text-yellow-500 mb-1" />
-            <h4 className="text-sm font-medium mb-1">Carboidratos</h4>
-            <p className="text-2xl font-bold">{macros.carbs}g</p>
-            <p className="text-xs text-muted-foreground">{carbsPercentage}%</p>
           </CardContent>
         </Card>
       </motion.div>
@@ -267,6 +267,29 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
             </Button>
           )}
         </div>
+      </motion.div>
+
+      {/* Call to Action */}
+      <motion.div variants={item} className="mt-8 p-4 bg-primary/10 border border-primary/20 rounded-lg text-center">
+        <h3 className="font-medium mb-1 flex items-center justify-center gap-2">
+          <Info className="h-5 w-5 text-primary" />
+          Importante!
+        </h3>
+        <p>
+          Dedique 3 minutos para ler as notas informativas abaixo e entenda como aproveitar ao máximo seus resultados.
+        </p>
+        <Button
+          variant="link"
+          className="mt-2"
+          onClick={() => {
+            const educationalSection = document.getElementById("educational-content");
+            if (educationalSection) {
+              educationalSection.scrollIntoView({ behavior: "smooth" });
+            }
+          }}
+        >
+          Ler agora ↓
+        </Button>
       </motion.div>
     </motion.div>
   );
