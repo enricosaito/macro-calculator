@@ -15,7 +15,15 @@ const SettingsToggle = () => {
   };
 
   const toggleDarkMode = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+
+    // Ensure DOM is updated immediately to avoid flashing
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
   };
 
   return (

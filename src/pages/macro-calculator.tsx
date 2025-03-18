@@ -17,6 +17,7 @@ import EducationalContent from "@/components/macro-calculator/educational-conten
 import useMacroCalculator from "@/hooks/useMacroCalculator";
 import { useAuth } from "@/context/AuthContext";
 import { useCalculations } from "@/hooks/useCalculations";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const MacroCalculator = () => {
   const { userData, currentStep, handleNext, handlePrevious, updateUserData, handleStartOver } = useMacroCalculator();
@@ -24,9 +25,70 @@ const MacroCalculator = () => {
   const { calculations, loading } = useCalculations();
   const [showCalculator, setShowCalculator] = useState(false);
 
+  // State for form errors by step
+  const [stepErrors, setStepErrors] = useState<{ [key: number]: boolean }>({});
+
+  // Function to validate BMR step
+  const validateBMRStep = () => {
+    const { weight, height, age, sex } = userData;
+
+    const weightNum = Number.parseFloat(weight);
+    const heightNum = Number.parseFloat(height);
+    const ageNum = Number.parseInt(age);
+
+    if (isNaN(weightNum) || weightNum < 30 || weightNum > 300) {
+      return false;
+    }
+    if (isNaN(heightNum) || heightNum < 100 || heightNum > 250) {
+      return false;
+    }
+    if (isNaN(ageNum) || ageNum < 18 || ageNum > 120) {
+      return false;
+    }
+    if (sex === null) {
+      return false;
+    }
+
+    return true;
+  };
+
+  // Function to validate specific step
+  const validateStep = (step: number) => {
+    switch (step) {
+      case 1: // BMR step
+        return validateBMRStep();
+      case 2: // Activity level
+        return userData.activityLevel !== "";
+      case 3: // Goal selection
+        return userData.goal !== "";
+      default:
+        return true;
+    }
+  };
+
+  // Handle next with validation
+  const handleNextWithValidation = () => {
+    const isValid = validateStep(currentStep);
+    setStepErrors({ ...stepErrors, [currentStep]: !isValid });
+
+    if (isValid) {
+      handleNext();
+    }
+  };
+
   // Decide whether to show the dashboard or calculator on initial load
   useEffect(() => {
-    if (!loading && currentUser && calculations && calculations.length > 0 && currentStep === 0) {
+    // If we have stored calculation at step 4 (results), show it instead of dashboard
+    const hasCompletedCalculation = currentStep === 4;
+
+    if (
+      !loading &&
+      currentUser &&
+      calculations &&
+      calculations.length > 0 &&
+      currentStep === 0 &&
+      !hasCompletedCalculation
+    ) {
       setShowCalculator(false);
     } else {
       setShowCalculator(true);
@@ -39,7 +101,13 @@ const MacroCalculator = () => {
   const progress =
     currentStep === 0
       ? 0 // No progress on the landing page
-      : (currentStep / (steps.length - 1)) * 100; // Exclude the results page
+      : currentStep === 1
+      ? 33
+      : currentStep === 2
+      ? 66
+      : currentStep === 3
+      ? 99
+      : 100;
 
   // Calculate current step for display (excluding landing page)
   const displayStep = currentStep === 0 ? 0 : currentStep;
@@ -50,11 +118,43 @@ const MacroCalculator = () => {
       case "landing":
         return <LandingPage onStart={handleNext} />;
       case "bmr":
-        return <BMRCalculation userData={userData} updateUserData={updateUserData} onNext={handleNext} />;
+        return (
+          <div className="relative">
+            <div className="flex justify-center mb-4">
+              <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-semibold">
+                1
+              </div>
+            </div>
+            <BMRCalculation
+              userData={userData}
+              updateUserData={updateUserData}
+              onNext={() => {}} // Removed individual step next functionality
+              showErrors={stepErrors[1]}
+            />
+          </div>
+        );
       case "activity":
-        return <ActivityLevel userData={userData} updateUserData={updateUserData} />;
+        return (
+          <div className="relative">
+            <div className="flex justify-center mb-4">
+              <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-semibold">
+                2
+              </div>
+            </div>
+            <ActivityLevel userData={userData} updateUserData={updateUserData} />
+          </div>
+        );
       case "goal":
-        return <GoalSelection userData={userData} updateUserData={updateUserData} />;
+        return (
+          <div className="relative">
+            <div className="flex justify-center mb-4">
+              <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-semibold">
+                3
+              </div>
+            </div>
+            <GoalSelection userData={userData} updateUserData={updateUserData} />
+          </div>
+        );
       case "results":
         return <ResultsPage userData={userData} onStartOver={handleStartOver} />;
       default:
@@ -80,12 +180,12 @@ const MacroCalculator = () => {
               <div className="flex flex-col h-full">
                 {/* Progress indicator */}
                 {currentStep > 0 && currentStep < steps.length - 1 && (
-                  <div className="mb-6">
+                  <div className="mb-8">
                     <div className="flex justify-between items-center mb-2">
                       <p className="text-sm text-muted-foreground">
                         Passo {displayStep} de {totalSteps}
                       </p>
-                      <p className="text-sm font-medium text-primary">{Math.round(progress)}% completo</p>
+                      <p className="text-sm font-medium text-primary">{progress}% completo</p>
                     </div>
                     <Progress value={progress} className="h-2" />
                   </div>
@@ -107,12 +207,23 @@ const MacroCalculator = () => {
 
                 {/* Navigation buttons */}
                 {currentStep > 0 && currentStep < steps.length - 1 && (
-                  <div className="flex justify-between mt-6">
-                    <Button onClick={handlePrevious} variant="outline" className="w-28">
+                  <div className="flex justify-between mt-8">
+                    <Button
+                      onClick={handlePrevious}
+                      variant="outline"
+                      size="lg"
+                      className="min-w-32 py-6 text-lg flex items-center gap-2"
+                    >
+                      <ArrowLeft className="h-5 w-5" />
                       Anterior
                     </Button>
-                    <Button onClick={handleNext} className="w-28">
+                    <Button
+                      onClick={handleNextWithValidation}
+                      size="lg"
+                      className="min-w-32 py-6 text-lg flex items-center gap-2"
+                    >
                       Próximo
+                      <ArrowRight className="h-5 w-5" />
                     </Button>
                   </div>
                 )}

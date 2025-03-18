@@ -112,8 +112,11 @@ const RecipePlanner = () => {
 
         <TabsContent value="explore">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-            <Alert variant="default" className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
-              <InfoIcon className="h-4 w-4 text-blue-500" />
+            <Alert
+              variant="default"
+              className="mb-6 bg-gradient-to-r from-blue-50/80 to-purple-50/80 dark:from-blue-950/20 dark:to-purple-950/20 border border-blue-200 dark:border-blue-800/30"
+            >
+              <InfoIcon className="h-4 w-4 text-blue-500 dark:text-blue-400" />
               <AlertDescription>
                 Selecione os ingredientes que você tem disponíveis e descubra receitas que se encaixam perfeitamente nos
                 seus objetivos de macros!
