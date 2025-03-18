@@ -1,4 +1,3 @@
-// src/lib/ingredients-data.ts
 export interface Ingredient {
   id: string;
   name: string;
@@ -8,6 +7,7 @@ export interface Ingredient {
   fats: number; // grams per 100g
   calories: number; // calories per 100g
   emoji: string; // emoji representing the ingredient
+  commonality?: number; // higher values = more common in households (0-100)
 }
 
 export const ingredients: Ingredient[] = [
@@ -21,6 +21,7 @@ export const ingredients: Ingredient[] = [
     fats: 3.6,
     calories: 165,
     emoji: "🍗",
+    commonality: 95,
   },
   {
     id: "beef",
@@ -31,6 +32,7 @@ export const ingredients: Ingredient[] = [
     fats: 15,
     calories: 250,
     emoji: "🥩",
+    commonality: 90,
   },
   {
     id: "eggs",
@@ -41,6 +43,7 @@ export const ingredients: Ingredient[] = [
     fats: 11,
     calories: 155,
     emoji: "🥚",
+    commonality: 98,
   },
   {
     id: "tuna",
@@ -51,6 +54,7 @@ export const ingredients: Ingredient[] = [
     fats: 1,
     calories: 130,
     emoji: "🐟",
+    commonality: 65,
   },
   {
     id: "salmon",
@@ -61,6 +65,7 @@ export const ingredients: Ingredient[] = [
     fats: 13,
     calories: 208,
     emoji: "🐠",
+    commonality: 50,
   },
   {
     id: "pork",
@@ -71,6 +76,7 @@ export const ingredients: Ingredient[] = [
     fats: 14,
     calories: 242,
     emoji: "🥓",
+    commonality: 85,
   },
   {
     id: "cheese",
@@ -81,6 +87,7 @@ export const ingredients: Ingredient[] = [
     fats: 33,
     calories: 402,
     emoji: "🧀",
+    commonality: 95,
   },
   {
     id: "yogurt",
@@ -91,6 +98,7 @@ export const ingredients: Ingredient[] = [
     fats: 0.4,
     calories: 59,
     emoji: "🥛",
+    commonality: 80,
   },
   {
     id: "tofu",
@@ -101,6 +109,7 @@ export const ingredients: Ingredient[] = [
     fats: 4,
     calories: 76,
     emoji: "🧊",
+    commonality: 30,
   },
   {
     id: "beans",
@@ -111,6 +120,7 @@ export const ingredients: Ingredient[] = [
     fats: 0.5,
     calories: 127,
     emoji: "🫘",
+    commonality: 99,
   },
   {
     id: "lentils",
@@ -121,6 +131,7 @@ export const ingredients: Ingredient[] = [
     fats: 0.4,
     calories: 116,
     emoji: "🫛",
+    commonality: 60,
   },
   {
     id: "chickpeas",
@@ -131,6 +142,7 @@ export const ingredients: Ingredient[] = [
     fats: 2.6,
     calories: 164,
     emoji: "🌱",
+    commonality: 55,
   },
   {
     id: "turkey",
@@ -141,6 +153,7 @@ export const ingredients: Ingredient[] = [
     fats: 7,
     calories: 189,
     emoji: "🦃",
+    commonality: 45,
   },
   {
     id: "cottage-cheese",
@@ -151,6 +164,7 @@ export const ingredients: Ingredient[] = [
     fats: 4.3,
     calories: 98,
     emoji: "🥫",
+    commonality: 40,
   },
   {
     id: "whey-protein",
@@ -161,6 +175,40 @@ export const ingredients: Ingredient[] = [
     fats: 3,
     calories: 400,
     emoji: "💪",
+    commonality: 60,
+  },
+  {
+    id: "ground-beef",
+    name: "Carne Moída",
+    category: "protein",
+    protein: 26,
+    carbs: 0,
+    fats: 15,
+    calories: 250,
+    emoji: "🥩",
+    commonality: 92,
+  },
+  {
+    id: "sardines",
+    name: "Sardinha",
+    category: "protein",
+    protein: 25,
+    carbs: 0,
+    fats: 11,
+    calories: 208,
+    emoji: "🐟",
+    commonality: 65,
+  },
+  {
+    id: "mussarela",
+    name: "Muçarela",
+    category: "protein",
+    protein: 22,
+    carbs: 2,
+    fats: 22,
+    calories: 280,
+    emoji: "🧀",
+    commonality: 90,
   },
 
   // Carbs
@@ -173,6 +221,7 @@ export const ingredients: Ingredient[] = [
     fats: 0.3,
     calories: 130,
     emoji: "🍚",
+    commonality: 99,
   },
   {
     id: "pasta",
@@ -183,6 +232,7 @@ export const ingredients: Ingredient[] = [
     fats: 0.9,
     calories: 158,
     emoji: "🍝",
+    commonality: 96,
   },
   {
     id: "potato",
@@ -193,6 +243,7 @@ export const ingredients: Ingredient[] = [
     fats: 0.1,
     calories: 77,
     emoji: "🥔",
+    commonality: 95,
   },
   {
     id: "sweet-potato",
@@ -203,6 +254,7 @@ export const ingredients: Ingredient[] = [
     fats: 0.1,
     calories: 86,
     emoji: "🍠",
+    commonality: 75,
   },
   {
     id: "bread",
@@ -213,6 +265,7 @@ export const ingredients: Ingredient[] = [
     fats: 3.2,
     calories: 265,
     emoji: "🍞",
+    commonality: 98,
   },
   {
     id: "oats",
@@ -223,6 +276,7 @@ export const ingredients: Ingredient[] = [
     fats: 6.9,
     calories: 389,
     emoji: "🌾",
+    commonality: 70,
   },
   {
     id: "quinoa",
@@ -233,6 +287,7 @@ export const ingredients: Ingredient[] = [
     fats: 1.9,
     calories: 120,
     emoji: "🌿",
+    commonality: 40,
   },
   {
     id: "corn",
@@ -243,6 +298,7 @@ export const ingredients: Ingredient[] = [
     fats: 1.5,
     calories: 106,
     emoji: "🌽",
+    commonality: 85,
   },
   {
     id: "banana",
@@ -253,6 +309,7 @@ export const ingredients: Ingredient[] = [
     fats: 0.3,
     calories: 89,
     emoji: "🍌",
+    commonality: 96,
   },
   {
     id: "apple",
@@ -263,6 +320,7 @@ export const ingredients: Ingredient[] = [
     fats: 0.2,
     calories: 52,
     emoji: "🍎",
+    commonality: 90,
   },
   {
     id: "broccoli",
@@ -273,6 +331,7 @@ export const ingredients: Ingredient[] = [
     fats: 0.4,
     calories: 34,
     emoji: "🥦",
+    commonality: 75,
   },
   {
     id: "spinach",
@@ -283,6 +342,7 @@ export const ingredients: Ingredient[] = [
     fats: 0.4,
     calories: 23,
     emoji: "🍃",
+    commonality: 65,
   },
   {
     id: "orange",
@@ -293,6 +353,7 @@ export const ingredients: Ingredient[] = [
     fats: 0.1,
     calories: 47,
     emoji: "🍊",
+    commonality: 92,
   },
   {
     id: "strawberry",
@@ -303,6 +364,7 @@ export const ingredients: Ingredient[] = [
     fats: 0.3,
     calories: 32,
     emoji: "🍓",
+    commonality: 70,
   },
   {
     id: "blueberry",
@@ -313,6 +375,7 @@ export const ingredients: Ingredient[] = [
     fats: 0.3,
     calories: 57,
     emoji: "🫐",
+    commonality: 40,
   },
   {
     id: "brown-rice",
@@ -323,6 +386,7 @@ export const ingredients: Ingredient[] = [
     fats: 0.9,
     calories: 112,
     emoji: "🍚",
+    commonality: 80,
   },
   {
     id: "yam",
@@ -333,6 +397,95 @@ export const ingredients: Ingredient[] = [
     fats: 0.1,
     calories: 118,
     emoji: "🍠",
+    commonality: 60,
+  },
+  {
+    id: "cassava",
+    name: "Mandioca",
+    category: "carb",
+    protein: 1.4,
+    carbs: 38,
+    fats: 0.3,
+    calories: 160,
+    emoji: "🥔",
+    commonality: 93,
+  },
+  {
+    id: "french-bread",
+    name: "Pão Francês",
+    category: "carb",
+    protein: 8,
+    carbs: 57,
+    fats: 2,
+    calories: 289,
+    emoji: "🥖",
+    commonality: 97,
+  },
+  {
+    id: "tomato",
+    name: "Tomate",
+    category: "carb",
+    protein: 0.9,
+    carbs: 3.9,
+    fats: 0.2,
+    calories: 18,
+    emoji: "🍅",
+    commonality: 95,
+  },
+  {
+    id: "carrot",
+    name: "Cenoura",
+    category: "carb",
+    protein: 0.9,
+    carbs: 9.6,
+    fats: 0.2,
+    calories: 41,
+    emoji: "🥕",
+    commonality: 90,
+  },
+  {
+    id: "flour",
+    name: "Farinha de Trigo",
+    category: "carb",
+    protein: 10,
+    carbs: 76,
+    fats: 1,
+    calories: 364,
+    emoji: "🌾",
+    commonality: 94,
+  },
+  {
+    id: "sugar",
+    name: "Açúcar",
+    category: "carb",
+    protein: 0,
+    carbs: 100,
+    fats: 0,
+    calories: 387,
+    emoji: "🧂",
+    commonality: 98,
+  },
+  {
+    id: "onion",
+    name: "Cebola",
+    category: "carb",
+    protein: 1.1,
+    carbs: 9.3,
+    fats: 0.1,
+    calories: 40,
+    emoji: "🧅",
+    commonality: 97,
+  },
+  {
+    id: "garlic",
+    name: "Alho",
+    category: "carb",
+    protein: 6.4,
+    carbs: 33,
+    fats: 0.5,
+    calories: 149,
+    emoji: "🧄",
+    commonality: 96,
   },
 
   // Fats
@@ -345,6 +498,7 @@ export const ingredients: Ingredient[] = [
     fats: 100,
     calories: 884,
     emoji: "🫒",
+    commonality: 92,
   },
   {
     id: "avocado",
@@ -355,6 +509,7 @@ export const ingredients: Ingredient[] = [
     fats: 15,
     calories: 160,
     emoji: "🥑",
+    commonality: 75,
   },
   {
     id: "nuts",
@@ -365,6 +520,7 @@ export const ingredients: Ingredient[] = [
     fats: 60.8,
     calories: 607,
     emoji: "🌰",
+    commonality: 60,
   },
   {
     id: "butter",
@@ -375,6 +531,7 @@ export const ingredients: Ingredient[] = [
     fats: 81.1,
     calories: 717,
     emoji: "🧈",
+    commonality: 94,
   },
   {
     id: "coconut-oil",
@@ -385,6 +542,7 @@ export const ingredients: Ingredient[] = [
     fats: 99,
     calories: 862,
     emoji: "🥥",
+    commonality: 50,
   },
   {
     id: "peanut-butter",
@@ -395,6 +553,7 @@ export const ingredients: Ingredient[] = [
     fats: 50,
     calories: 588,
     emoji: "🥜",
+    commonality: 55,
   },
   {
     id: "almonds",
@@ -405,6 +564,7 @@ export const ingredients: Ingredient[] = [
     fats: 49,
     calories: 575,
     emoji: "🥜",
+    commonality: 60,
   },
   {
     id: "walnuts",
@@ -415,6 +575,7 @@ export const ingredients: Ingredient[] = [
     fats: 65,
     calories: 654,
     emoji: "🌰",
+    commonality: 40,
   },
   {
     id: "flaxseed",
@@ -425,6 +586,7 @@ export const ingredients: Ingredient[] = [
     fats: 42,
     calories: 534,
     emoji: "🌱",
+    commonality: 55,
   },
   {
     id: "chia-seeds",
@@ -435,6 +597,7 @@ export const ingredients: Ingredient[] = [
     fats: 31,
     calories: 486,
     emoji: "⚫",
+    commonality: 50,
   },
   {
     id: "dark-chocolate",
@@ -445,6 +608,7 @@ export const ingredients: Ingredient[] = [
     fats: 43.1,
     calories: 598,
     emoji: "🍫",
+    commonality: 70,
   },
   {
     id: "coconut-milk",
@@ -455,5 +619,72 @@ export const ingredients: Ingredient[] = [
     fats: 23.8,
     calories: 230,
     emoji: "🥥",
+    commonality: 60,
+  },
+  {
+    id: "cooking-oil",
+    name: "Óleo de Cozinha",
+    category: "fat",
+    protein: 0,
+    carbs: 0,
+    fats: 100,
+    calories: 884,
+    emoji: "🧴",
+    commonality: 99,
+  },
+  {
+    id: "margarine",
+    name: "Margarina",
+    category: "fat",
+    protein: 0.2,
+    carbs: 0.7,
+    fats: 80,
+    calories: 717,
+    emoji: "🧈",
+    commonality: 88,
+  },
+  {
+    id: "peanuts",
+    name: "Amendoim",
+    category: "fat",
+    protein: 26,
+    carbs: 16,
+    fats: 49,
+    calories: 567,
+    emoji: "🥜",
+    commonality: 75,
+  },
+  {
+    id: "mayo",
+    name: "Maionese",
+    category: "fat",
+    protein: 1,
+    carbs: 8,
+    fats: 75,
+    calories: 680,
+    emoji: "🧂",
+    commonality: 88,
+  },
+  {
+    id: "cream-cheese",
+    name: "Cream Cheese",
+    category: "fat",
+    protein: 6,
+    carbs: 4,
+    fats: 34,
+    calories: 342,
+    emoji: "🧀",
+    commonality: 80,
+  },
+  {
+    id: "requeijao",
+    name: "Requeijão",
+    category: "fat",
+    protein: 9,
+    carbs: 3,
+    fats: 28,
+    calories: 290,
+    emoji: "🧀",
+    commonality: 92,
   },
 ];
