@@ -1,7 +1,8 @@
+// src/components/macro-calculator/educational-content.tsx
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Target, ArrowUp, Zap, CheckCircle } from "lucide-react";
+import { AlertTriangle, Target, ArrowUp, Zap, Star, Beaker, Users } from "lucide-react";
 import CallToAction from "@/components/ui/call-to-action";
 
 const EducationalContent = () => {
@@ -13,7 +14,7 @@ const EducationalContent = () => {
   };
 
   return (
-    <div id="educational-content" className="space-y-12 mt-32 pt-16 mb-24 relative border-t border-border/20">
+    <div id="educational-content" className="space-y-48 mt-32 pt-16 mb-24 relative border-t border-border/20">
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -34,7 +35,7 @@ const EducationalContent = () => {
 
             <div className="pl-2 space-y-6 mb-6">
               <div className="flex items-start gap-3">
-                <CheckCircle className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                <Beaker className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-medium mb-1">Nada de achismos aqui</h3>
                   <p>
@@ -43,7 +44,7 @@ const EducationalContent = () => {
                       href="https://nutrium.com/blog/pt-br/equacao-de-mifflin-st-jeor-para-profissionais-de-nutricao/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 underline hover:text-blue-800"
+                      className="text-primary underline hover:text-primary/80"
                     >
                       Mifflin-St Jeor
                     </a>
@@ -54,7 +55,7 @@ const EducationalContent = () => {
               </div>
 
               <div className="flex items-start gap-3">
-                <CheckCircle className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                <Users className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-medium mb-1">Testada com pessoas reais</h3>
                   <p>
@@ -65,7 +66,7 @@ const EducationalContent = () => {
               </div>
 
               <div className="flex items-start gap-3">
-                <CheckCircle className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                <Star className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-medium mb-1">Protegendo seu músculo</h3>
                   <p>
@@ -76,7 +77,7 @@ const EducationalContent = () => {
               </div>
             </div>
 
-            <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-100 dark:border-blue-900/50">
+            <div className="bg-primary/10 p-4 rounded-lg border border-primary/20">
               <p>
                 <span className="font-medium">Direto ao ponto:</span> Estes números são um excelente ponto de partida.
                 São baseados em ciência sólida e experiência real. É como ter um mini-nutricionista no seu bolso.
@@ -107,7 +108,7 @@ const EducationalContent = () => {
 
             <div className="pl-2 space-y-6 mb-6">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-amber-500 mt-1 flex-shrink-0" />
+                <AlertTriangle className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-medium mb-1">O erro que quase todo mundo comete</h3>
                   <p>
@@ -149,7 +150,7 @@ const EducationalContent = () => {
               </p>
             </div>
 
-            <div className="bg-amber-50 dark:bg-amber-950/20 p-4 rounded-lg border border-amber-100 dark:border-amber-900/50">
+            <div className="bg-primary/10 p-4 rounded-lg border border-primary/20">
               <p>
                 <span className="font-medium">Lembre-se:</span> Paciência é tudo na transformação corporal. O corpo que
                 você quer demora tempo para ser construído — e os resultados duradouros vêm de quem entende que é uma
@@ -180,21 +181,21 @@ const EducationalContent = () => {
 
             <div className="mb-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-green-50 dark:bg-green-950/20 p-4 rounded-lg border border-green-100 dark:border-green-900/50 h-full">
+                <div className="bg-primary/10 p-4 rounded-lg border border-primary/20 h-full">
                   <h3 className="font-medium mb-3 flex items-center gap-2">
-                    <Target className="h-5 w-5 text-green-600" />
+                    <Target className="h-5 w-5 text-primary" />
                     Meta de perda ideal
                   </h3>
-                  <p className="text-2xl font-bold text-green-600 mb-3">0,5 a 1kg por semana</p>
+                  <p className="text-2xl font-bold text-primary mb-3">0,5 a 1kg por semana</p>
                   <p>
                     Este ritmo permite que você preserve músculo, mantenha sua energia e metabolismo, e o mais
                     importante: <span className="font-medium">não sofra o efeito sanfona</span> depois.
                   </p>
                 </div>
 
-                <div className="bg-red-50 dark:bg-red-950/20 p-4 rounded-lg border border-red-100 dark:border-red-900/50 h-full">
+                <div className="bg-primary/10 p-4 rounded-lg border border-primary/20 h-full">
                   <h3 className="font-medium mb-3 flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-red-600" />O que acontece se for mais rápido
+                    <AlertTriangle className="h-5 w-5 text-primary" />O que acontece se for mais rápido
                   </h3>
                   <p className="mb-2">Tentou perder 2kg+ por semana? Prepare-se para:</p>
                   <ul className="list-disc pl-5 space-y-1">
@@ -210,7 +211,7 @@ const EducationalContent = () => {
             <div className="pl-2 mb-6">
               <h3 className="font-medium mb-2">Para quem quer ganhar massa muscular:</h3>
               <p className="mb-4">O ganho muscular natural é um processo lento, mas consistente:</p>
-              <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-100 dark:border-blue-900/50">
+              <div className="bg-primary/10 p-4 rounded-lg border border-primary/20">
                 <p className="mb-1">
                   <span className="font-medium">Iniciantes:</span> Até 900g de músculo por mês (nos primeiros 6 meses)
                 </p>
@@ -251,58 +252,58 @@ const EducationalContent = () => {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              <div className="bg-gradient-to-b from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/20 p-5 rounded-lg border border-blue-200 dark:border-blue-800/50">
-                <h3 className="font-medium mb-3 text-blue-700 dark:text-blue-400">Iniciante</h3>
+              <div className="bg-primary/10 p-5 rounded-lg border border-primary/20">
+                <h3 className="font-medium mb-3 text-primary">Iniciante</h3>
                 <p className="text-sm mb-3">Menos de 1 ano de treino consistente</p>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <Star className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                     <span>Foque em consistência, não perfeição</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <Star className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                     <span>Ajustes a cada 3-4 semanas são suficientes</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <Star className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                     <span>Seu corpo responderá bem a quase qualquer estímulo</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="bg-gradient-to-b from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/20 p-5 rounded-lg border border-purple-200 dark:border-purple-800/50">
-                <h3 className="font-medium mb-3 text-purple-700 dark:text-purple-400">Intermediário</h3>
+              <div className="bg-primary/10 p-5 rounded-lg border border-primary/20">
+                <h3 className="font-medium mb-3 text-primary">Intermediário</h3>
                 <p className="text-sm mb-3">1-3 anos de treino estruturado</p>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                    <Star className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                     <span>Precisão maior com macros se torna importante</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                    <Star className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                     <span>Ciclagem de carboidratos pode trazer benefícios</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                    <Star className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                     <span>Considere timing nutricional ao redor dos treinos</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="bg-gradient-to-b from-amber-50 to-amber-100 dark:from-amber-950/30 dark:to-amber-900/20 p-5 rounded-lg border border-amber-200 dark:border-amber-800/50">
-                <h3 className="font-medium mb-3 text-amber-700 dark:text-amber-400">Avançado</h3>
+              <div className="bg-primary/10 p-5 rounded-lg border border-primary/20">
+                <h3 className="font-medium mb-3 text-primary">Avançado</h3>
                 <p className="text-sm mb-3">3+ anos de treino sério e dieta estruturada</p>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                    <Star className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                     <span>Ajustes mais frequentes e precisos são necessários</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                    <Star className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                     <span>Periodização nutricional alinhada aos ciclos de treino</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                    <Star className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                     <span>Microajustes fazem grande diferença nos resultados</span>
                   </li>
                 </ul>
