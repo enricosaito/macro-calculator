@@ -276,7 +276,7 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
           Importante!
         </h3>
         <p>
-          Dedique 3 minutos para ler as notas informativas abaixo e entenda como aproveitar ao máximo seus resultados.
+          Dedique <strong>3 minutos</strong> para ler as anotações abaixo 👇
         </p>
         <Button
           variant="link"
