@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, CookingPot, Lock } from "lucide-react";
+import { Search, CookingPot, Lock, ShoppingBasket, InfoIcon } from "lucide-react";
 import { ingredients } from "@/lib/ingredients-data";
 import { Recipe, recipes } from "@/lib/recipes-data";
 import { suggestRecipes } from "@/lib/recipe-suggestions";
@@ -14,7 +14,6 @@ import SavedRecipes from "@/components/recipe-planner/saved-recipes";
 import { useSavedRecipes } from "@/hooks/useSavedRecipes";
 import { useAuth } from "@/context/AuthContext";
 import { motion } from "framer-motion";
-import { InfoIcon } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import LoginPrompt from "@/components/recipe-planner/login-prompt";
 
@@ -97,10 +96,13 @@ const RecipePlanner = () => {
 
   return (
     <div className="container mx-auto py-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">Planejador de Receitas</h1>
-      <p className="text-center text-muted-foreground mb-8">
-        Selecione os ingredientes que você tem e nós sugeriremos receitas compatíveis com seus objetivos de macros.
-      </p>
+      <div className="py-10 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/30 dark:to-blue-950/30 mb-8 rounded-xl border border-green-100 dark:border-green-900/30">
+        <h1 className="text-4xl font-bold mb-4 text-center">Planejador de Receitas</h1>
+        <p className="text-center text-muted-foreground max-w-2xl mx-auto px-4">
+          Selecione os ingredientes que você tem disponíveis e descubra receitas deliciosas que combinam perfeitamente
+          com seus objetivos de macros!
+        </p>
+      </div>
 
       <Tabs defaultValue="explore" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-2 mb-8">
@@ -129,17 +131,45 @@ const RecipePlanner = () => {
               </AlertDescription>
             </Alert>
           </motion.div>
+
           {/* Search Bar */}
-          <div className="relative mb-6">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              type="text"
-              placeholder="Buscar ingredientes adicionais..."
-              className="pl-10"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          <div className="relative mb-8">
+            <div className="max-w-xl mx-auto">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+              <Input
+                type="text"
+                placeholder="Buscar ingredientes adicionais..."
+                className="pl-12 h-12 text-lg rounded-full border-2 border-border/50 focus:border-primary/50 shadow-sm"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
           </div>
+
+          {/* Popular Ingredients Quick Select */}
+          {searchTerm.trim() === "" && (
+            <div className="mb-8">
+              <h3 className="text-lg font-medium mb-3 text-center">Ingredientes Populares</h3>
+              <div className="flex flex-wrap justify-center gap-2 max-w-4xl mx-auto">
+                {ingredients
+                  .filter((ing) => (ing.commonality || 0) > 85)
+                  .sort((a, b) => (b.commonality || 0) - (a.commonality || 0))
+                  .slice(0, 8)
+                  .map((ingredient) => (
+                    <Button
+                      key={ingredient.id}
+                      variant={selectedIngredients.includes(ingredient.id) ? "default" : "outline"}
+                      size="lg"
+                      onClick={() => toggleIngredient(ingredient.id)}
+                      className="h-auto py-3 px-4 rounded-xl"
+                    >
+                      <span className="text-lg mr-2">{ingredient.emoji}</span>
+                      {ingredient.name}
+                    </Button>
+                  ))}
+              </div>
+            </div>
+          )}
 
           {/* Search Results */}
           {searchTerm.trim() !== "" && filteredIngredients.length > 0 && (
@@ -150,16 +180,51 @@ const RecipePlanner = () => {
                   <Button
                     key={ingredient.id}
                     variant={selectedIngredients.includes(ingredient.id) ? "default" : "outline"}
-                    size="sm"
+                    size="lg"
                     onClick={() => toggleIngredient(ingredient.id)}
-                    className="h-auto py-1 px-3"
+                    className="h-auto py-3 px-4 rounded-xl"
                   >
-                    {ingredient.emoji} {ingredient.name}
+                    <span className="text-lg mr-2">{ingredient.emoji}</span>
+                    {ingredient.name}
                   </Button>
                 ))}
               </div>
             </div>
           )}
+
+          {/* Selected Ingredients Summary */}
+          <div className="bg-gradient-to-r from-primary/5 to-transparent p-6 rounded-xl mb-10 border border-primary/10">
+            <h3 className="text-xl font-medium mb-4 flex items-center">
+              <ShoppingBasket className="h-5 w-5 mr-2 text-primary" />
+              Ingredientes Selecionados ({selectedIngredients.length})
+            </h3>
+
+            {selectedIngredients.length === 0 ? (
+              <div className="text-center py-4 text-muted-foreground">
+                <p>Selecione ingredientes acima para começar</p>
+                <p className="text-sm mt-1">Quanto mais ingredientes você selecionar, melhores serão as sugestões!</p>
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {selectedIngredients.map((id) => {
+                  const ingredient = ingredients.find((ing) => ing.id === id);
+                  return (
+                    <Button
+                      key={id}
+                      variant="default"
+                      size="lg"
+                      className="h-auto py-2 px-4 bg-primary/80 hover:bg-primary/70"
+                      onClick={() => toggleIngredient(id)}
+                    >
+                      <span className="text-lg mr-2">{ingredient?.emoji}</span>
+                      {ingredient?.name}
+                      <span className="ml-2 opacity-70">✕</span>
+                    </Button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
           {/* Ingredient Categories */}
           <Card className="mb-8">
@@ -189,30 +254,6 @@ const RecipePlanner = () => {
             </CardContent>
           </Card>
 
-          {/* Selected Ingredients Summary */}
-          <div className="mb-6">
-            <h3 className="text-lg font-medium mb-2">Ingredientes Selecionados ({selectedIngredients.length})</h3>
-            <div className="flex flex-wrap gap-2">
-              {selectedIngredients.map((id) => {
-                const ingredient = ingredients.find((ing) => ing.id === id);
-                return (
-                  <Button
-                    key={id}
-                    variant="default"
-                    size="sm"
-                    className="h-auto py-1 px-3"
-                    onClick={() => toggleIngredient(id)}
-                  >
-                    {ingredient?.emoji} {ingredient?.name} ✕
-                  </Button>
-                );
-              })}
-              {selectedIngredients.length === 0 && (
-                <p className="text-sm text-muted-foreground">Nenhum ingrediente selecionado</p>
-              )}
-            </div>
-          </div>
-
           {/* Information about total recipes */}
           <div className="flex justify-center mb-8">
             <div className="bg-primary/5 rounded-lg p-3 text-center max-w-lg">
@@ -227,21 +268,21 @@ const RecipePlanner = () => {
           </div>
 
           {/* Generate Button */}
-          <div className="flex justify-center mb-8">
+          <div className="flex justify-center mb-12">
             <Button
               size="lg"
               disabled={selectedIngredients.length === 0 || isGeneratingRecipes}
-              className="px-8"
+              className="px-10 py-6 text-lg rounded-xl shadow-md hover:shadow-lg transform transition-all hover:-translate-y-1"
               onClick={handleGenerateRecipes}
             >
               {isGeneratingRecipes ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
                   Gerando Receitas...
                 </>
               ) : (
                 <>
-                  <CookingPot className="mr-2 h-5 w-5" />
+                  <CookingPot className="mr-3 h-6 w-6" />
                   Gerar Ideias de Receitas
                 </>
               )}
@@ -283,7 +324,7 @@ const RecipePlanner = () => {
               )}
 
               {processedRecipes.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {processedRecipes.map((recipe) => (
                     <RecipeCard
                       key={recipe.id}
