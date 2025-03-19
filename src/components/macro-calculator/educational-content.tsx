@@ -16,6 +16,7 @@ const EducationalContent = () => {
   return (
     <div id="educational-content" className="space-y-48 mt-32 pt-16 mb-24 relative border-t border-border/20">
       <motion.div
+        id="education-point-1"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: "-100px" }}
