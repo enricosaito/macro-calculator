@@ -3,10 +3,25 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import Dashboard from "../dashboard";
 import { useCalculations } from "@/hooks/useCalculations";
+import { Timestamp } from "firebase/firestore";
 
 // Mock the hooks
 vi.mock("@/hooks/useCalculations", () => ({
   useCalculations: vi.fn(),
+}));
+
+// Mock firebase/firestore
+vi.mock("firebase/firestore", () => ({
+  Timestamp: {
+    now: () => ({
+      seconds: Date.now() / 1000,
+      nanoseconds: 0,
+      toDate: () => new Date(),
+      toMillis: () => Date.now(),
+      isEqual: () => false,
+      toJSON: () => ({}),
+    }),
+  },
 }));
 
 describe("Dashboard component", () => {
@@ -44,17 +59,27 @@ describe("Dashboard component", () => {
   });
 
   it("displays calculation results when data exists", () => {
+    // Create a proper timestamp mock
+    const timestamp = {
+      seconds: Date.now() / 1000,
+      nanoseconds: 0,
+      toDate: () => new Date(),
+      toMillis: () => Date.now(),
+      isEqual: () => false,
+      toJSON: () => ({}),
+    } as unknown as Timestamp;
+
     // Mock calculation data
     const mockCalculations = [
       {
         id: "1",
         userId: "user123",
-        timestamp: { seconds: Date.now() / 1000, nanoseconds: 0 },
+        timestamp,
         data: {
           weight: 70,
           height: 175,
           age: 30,
-          sex: "male",
+          sex: "male" as const,
           activityLevel: "1.55",
           goal: "maintain",
         },
