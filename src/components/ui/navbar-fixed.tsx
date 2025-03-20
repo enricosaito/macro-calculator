@@ -138,6 +138,7 @@ const Navbar = () => {
                   <p className="text-sm font-medium">Logado como:</p>
                   <p className="text-sm text-muted-foreground mb-2">{currentUser.email}</p>
                   <Button variant="outline" onClick={handleLogout} className="gap-2 w-full justify-center">
+                    <LogOut className="h-4 w-4" />
                     Sair
                   </Button>
                 </div>
