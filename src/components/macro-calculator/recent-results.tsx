@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useCalculations } from "@/hooks/useCalculations";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -8,11 +8,17 @@ const RecentResults = () => {
   const { calculations, loading } = useCalculations();
   const [expanded, setExpanded] = useState(false);
 
-  if (loading || !calculations || calculations.length === 0) {
+  // Use useMemo to get and process the most recent calculation
+  const mostRecent = useMemo(() => {
+    if (loading || !calculations || calculations.length === 0) {
+      return null;
+    }
+    return calculations[0]; // Calculations are ordered by timestamp desc
+  }, [calculations, loading]);
+
+  if (!mostRecent) {
     return null;
   }
-
-  const mostRecent = calculations[0]; // Calculations are ordered by timestamp desc
 
   return (
     <div className="relative">
