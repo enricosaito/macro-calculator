@@ -5,9 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Flame, Dumbbell, Croissant, Droplet, ArrowLeft, Share2, Info, BookOpen } from "lucide-react";
-import { useCalculations } from "@/hooks/useCalculations";
+import { Flame, Dumbbell, Croissant, Droplet, ArrowLeft, Share2, Info, BookOpen, UtensilsCrossed } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { db } from "@/lib/firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 interface ResultsPageProps {
   userData: {
@@ -24,7 +25,6 @@ interface ResultsPageProps {
 const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const { saveCalculation } = useCalculations();
 
   // Calculate BMR
   const calculateBMR = () => {
@@ -94,6 +94,11 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
   // Track saving
   const hasSavedRef = useRef(false);
 
+  // Navigate to recipe planner
+  const goToRecipePlanner = () => {
+    navigate("/recipes");
+  };
+
   // Handle sharing results
   const handleShare = () => {
     if (navigator.share) {
@@ -135,38 +140,48 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
     }
   };
 
+  // Save to user profile if logged in
   useEffect(() => {
-    const saveResults = async () => {
+    const saveToUserProfile = async () => {
       // Guard against multiple saves and ensure user is logged in
       if (!currentUser || hasSavedRef.current) return;
 
       try {
-        await saveCalculation({
-          data: {
-            weight: Number(userData.weight),
-            height: Number(userData.height),
-            age: Number(userData.age),
-            sex: userData.sex as "male" | "female",
-            activityLevel: userData.activityLevel,
-            goal: userData.goal,
+        // Save to user profile document
+        const userDocRef = doc(db, "users", currentUser.uid);
+        await setDoc(
+          userDocRef,
+          {
+            latestMacros: {
+              data: {
+                weight: Number(userData.weight),
+                height: Number(userData.height),
+                age: Number(userData.age),
+                sex: userData.sex,
+                activityLevel: userData.activityLevel,
+                goal: userData.goal,
+              },
+              results: {
+                bmr,
+                tdee,
+                macros,
+              },
+              updatedAt: new Date(),
+            },
           },
-          results: {
-            bmr,
-            tdee,
-            macros,
-          },
-        });
+          { merge: true }
+        ); // Use merge to avoid overwriting other user data
+
         // Mark as saved to prevent subsequent saves
         hasSavedRef.current = true;
       } catch (error) {
-        console.error("Error saving results:", error);
+        console.error("Error saving to user profile:", error);
       }
     };
 
-    saveResults();
+    saveToUserProfile();
   }, [
     currentUser,
-    saveCalculation,
     bmr,
     tdee,
     macros,
@@ -258,23 +273,33 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
 
       {/* Action Buttons */}
       <motion.div variants={item} className="flex flex-col gap-3 mt-8">
-        <Button onClick={handleShare} variant="outline" size="lg" className="gap-2 w-full">
-          <Share2 className="h-4 w-4" />
-          Compartilhar Resultados
+        {/* New Recipe Planner Button */}
+        <Button
+          onClick={goToRecipePlanner}
+          size="lg"
+          className="gap-2 w-full bg-gradient-to-r from-primary to-primary/80 shadow-md"
+        >
+          <UtensilsCrossed className="h-4 w-4" />
+          Explorar Receitas para Seus Macros
         </Button>
 
         <div className="grid grid-cols-2 gap-3">
+          <Button onClick={handleShare} variant="outline" size="lg" className="gap-2">
+            <Share2 className="h-4 w-4" />
+            Compartilhar
+          </Button>
+
           <Button onClick={onStartOver} variant="outline" size="lg" className="gap-2">
             <ArrowLeft className="h-4 w-4" />
             Recalcular
           </Button>
-
-          {!currentUser && (
-            <Button onClick={() => navigate("/login")} size="lg">
-              Salvar Resultados
-            </Button>
-          )}
         </div>
+
+        {!currentUser && (
+          <Button onClick={() => navigate("/login")} variant="outline" size="lg">
+            Salvar Resultados
+          </Button>
+        )}
       </motion.div>
 
       {/* Call to Action */}
