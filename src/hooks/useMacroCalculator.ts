@@ -126,7 +126,7 @@ const useMacroCalculator = (initialData?: MacroCalculation) => {
       };
       saveCalculationToStorage(calculationData);
 
-      // If user is authenticated, also save to Firestore
+      // If user is authenticated, also try to save to Firestore
       if (currentUser && step === 4) {
         // Only save completed calculations to Firestore
         try {
@@ -144,6 +144,8 @@ const useMacroCalculator = (initialData?: MacroCalculation) => {
           );
         } catch (error) {
           console.error("Error saving to Firestore:", error);
+          // Don't throw - just log the error and continue
+          // App will continue to function with local storage
         }
       }
     },
