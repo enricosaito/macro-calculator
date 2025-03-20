@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { saveCalculationToStorage } from "@/lib/storage-utils";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -90,6 +91,26 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
   const macros = calculateMacros();
   const bmr = calculateBMR();
   const tdee = calculateTDEE();
+
+  const calculationData = {
+    currentStep: 4, // Results step
+    userData: {
+      weight: userData.weight,
+      height: userData.height,
+      age: userData.age,
+      sex: userData.sex,
+      activityLevel: userData.activityLevel,
+      goal: userData.goal,
+    },
+    timestamp: Date.now(),
+    results: {
+      calories: macros.calories,
+      protein: macros.protein,
+      carbs: macros.carbs,
+      fats: macros.fats,
+    },
+  };
+  saveCalculationToStorage(calculationData);
 
   // Track saving
   const hasSavedRef = useRef(false);
