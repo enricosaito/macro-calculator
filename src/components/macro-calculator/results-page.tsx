@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Flame, Dumbbell, Croissant, Droplet, ArrowLeft, Share2, Info } from "lucide-react";
+import { Flame, Dumbbell, Croissant, Droplet, ArrowLeft, Share2, Info, BookOpen } from "lucide-react";
 import { useCalculations } from "@/hooks/useCalculations";
 import { useAuth } from "@/context/AuthContext";
 
@@ -114,6 +114,21 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
         .then(() => {
           alert("Resultados copiados para a área de transferência!");
         });
+    }
+  };
+
+  const scrollToEducationalContent = () => {
+    const educationPoint = document.getElementById("education-point-1");
+    if (educationPoint) {
+      // Get the position of the element
+      const elementPosition = educationPoint.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - 120; // Position it 120px from the top
+
+      // Scroll to that position
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
     }
   };
 
@@ -265,17 +280,9 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
         <p>
           Dedique <strong>3 minutos</strong> para ler as anotações abaixo 👇
         </p>
-        <Button
-          variant="link"
-          className="mt-2"
-          onClick={() => {
-            const educationalSection = document.getElementById("educational-content");
-            if (educationalSection) {
-              educationalSection.scrollIntoView({ behavior: "smooth" });
-            }
-          }}
-        >
-          Ler agora ↓
+        <Button onClick={scrollToEducationalContent} variant="outline" className="mt-4 gap-2">
+          <BookOpen className="h-4 w-4" />
+          Ler mais ↓
         </Button>
       </motion.div>
     </motion.div>

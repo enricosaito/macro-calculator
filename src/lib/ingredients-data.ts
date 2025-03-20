@@ -1,7 +1,7 @@
 export interface Ingredient {
   id: string;
   name: string;
-  category: "protein" | "carb" | "fat";
+  category: "protein" | "carb" | "fat" | "spice";
   protein: number; // grams per 100g
   carbs: number; // grams per 100g
   fats: number; // grams per 100g
@@ -686,5 +686,223 @@ export const ingredients: Ingredient[] = [
     calories: 290,
     emoji: "🧀",
     commonality: 92,
+  },
+];
+
+// Protein Groups
+export interface ProteinGroup {
+  id: string;
+  name: string;
+  emoji: string;
+  description: string;
+  ingredients: Ingredient[];
+}
+
+export const proteinGroups: ProteinGroup[] = [
+  {
+    id: "red-meat",
+    name: "Carnes Vermelhas",
+    emoji: "🥩",
+    description: "Ricas em ferro e vitamina B12, ideais para ganho de massa muscular",
+    ingredients: ingredients.filter((ing) => ["beef", "pork", "ground-beef"].includes(ing.id)),
+  },
+  {
+    id: "poultry",
+    name: "Frango e Aves",
+    emoji: "🍗",
+    description: "Proteínas magras, perfeitas para dietas de baixa caloria",
+    ingredients: ingredients.filter((ing) => ["chicken-breast", "turkey"].includes(ing.id)),
+  },
+  {
+    id: "fish",
+    name: "Peixes e Frutos do Mar",
+    emoji: "🐟",
+    description: "Ricos em ômega-3 e proteínas de alta qualidade",
+    ingredients: ingredients.filter((ing) => ["tuna", "salmon", "sardines"].includes(ing.id)),
+  },
+  {
+    id: "eggs",
+    name: "Ovos",
+    emoji: "🥚",
+    description: "Proteína completa com todos os aminoácidos essenciais",
+    ingredients: ingredients.filter((ing) => ["eggs"].includes(ing.id)),
+  },
+  {
+    id: "dairy",
+    name: "Laticínios",
+    emoji: "🧀",
+    description: "Boas fontes de proteína e cálcio",
+    ingredients: ingredients.filter((ing) =>
+      ["cheese", "yogurt", "cottage-cheese", "mussarela", "cream-cheese", "requeijao", "whey-protein"].includes(ing.id)
+    ),
+  },
+  {
+    id: "plant-based",
+    name: "Proteínas Vegetais",
+    emoji: "🌱",
+    description: "Opções para vegetarianos e veganos",
+    ingredients: ingredients.filter((ing) => ["tofu", "beans", "lentils", "chickpeas"].includes(ing.id)),
+  },
+];
+
+// Carb Groups
+
+export interface CarbGroup {
+  id: string;
+  name: string;
+  emoji: string;
+  description: string;
+  ingredients: Ingredient[];
+}
+
+export const carbGroups: CarbGroup[] = [
+  {
+    id: "grains",
+    name: "Grãos",
+    emoji: "🌾",
+    description: "Arroz, quinoa e outros grãos integrais",
+    ingredients: ingredients.filter((ing) => ["rice", "brown-rice", "quinoa", "oats"].includes(ing.id)),
+  },
+  {
+    id: "breads",
+    name: "Pães",
+    emoji: "🍞",
+    description: "Pães e produtos de padaria",
+    ingredients: ingredients.filter((ing) => ["bread", "french-bread", "flour"].includes(ing.id)),
+  },
+  {
+    id: "pasta",
+    name: "Massas",
+    emoji: "🍝",
+    description: "Macarrão e outras massas",
+    ingredients: ingredients.filter((ing) => ["pasta"].includes(ing.id)),
+  },
+  {
+    id: "root-vegetables",
+    name: "Tubérculos",
+    emoji: "🥔",
+    description: "Batatas, mandioca e outros tubérculos",
+    ingredients: ingredients.filter((ing) => ["potato", "sweet-potato", "yam", "cassava"].includes(ing.id)),
+  },
+  {
+    id: "vegetables",
+    name: "Vegetais",
+    emoji: "🥦",
+    description: "Legumes e verduras",
+    ingredients: ingredients.filter((ing) =>
+      ["broccoli", "spinach", "tomato", "carrot", "onion", "garlic", "corn"].includes(ing.id)
+    ),
+  },
+  {
+    id: "fruits",
+    name: "Frutas",
+    emoji: "🍎",
+    description: "Frutas frescas",
+    ingredients: ingredients.filter((ing) => ["banana", "apple", "orange", "strawberry", "blueberry"].includes(ing.id)),
+  },
+];
+
+// Additional Ingredients
+
+export interface AdditionalGroup {
+  id: string;
+  name: string;
+  emoji: string;
+  description: string;
+  ingredients: Ingredient[];
+}
+
+export const additionalGroups: AdditionalGroup[] = [
+  {
+    id: "oils-fats",
+    name: "Óleos & Gorduras",
+    emoji: "🫒",
+    description: "Essenciais para cozinhar e dar sabor",
+    ingredients: ingredients.filter((ing) =>
+      ["olive-oil", "butter", "coconut-oil", "cooking-oil", "avocado", "nuts"].includes(ing.id)
+    ),
+  },
+  {
+    id: "seasonings",
+    name: "Temperos Básicos",
+    emoji: "🧂",
+    description: "Sal, pimenta e outros temperos essenciais",
+    ingredients: [
+      ...ingredients.filter((ing) => ["salt", "pepper", "garlic", "onion"].includes(ing.id)),
+      // Add spice ingredients that aren't in the main ingredients array
+      {
+        id: "herbs",
+        name: "Ervas Frescas",
+        category: "spice",
+        protein: 0,
+        carbs: 0,
+        fats: 0,
+        calories: 0,
+        emoji: "🌿",
+      },
+      {
+        id: "oregano",
+        name: "Orégano",
+        category: "spice",
+        protein: 0,
+        carbs: 0,
+        fats: 0,
+        calories: 0,
+        emoji: "🌱",
+      },
+    ],
+  },
+  {
+    id: "flavor-enhancers",
+    name: "Aromatizantes",
+    emoji: "🍋",
+    description: "Para realçar o sabor dos seus pratos",
+    ingredients: [
+      ...ingredients.filter((ing) => ["lemon", "tomato"].includes(ing.id)),
+      // Add more flavor enhancers
+      {
+        id: "basil",
+        name: "Manjericão",
+        category: "spice",
+        protein: 0,
+        carbs: 0,
+        fats: 0,
+        calories: 0,
+        emoji: "🌱",
+      },
+      {
+        id: "cilantro",
+        name: "Coentro",
+        category: "spice",
+        protein: 0,
+        carbs: 0,
+        fats: 0,
+        calories: 0,
+        emoji: "🌿",
+      },
+    ],
+  },
+  {
+    id: "dairy",
+    name: "Lácteos",
+    emoji: "🧀",
+    description: "Queijos e outros derivados do leite",
+    ingredients: ingredients.filter((ing) => ["cheese", "yogurt", "cream-cheese", "requeijao"].includes(ing.id)),
+  },
+  {
+    id: "supplements",
+    name: "Suplementos",
+    emoji: "💪",
+    description: "Para complementar sua alimentação",
+    ingredients: ingredients.filter((ing) => ["whey-protein"].includes(ing.id)),
+  },
+  {
+    id: "nuts-seeds",
+    name: "Castanhas & Sementes",
+    emoji: "🌰",
+    description: "Para textura e nutrientes adicionais",
+    ingredients: ingredients.filter((ing) =>
+      ["almonds", "walnuts", "peanuts", "flaxseed", "chia-seeds"].includes(ing.id)
+    ),
   },
 ];
