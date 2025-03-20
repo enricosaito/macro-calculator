@@ -14,6 +14,7 @@ import AboutPage from "@/pages/about";
 import TermsPage from "@/pages/terms";
 import PrivacyPage from "@/pages/privacy";
 import NotFoundPage from "@/pages/not-found";
+import RecipeExplorer from "./pages/recipe-explorer";
 import Login from "@/pages/auth/login";
 import Register from "@/pages/auth/register";
 import SettingsToggle from "@/components/ui/SettingsToggle";
@@ -52,8 +53,8 @@ const App = () => {
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="/terms" element={<TermsPage />} />
                     <Route path="/privacy" element={<PrivacyPage />} />
-                    {/* Changed from ProtectedRoute to a regular Route */}
                     <Route path="/recipes" element={<RecipePlanner />} />
+                    <Route path="/explore" element={<RecipeExplorer />} />
                     {/* Catch all route for 404 */}
                     <Route path="*" element={<NotFoundPage />} />
                   </Routes>
