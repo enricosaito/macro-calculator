@@ -23,26 +23,46 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
   // Prepare macro data for display if available
   const macroData = storedCalculation
     ? {
-        calories: Math.round(
-          parseFloat(storedCalculation.userData.weight) *
-            parseFloat(storedCalculation.userData.activityLevel) *
-            (storedCalculation.userData.goal === "lose" ? 0.8 : storedCalculation.userData.goal === "gain" ? 1.1 : 1)
-        ),
-        protein: Math.round(parseFloat(storedCalculation.userData.weight) * 2.2),
-        carbs: Math.round(
-          (parseFloat(storedCalculation.userData.weight) *
-            parseFloat(storedCalculation.userData.activityLevel) *
-            (storedCalculation.userData.goal === "lose" ? 0.8 : storedCalculation.userData.goal === "gain" ? 1.1 : 1) *
-            0.4) /
-            4
-        ),
-        fats: Math.round(
-          (parseFloat(storedCalculation.userData.weight) *
-            parseFloat(storedCalculation.userData.activityLevel) *
-            (storedCalculation.userData.goal === "lose" ? 0.8 : storedCalculation.userData.goal === "gain" ? 1.1 : 1) *
-            0.25) /
-            9
-        ),
+        calories: storedCalculation.results
+          ? Math.round(storedCalculation.results.calories)
+          : Math.round(
+              parseFloat(storedCalculation.userData.weight) *
+                parseFloat(storedCalculation.userData.activityLevel) *
+                (storedCalculation.userData.goal === "lose"
+                  ? 0.8
+                  : storedCalculation.userData.goal === "gain"
+                  ? 1.1
+                  : 1)
+            ),
+        protein: storedCalculation.results
+          ? Math.round(storedCalculation.results.protein)
+          : Math.round(parseFloat(storedCalculation.userData.weight) * 2.2),
+        carbs: storedCalculation.results
+          ? Math.round(storedCalculation.results.carbs)
+          : Math.round(
+              (parseFloat(storedCalculation.userData.weight) *
+                parseFloat(storedCalculation.userData.activityLevel) *
+                (storedCalculation.userData.goal === "lose"
+                  ? 0.8
+                  : storedCalculation.userData.goal === "gain"
+                  ? 1.1
+                  : 1) *
+                0.4) /
+                4
+            ),
+        fats: storedCalculation.results
+          ? Math.round(storedCalculation.results.fats)
+          : Math.round(
+              (parseFloat(storedCalculation.userData.weight) *
+                parseFloat(storedCalculation.userData.activityLevel) *
+                (storedCalculation.userData.goal === "lose"
+                  ? 0.8
+                  : storedCalculation.userData.goal === "gain"
+                  ? 1.1
+                  : 1) *
+                0.25) /
+                9
+            ),
       }
     : null;
 
