@@ -1,23 +1,80 @@
-// src/components/macro-calculator/dashboard.tsx
 import { useCalculations } from "@/hooks/useCalculations";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Flame, Dumbbell, Croissant, Droplet } from "lucide-react";
+import { useMemo } from "react"; // Add useMemo
 import HistoryDisplay from "./history-display";
 import MealTimingCalculator from "./meal-timing-calculator";
 
 const Dashboard = ({ onNewCalculation }: { onNewCalculation: () => void }) => {
   const { calculations, loading } = useCalculations();
 
+  // Use useMemo to derive values from calculations to prevent unnecessary recalculations
+  const calculationData = useMemo(() => {
+    if (!calculations || calculations.length === 0) return null;
+
+    const mostRecent = calculations[0];
+    const macros = mostRecent.results.macros;
+    const { protein, carbs, fats } = macros;
+
+    // Calculate percentages for display
+    const totalCalories = macros.calories;
+    const proteinCalories = protein * 4;
+    const carbsCalories = carbs * 4;
+    const fatsCalories = fats * 9;
+
+    const proteinPercentage = Math.round((proteinCalories / totalCalories) * 100);
+    const carbsPercentage = Math.round((carbsCalories / totalCalories) * 100);
+    const fatsPercentage = Math.round((fatsCalories / totalCalories) * 100);
+
+    // Calculate water intake recommendation
+    const calculateWaterIntake = () => {
+      const weightKg = mostRecent.data.weight;
+      if (isNaN(weightKg)) return null;
+
+      // Base calculation: 35ml per kg of body weight
+      let waterIntakeML = weightKg * 35;
+
+      // Adjust based on activity level
+      const activityMultiplier = parseFloat(mostRecent.data.activityLevel);
+      if (!isNaN(activityMultiplier)) {
+        if (activityMultiplier >= 1.55) {
+          waterIntakeML += 500; // Add 500ml for moderate to very active
+        }
+        if (activityMultiplier >= 1.725) {
+          waterIntakeML += 500; // Add another 500ml for very to extremely active
+        }
+      }
+
+      const waterIntakeL = (waterIntakeML / 1000).toFixed(1);
+      return waterIntakeL;
+    };
+
+    return {
+      mostRecent,
+      macros,
+      protein,
+      carbs,
+      fats,
+      proteinPercentage,
+      carbsPercentage,
+      fatsPercentage,
+      waterIntake: calculateWaterIntake(),
+    };
+  }, [calculations]); // Only recalculate when calculations change
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div
+          className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"
+          data-testid="loading-spinner"
+        ></div>
       </div>
     );
   }
 
-  if (!calculations || calculations.length === 0) {
+  if (!calculationData) {
     return (
       <div className="text-center py-12">
         <h2 className="text-2xl font-bold mb-4">Bem-vindo à Calculadora de Macros</h2>
@@ -29,44 +86,8 @@ const Dashboard = ({ onNewCalculation }: { onNewCalculation: () => void }) => {
     );
   }
 
-  const mostRecent = calculations[0];
-  const macros = mostRecent.results.macros;
-  const { protein, carbs, fats } = macros;
-
-  // Calculate percentages for display
-  const totalCalories = macros.calories;
-  const proteinCalories = protein * 4;
-  const carbsCalories = carbs * 4;
-  const fatsCalories = fats * 9;
-
-  const proteinPercentage = Math.round((proteinCalories / totalCalories) * 100);
-  const carbsPercentage = Math.round((carbsCalories / totalCalories) * 100);
-  const fatsPercentage = Math.round((fatsCalories / totalCalories) * 100);
-
-  // Calculate water intake recommendation
-  const calculateWaterIntake = () => {
-    const weightKg = mostRecent.data.weight;
-    if (isNaN(weightKg)) return null;
-
-    // Base calculation: 35ml per kg of body weight
-    let waterIntakeML = weightKg * 35;
-
-    // Adjust based on activity level
-    const activityMultiplier = parseFloat(mostRecent.data.activityLevel);
-    if (!isNaN(activityMultiplier)) {
-      if (activityMultiplier >= 1.55) {
-        waterIntakeML += 500; // Add 500ml for moderate to very active
-      }
-      if (activityMultiplier >= 1.725) {
-        waterIntakeML += 500; // Add another 500ml for very to extremely active
-      }
-    }
-
-    const waterIntakeL = (waterIntakeML / 1000).toFixed(1);
-    return waterIntakeL;
-  };
-
-  const waterIntake = calculateWaterIntake();
+  const { mostRecent, macros, protein, carbs, fats, proteinPercentage, carbsPercentage, fatsPercentage, waterIntake } =
+    calculationData;
 
   // Define colors for the macro cards
   const macroColors = {
