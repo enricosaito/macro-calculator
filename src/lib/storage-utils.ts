@@ -9,6 +9,12 @@ export interface StoredCalculation {
     goal: string;
   };
   timestamp: number;
+  results?: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fats: number;
+  };
 }
 
 export const saveCalculationToStorage = (data: StoredCalculation): void => {
