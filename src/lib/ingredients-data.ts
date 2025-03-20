@@ -689,6 +689,7 @@ export const ingredients: Ingredient[] = [
   },
 ];
 
+// Protein Groups
 export interface ProteinGroup {
   id: string;
   name: string;
@@ -697,7 +698,6 @@ export interface ProteinGroup {
   ingredients: Ingredient[];
 }
 
-// Add this to the file as well
 export const proteinGroups: ProteinGroup[] = [
   {
     id: "red-meat",
@@ -742,5 +742,62 @@ export const proteinGroups: ProteinGroup[] = [
     emoji: "🌱",
     description: "Opções para vegetarianos e veganos",
     ingredients: ingredients.filter((ing) => ["tofu", "beans", "lentils", "chickpeas"].includes(ing.id)),
+  },
+];
+
+// Carb Groups
+
+export interface CarbGroup {
+  id: string;
+  name: string;
+  emoji: string;
+  description: string;
+  ingredients: Ingredient[];
+}
+
+export const carbGroups: CarbGroup[] = [
+  {
+    id: "grains",
+    name: "Grãos",
+    emoji: "🌾",
+    description: "Arroz, quinoa e outros grãos integrais",
+    ingredients: ingredients.filter((ing) => ["rice", "brown-rice", "quinoa", "oats"].includes(ing.id)),
+  },
+  {
+    id: "breads",
+    name: "Pães",
+    emoji: "🍞",
+    description: "Pães e produtos de padaria",
+    ingredients: ingredients.filter((ing) => ["bread", "french-bread", "flour"].includes(ing.id)),
+  },
+  {
+    id: "pasta",
+    name: "Massas",
+    emoji: "🍝",
+    description: "Macarrão e outras massas",
+    ingredients: ingredients.filter((ing) => ["pasta"].includes(ing.id)),
+  },
+  {
+    id: "root-vegetables",
+    name: "Tubérculos",
+    emoji: "🥔",
+    description: "Batatas, mandioca e outros tubérculos",
+    ingredients: ingredients.filter((ing) => ["potato", "sweet-potato", "yam", "cassava"].includes(ing.id)),
+  },
+  {
+    id: "vegetables",
+    name: "Vegetais",
+    emoji: "🥦",
+    description: "Legumes e verduras",
+    ingredients: ingredients.filter((ing) =>
+      ["broccoli", "spinach", "tomato", "carrot", "onion", "garlic", "corn"].includes(ing.id)
+    ),
+  },
+  {
+    id: "fruits",
+    name: "Frutas",
+    emoji: "🍎",
+    description: "Frutas frescas",
+    ingredients: ingredients.filter((ing) => ["banana", "apple", "orange", "strawberry", "blueberry"].includes(ing.id)),
   },
 ];
