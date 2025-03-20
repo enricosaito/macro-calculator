@@ -191,7 +191,7 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
             },
           },
           { merge: true }
-        ); // Use merge to avoid overwriting other user data
+        );
 
         // Mark as saved to prevent subsequent saves
         hasSavedRef.current = true;
