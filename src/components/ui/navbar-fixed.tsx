@@ -1,4 +1,4 @@
-import { Calculator, Utensils, LogOut, Menu, X } from "lucide-react";
+import { Calculator, Utensils, LogOut, Menu, X, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -27,6 +27,11 @@ const Navbar = () => {
     //   path: "/about",
     //   icon: Info,
     // },
+    {
+      label: "Explorar",
+      path: "/explore",
+      icon: Search,
+    },
   ];
 
   const handleLogout = async () => {
