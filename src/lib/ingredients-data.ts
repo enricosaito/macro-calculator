@@ -733,7 +733,7 @@ export const proteinGroups: ProteinGroup[] = [
     emoji: "🧀",
     description: "Boas fontes de proteína e cálcio",
     ingredients: ingredients.filter((ing) =>
-      ["cheese", "yogurt", "cottage-cheese", "mussarela", "cream-cheese", "requeijao"].includes(ing.id)
+      ["cheese", "yogurt", "cottage-cheese", "mussarela", "cream-cheese", "requeijao", "whey-protein"].includes(ing.id)
     ),
   },
   {
