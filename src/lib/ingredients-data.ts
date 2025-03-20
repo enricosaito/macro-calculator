@@ -1,7 +1,7 @@
 export interface Ingredient {
   id: string;
   name: string;
-  category: "protein" | "carb" | "fat";
+  category: "protein" | "carb" | "fat" | "spice";
   protein: number; // grams per 100g
   carbs: number; // grams per 100g
   fats: number; // grams per 100g
@@ -799,5 +799,110 @@ export const carbGroups: CarbGroup[] = [
     emoji: "🍎",
     description: "Frutas frescas",
     ingredients: ingredients.filter((ing) => ["banana", "apple", "orange", "strawberry", "blueberry"].includes(ing.id)),
+  },
+];
+
+// Additional Ingredients
+
+export interface AdditionalGroup {
+  id: string;
+  name: string;
+  emoji: string;
+  description: string;
+  ingredients: Ingredient[];
+}
+
+export const additionalGroups: AdditionalGroup[] = [
+  {
+    id: "oils-fats",
+    name: "Óleos & Gorduras",
+    emoji: "🫒",
+    description: "Essenciais para cozinhar e dar sabor",
+    ingredients: ingredients.filter((ing) =>
+      ["olive-oil", "butter", "coconut-oil", "cooking-oil", "avocado", "nuts"].includes(ing.id)
+    ),
+  },
+  {
+    id: "seasonings",
+    name: "Temperos Básicos",
+    emoji: "🧂",
+    description: "Sal, pimenta e outros temperos essenciais",
+    ingredients: [
+      ...ingredients.filter((ing) => ["salt", "pepper", "garlic", "onion"].includes(ing.id)),
+      // Add spice ingredients that aren't in the main ingredients array
+      {
+        id: "herbs",
+        name: "Ervas Frescas",
+        category: "spice",
+        protein: 0,
+        carbs: 0,
+        fats: 0,
+        calories: 0,
+        emoji: "🌿",
+      },
+      {
+        id: "oregano",
+        name: "Orégano",
+        category: "spice",
+        protein: 0,
+        carbs: 0,
+        fats: 0,
+        calories: 0,
+        emoji: "🌱",
+      },
+    ],
+  },
+  {
+    id: "flavor-enhancers",
+    name: "Aromatizantes",
+    emoji: "🍋",
+    description: "Para realçar o sabor dos seus pratos",
+    ingredients: [
+      ...ingredients.filter((ing) => ["lemon", "tomato"].includes(ing.id)),
+      // Add more flavor enhancers
+      {
+        id: "basil",
+        name: "Manjericão",
+        category: "spice",
+        protein: 0,
+        carbs: 0,
+        fats: 0,
+        calories: 0,
+        emoji: "🌱",
+      },
+      {
+        id: "cilantro",
+        name: "Coentro",
+        category: "spice",
+        protein: 0,
+        carbs: 0,
+        fats: 0,
+        calories: 0,
+        emoji: "🌿",
+      },
+    ],
+  },
+  {
+    id: "dairy",
+    name: "Lácteos",
+    emoji: "🧀",
+    description: "Queijos e outros derivados do leite",
+    ingredients: ingredients.filter((ing) => ["cheese", "yogurt", "cream-cheese", "requeijao"].includes(ing.id)),
+  },
+  {
+    id: "supplements",
+    name: "Suplementos",
+    emoji: "💪",
+    description: "Para complementar sua alimentação",
+    ingredients: ingredients.filter((ing) => ["whey-protein"].includes(ing.id)),
+  },
+  {
+    id: "nuts-seeds",
+    name: "Castanhas & Sementes",
+    emoji: "🌰",
+    description: "Para textura e nutrientes adicionais",
+    ingredients: ingredients.filter((ing) =>
+      ["almonds", "walnuts", "peanuts", "flaxseed", "chia-seeds"].includes(ing.id)
+    ),
   },
 ];
