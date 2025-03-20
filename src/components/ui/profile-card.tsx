@@ -12,7 +12,7 @@ interface ProfileCardProps {
 }
 
 const ProfileCard = ({ onLogout }: ProfileCardProps) => {
-  const { currentUser, userProfile } = useAuth();
+  const { currentUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -24,20 +24,20 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
   const macroData = storedCalculation
     ? {
         calories: Math.round(
-          storedCalculation.userData.weight *
+          parseFloat(storedCalculation.userData.weight) *
             parseFloat(storedCalculation.userData.activityLevel) *
             (storedCalculation.userData.goal === "lose" ? 0.8 : storedCalculation.userData.goal === "gain" ? 1.1 : 1)
         ),
-        protein: Math.round(storedCalculation.userData.weight * 2.2),
+        protein: Math.round(parseFloat(storedCalculation.userData.weight) * 2.2),
         carbs: Math.round(
-          (storedCalculation.userData.weight *
+          (parseFloat(storedCalculation.userData.weight) *
             parseFloat(storedCalculation.userData.activityLevel) *
             (storedCalculation.userData.goal === "lose" ? 0.8 : storedCalculation.userData.goal === "gain" ? 1.1 : 1) *
             0.4) /
             4
         ),
         fats: Math.round(
-          (storedCalculation.userData.weight *
+          (parseFloat(storedCalculation.userData.weight) *
             parseFloat(storedCalculation.userData.activityLevel) *
             (storedCalculation.userData.goal === "lose" ? 0.8 : storedCalculation.userData.goal === "gain" ? 1.1 : 1) *
             0.25) /
