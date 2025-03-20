@@ -1,11 +1,21 @@
+import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LogOut, ChevronDown, ChevronUp, User, Award, Flame, Dumbbell, Croissant, Droplet } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getCalculationFromStorage } from "@/lib/storage-utils";
 import { useNavigate } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+
+// Add a new interface for macro data
+interface MacroData {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fats: number;
+}
 
 interface ProfileCardProps {
   onLogout: () => Promise<void>;
@@ -14,57 +24,65 @@ interface ProfileCardProps {
 const ProfileCard = ({ onLogout }: ProfileCardProps) => {
   const { currentUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [macroData, setMacroData] = useState<MacroData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  // Get macro calculation data from storage if available
-  const storedCalculation = getCalculationFromStorage();
-
-  // Prepare macro data for display if available
-  const macroData = storedCalculation
-    ? {
-        calories: storedCalculation.results
-          ? Math.round(storedCalculation.results.calories)
-          : Math.round(
-              parseFloat(storedCalculation.userData.weight) *
-                parseFloat(storedCalculation.userData.activityLevel) *
-                (storedCalculation.userData.goal === "lose"
-                  ? 0.8
-                  : storedCalculation.userData.goal === "gain"
-                  ? 1.1
-                  : 1)
-            ),
-        protein: storedCalculation.results
-          ? Math.round(storedCalculation.results.protein)
-          : Math.round(parseFloat(storedCalculation.userData.weight) * 2.2),
-        carbs: storedCalculation.results
-          ? Math.round(storedCalculation.results.carbs)
-          : Math.round(
-              (parseFloat(storedCalculation.userData.weight) *
-                parseFloat(storedCalculation.userData.activityLevel) *
-                (storedCalculation.userData.goal === "lose"
-                  ? 0.8
-                  : storedCalculation.userData.goal === "gain"
-                  ? 1.1
-                  : 1) *
-                0.4) /
-                4
-            ),
-        fats: storedCalculation.results
-          ? Math.round(storedCalculation.results.fats)
-          : Math.round(
-              (parseFloat(storedCalculation.userData.weight) *
-                parseFloat(storedCalculation.userData.activityLevel) *
-                (storedCalculation.userData.goal === "lose"
-                  ? 0.8
-                  : storedCalculation.userData.goal === "gain"
-                  ? 1.1
-                  : 1) *
-                0.25) /
-                9
-            ),
+  // Fetch macro data when component mounts or user changes
+  useEffect(() => {
+    const fetchMacroData = async () => {
+      if (!currentUser) {
+        // Use local storage for non-authenticated users
+        const storedCalculation = getCalculationFromStorage();
+        if (storedCalculation && storedCalculation.results) {
+          setMacroData({
+            calories: Math.round(storedCalculation.results.calories),
+            protein: Math.round(storedCalculation.results.protein),
+            carbs: Math.round(storedCalculation.results.carbs),
+            fats: Math.round(storedCalculation.results.fats),
+          });
+        }
+        return;
       }
-    : null;
+
+      // For authenticated users, fetch from Firestore
+      setIsLoading(true);
+      try {
+        const userDocRef = doc(db, "users", currentUser.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists() && userDoc.data().latestMacros) {
+          const firestoreData = userDoc.data().latestMacros;
+          if (firestoreData.results) {
+            setMacroData({
+              calories: Math.round(firestoreData.results.calories),
+              protein: Math.round(firestoreData.results.protein),
+              carbs: Math.round(firestoreData.results.carbs),
+              fats: Math.round(firestoreData.results.fats),
+            });
+          }
+        } else {
+          // Fall back to local storage if no Firestore data
+          const storedCalculation = getCalculationFromStorage();
+          if (storedCalculation && storedCalculation.results) {
+            setMacroData({
+              calories: Math.round(storedCalculation.results.calories),
+              protein: Math.round(storedCalculation.results.protein),
+              carbs: Math.round(storedCalculation.results.carbs),
+              fats: Math.round(storedCalculation.results.fats),
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching macro data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMacroData();
+  }, [currentUser]);
 
   // Handle click outside to close the dropdown
   useEffect(() => {
@@ -115,7 +133,12 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
                   <p className="text-sm text-muted-foreground">{currentUser.email}</p>
                 </div>
 
-                {macroData ? (
+                {isLoading ? (
+                  <div className="bg-secondary/30 rounded-lg p-3 mb-3 text-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary mx-auto mb-1"></div>
+                    <p className="text-sm text-muted-foreground">Carregando dados...</p>
+                  </div>
+                ) : macroData ? (
                   <div className="bg-primary/10 rounded-lg p-3 mb-3">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="text-sm font-medium">Seus macros:</h4>
