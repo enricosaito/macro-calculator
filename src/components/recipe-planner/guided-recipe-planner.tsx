@@ -16,9 +16,8 @@ import { Recipe } from "@/lib/recipes-data";
 import LandingPage from "./landing-page";
 import ProteinSelection from "./protein-selection";
 import CarbSelection from "./carb-selection";
-import FatSelection from "./fat-selection";
-import SpiceSelection from "./spice-selection";
 import ResultsPage from "./results-page";
+import AdditionalSelection from "./additional-selector";
 
 const GuidedRecipePlanner = () => {
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
@@ -84,9 +83,8 @@ const GuidedRecipePlanner = () => {
   const handleNext = () => {
     if (step === "landing") setStep("proteins");
     else if (step === "proteins") setStep("carbs");
-    else if (step === "carbs") setStep("fats");
-    else if (step === "fats") setStep("spices");
-    else if (step === "spices") {
+    else if (step === "carbs") setStep("additional");
+    else if (step === "additional") {
       setIsGeneratingRecipes(true);
       // Generate recipes
       setTimeout(() => {
@@ -101,9 +99,8 @@ const GuidedRecipePlanner = () => {
   // Handle previous step
   const handlePrevious = () => {
     if (step === "carbs") setStep("proteins");
-    else if (step === "fats") setStep("carbs");
-    else if (step === "spices") setStep("fats");
-    else if (step === "results") setStep("spices");
+    else if (step === "additional") setStep("carbs");
+    else if (step === "results") setStep("additional");
   };
 
   // Handle start over
@@ -130,20 +127,17 @@ const GuidedRecipePlanner = () => {
       case "landing":
         return 0;
       case "proteins":
-        return 20;
+        return 33;
       case "carbs":
-        return 40;
-      case "fats":
-        return 60;
-      case "spices":
-        return 80;
+        return 66;
+      case "additional":
+        return 99;
       case "results":
         return 100;
       default:
         return 0;
     }
   };
-
   // Get step number for display
   const getStepNumber = () => {
     switch (step) {
@@ -151,10 +145,8 @@ const GuidedRecipePlanner = () => {
         return 1;
       case "carbs":
         return 2;
-      case "fats":
+      case "additional":
         return 3;
-      case "spices":
-        return 4;
       default:
         return 0;
     }
@@ -183,18 +175,9 @@ const GuidedRecipePlanner = () => {
             onPrevious={handlePrevious}
           />
         );
-      case "fats":
+      case "additional":
         return (
-          <FatSelection
-            selectedIngredients={selectedIngredients}
-            toggleIngredient={toggleIngredient}
-            onNext={handleNext}
-            onPrevious={handlePrevious}
-          />
-        );
-      case "spices":
-        return (
-          <SpiceSelection
+          <AdditionalSelection
             selectedIngredients={selectedIngredients}
             toggleIngredient={toggleIngredient}
             onNext={handleNext}
@@ -266,7 +249,7 @@ const GuidedRecipePlanner = () => {
             className="min-w-32 py-6 text-lg flex items-center gap-2"
             disabled={isGeneratingRecipes}
           >
-            {step === "spices" ? (
+            {step === "additional" ? (
               isGeneratingRecipes ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>

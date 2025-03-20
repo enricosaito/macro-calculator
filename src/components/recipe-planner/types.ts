@@ -2,7 +2,7 @@ import { Ingredient } from "@/lib/ingredients-data";
 import { Recipe } from "@/lib/recipes-data";
 import { User } from "firebase/auth";
 
-export type RecipeStep = "landing" | "proteins" | "carbs" | "fats" | "spices" | "results";
+export type RecipeStep = "landing" | "proteins" | "carbs" | "additional" | "results";
 
 export interface SpiceIngredient {
   id: string;
