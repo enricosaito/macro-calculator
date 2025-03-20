@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -91,6 +91,9 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
   const bmr = calculateBMR();
   const tdee = calculateTDEE();
 
+  // Track saving
+  const hasSavedRef = useRef(false);
+
   // Handle sharing results
   const handleShare = () => {
     if (navigator.share) {
@@ -134,7 +137,8 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
 
   useEffect(() => {
     const saveResults = async () => {
-      if (!currentUser) return;
+      // Guard against multiple saves and ensure user is logged in
+      if (!currentUser || hasSavedRef.current) return;
 
       try {
         await saveCalculation({
@@ -152,6 +156,8 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
             macros,
           },
         });
+        // Mark as saved to prevent subsequent saves
+        hasSavedRef.current = true;
       } catch (error) {
         console.error("Error saving results:", error);
       }
