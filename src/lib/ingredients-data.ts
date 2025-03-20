@@ -688,3 +688,59 @@ export const ingredients: Ingredient[] = [
     commonality: 92,
   },
 ];
+
+export interface ProteinGroup {
+  id: string;
+  name: string;
+  emoji: string;
+  description: string;
+  ingredients: Ingredient[];
+}
+
+// Add this to the file as well
+export const proteinGroups: ProteinGroup[] = [
+  {
+    id: "red-meat",
+    name: "Carnes Vermelhas",
+    emoji: "🥩",
+    description: "Ricas em ferro e vitamina B12, ideais para ganho de massa muscular",
+    ingredients: ingredients.filter((ing) => ["beef", "pork", "ground-beef"].includes(ing.id)),
+  },
+  {
+    id: "poultry",
+    name: "Frango e Aves",
+    emoji: "🍗",
+    description: "Proteínas magras, perfeitas para dietas de baixa caloria",
+    ingredients: ingredients.filter((ing) => ["chicken-breast", "turkey"].includes(ing.id)),
+  },
+  {
+    id: "fish",
+    name: "Peixes e Frutos do Mar",
+    emoji: "🐟",
+    description: "Ricos em ômega-3 e proteínas de alta qualidade",
+    ingredients: ingredients.filter((ing) => ["tuna", "salmon", "sardines"].includes(ing.id)),
+  },
+  {
+    id: "eggs",
+    name: "Ovos",
+    emoji: "🥚",
+    description: "Proteína completa com todos os aminoácidos essenciais",
+    ingredients: ingredients.filter((ing) => ["eggs"].includes(ing.id)),
+  },
+  {
+    id: "dairy",
+    name: "Laticínios",
+    emoji: "🧀",
+    description: "Boas fontes de proteína e cálcio",
+    ingredients: ingredients.filter((ing) =>
+      ["cheese", "yogurt", "cottage-cheese", "mussarela", "cream-cheese", "requeijao"].includes(ing.id)
+    ),
+  },
+  {
+    id: "plant-based",
+    name: "Proteínas Vegetais",
+    emoji: "🌱",
+    description: "Opções para vegetarianos e veganos",
+    ingredients: ingredients.filter((ing) => ["tofu", "beans", "lentils", "chickpeas"].includes(ing.id)),
+  },
+];
