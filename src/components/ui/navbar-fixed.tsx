@@ -3,7 +3,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import RecentResults from "@/components/macro-calculator/recent-results";
 import { useState } from "react";
 
 const Navbar = () => {
@@ -82,8 +81,6 @@ const Navbar = () => {
 
           {/* User actions / right side */}
           <div className="hidden md:flex items-center gap-4">
-            {currentUser && <RecentResults />}
-
             {currentUser ? (
               <div className="flex items-center gap-4">
                 <span className="text-sm text-muted-foreground">{currentUser.email}</span>
