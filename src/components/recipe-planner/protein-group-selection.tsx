@@ -1,37 +1,63 @@
+// src/components/recipe-planner/protein-group-selection.tsx
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { ProteinGroup } from "@/lib/ingredients-data";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface ProteinGroupSelectionProps {
   proteinGroups: ProteinGroup[];
-  selectedGroups: string[];
-  toggleGroup: (id: string) => void;
-  onSelectIngredients: (ingredientIds: string[]) => void;
+  selectedIngredients: string[];
+  toggleIngredient: (id: string) => void;
 }
 
 const ProteinGroupSelection = ({
   proteinGroups,
-  selectedGroups,
-  toggleGroup,
-  onSelectIngredients,
+  selectedIngredients,
+  toggleIngredient,
 }: ProteinGroupSelectionProps) => {
-  const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
+  const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
 
-  const handleExpandGroup = (groupId: string) => {
-    if (expandedGroup === groupId) {
-      setExpandedGroup(null);
+  // Get all ingredients from all protein groups
+  const allGroupIngredients = proteinGroups.flatMap((group) => group.ingredients);
+
+  // Determine which groups should be marked as selected
+  useEffect(() => {
+    const newSelectedGroups = proteinGroups
+      .filter((group) => {
+        // If any ingredient from this group is selected, consider the group selected
+        return group.ingredients.some((ing) => selectedIngredients.includes(ing.id));
+      })
+      .map((group) => group.id);
+
+    setSelectedGroups(newSelectedGroups);
+  }, [selectedIngredients, proteinGroups]);
+
+  // Toggle a group and select/deselect all its ingredients
+  const toggleGroup = (groupId: string) => {
+    const group = proteinGroups.find((g) => g.id === groupId);
+
+    if (!group) return;
+
+    if (selectedGroups.includes(groupId)) {
+      // Deselect all ingredients in this group
+      group.ingredients.forEach((ing) => {
+        if (selectedIngredients.includes(ing.id)) {
+          toggleIngredient(ing.id);
+        }
+      });
     } else {
-      setExpandedGroup(groupId);
-
-      // Auto-select all ingredients from this group
-      const group = proteinGroups.find((g) => g.id === groupId);
-      if (group) {
-        onSelectIngredients(group.ingredients.map((ing) => ing.id));
-      }
+      // Select all ingredients in this group
+      group.ingredients.forEach((ing) => {
+        if (!selectedIngredients.includes(ing.id)) {
+          toggleIngredient(ing.id);
+        }
+      });
     }
   };
+
+  // Get all selected protein ingredients
+  const selectedProteinIngredients = allGroupIngredients.filter((ing) => selectedIngredients.includes(ing.id));
 
   return (
     <div>
@@ -53,10 +79,7 @@ const ProteinGroupSelection = ({
                   ? "border-2 border-primary bg-accent/50"
                   : "border border-border/50 hover:bg-accent/30"
               }`}
-              onClick={() => {
-                toggleGroup(group.id);
-                handleExpandGroup(group.id);
-              }}
+              onClick={() => toggleGroup(group.id)}
             >
               <CardContent className="p-4 flex flex-col items-center text-center h-full">
                 <div
@@ -84,23 +107,35 @@ const ProteinGroupSelection = ({
         ))}
       </div>
 
-      {expandedGroup && (
+      {selectedProteinIngredients.length > 0 && (
         <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className="mt-6"
+          className="mt-8 bg-accent/20 p-4 rounded-lg border border-border/30"
         >
-          <h3 className="text-lg font-medium mb-3">Ingredientes incluídos:</h3>
+          <h3 className="text-lg font-medium mb-3">Ingredientes selecionados:</h3>
           <div className="flex flex-wrap gap-2">
-            {proteinGroups
-              .find((group) => group.id === expandedGroup)
-              ?.ingredients.map((ingredient) => (
-                <span key={ingredient.id} className="bg-accent px-3 py-1 rounded-full text-sm flex items-center">
-                  <span className="mr-1">{ingredient.emoji}</span>
-                  {ingredient.name}
-                </span>
-              ))}
+            {selectedProteinIngredients.map((ingredient) => (
+              <motion.span
+                key={ingredient.id}
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                className="bg-background border border-border/50 px-3 py-1 rounded-full text-sm flex items-center shadow-sm"
+              >
+                <span className="mr-2">{ingredient.emoji}</span>
+                {ingredient.name}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleIngredient(ingredient.id);
+                  }}
+                  className="ml-2 hover:bg-accent rounded-full p-1 -mr-1"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </motion.span>
+            ))}
           </div>
         </motion.div>
       )}
