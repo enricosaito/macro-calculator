@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -29,67 +29,56 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  // Fetch macro data when component mounts or user changes
-  useEffect(() => {
-    const fetchMacroData = async () => {
-      if (!currentUser) {
-        // Use local storage for non-authenticated users
-        const storedCalculation = getCalculationFromStorage();
-        if (storedCalculation && storedCalculation.results) {
-          setMacroData({
-            calories: Math.round(storedCalculation.results.calories || 0),
-            protein: Math.round(storedCalculation.results.protein || 0),
-            carbs: Math.round(storedCalculation.results.carbs || 0),
-            fats: Math.round(storedCalculation.results.fats || 0),
-          });
-        }
-        return;
+  // Add a ref to track the last update time
+  const lastUpdateRef = useRef<number>(0);
+
+  // Fetch macro data
+  const fetchMacroData = useCallback(async () => {
+    if (!currentUser) {
+      // Use local storage for non-authenticated users
+      const storedCalculation = getCalculationFromStorage();
+      if (storedCalculation && storedCalculation.results) {
+        setMacroData({
+          calories: Math.round(storedCalculation.results.calories || 0),
+          protein: Math.round(storedCalculation.results.protein || 0),
+          carbs: Math.round(storedCalculation.results.carbs || 0),
+          fats: Math.round(storedCalculation.results.fats || 0),
+        });
       }
+      return;
+    }
 
-      // For authenticated users, fetch from Firestore
-      setIsLoading(true);
-      try {
-        const userDocRef = doc(db, "users", currentUser.uid);
-        const userDoc = await getDoc(userDocRef);
+    // For authenticated users, fetch from Firestore
+    setIsLoading(true);
+    try {
+      const userDocRef = doc(db, "users", currentUser.uid);
+      const userDoc = await getDoc(userDocRef);
 
-        if (userDoc.exists() && userDoc.data().latestMacros) {
-          const firestoreData = userDoc.data().latestMacros;
+      if (userDoc.exists() && userDoc.data().latestMacros) {
+        const firestoreData = userDoc.data().latestMacros;
 
-          // Check if we have macros data in the results structure
-          if (firestoreData.results && firestoreData.results.macros) {
-            // This matches the structure we saw in your Firestore screenshot
-            const macros = firestoreData.results.macros;
-            setMacroData({
-              calories: Math.round(macros.calories || 0),
-              protein: Math.round(macros.protein || 0),
-              carbs: Math.round(macros.carbs || 0),
-              fats: Math.round(macros.fats || 0),
-            });
-          } else if (firestoreData.results) {
-            // Fallback if the structure is different
-            const results = firestoreData.results;
-            setMacroData({
-              calories: Math.round(results.calories || 0),
-              protein: Math.round(results.protein || 0),
-              carbs: Math.round(results.carbs || 0),
-              fats: Math.round(results.fats || 0),
-            });
-          }
-        } else {
-          // Fall back to local storage if no Firestore data
-          const storedCalculation = getCalculationFromStorage();
-          if (storedCalculation && storedCalculation.results) {
-            setMacroData({
-              calories: Math.round(storedCalculation.results.calories || 0),
-              protein: Math.round(storedCalculation.results.protein || 0),
-              carbs: Math.round(storedCalculation.results.carbs || 0),
-              fats: Math.round(storedCalculation.results.fats || 0),
-            });
-          }
+        // Check if we have macros data in the results structure
+        if (firestoreData.results && firestoreData.results.macros) {
+          // This matches the structure we saw in your Firestore screenshot
+          const macros = firestoreData.results.macros;
+          setMacroData({
+            calories: Math.round(macros.calories || 0),
+            protein: Math.round(macros.protein || 0),
+            carbs: Math.round(macros.carbs || 0),
+            fats: Math.round(macros.fats || 0),
+          });
+        } else if (firestoreData.results) {
+          // Fallback if the structure is different
+          const results = firestoreData.results;
+          setMacroData({
+            calories: Math.round(results.calories || 0),
+            protein: Math.round(results.protein || 0),
+            carbs: Math.round(results.carbs || 0),
+            fats: Math.round(results.fats || 0),
+          });
         }
-      } catch (error) {
-        console.error("Error fetching macro data:", error);
-        // Fall back to local storage if there was an error
+      } else {
+        // Fall back to local storage if no Firestore data
         const storedCalculation = getCalculationFromStorage();
         if (storedCalculation && storedCalculation.results) {
           setMacroData({
@@ -99,13 +88,55 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
             fats: Math.round(storedCalculation.results.fats || 0),
           });
         }
-      } finally {
-        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error fetching macro data:", error);
+      // Fall back to local storage if there was an error
+      const storedCalculation = getCalculationFromStorage();
+      if (storedCalculation && storedCalculation.results) {
+        setMacroData({
+          calories: Math.round(storedCalculation.results.calories || 0),
+          protein: Math.round(storedCalculation.results.protein || 0),
+          carbs: Math.round(storedCalculation.results.carbs || 0),
+          fats: Math.round(storedCalculation.results.fats || 0),
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentUser]);
+
+  // Fetch data on component mount and when user changes
+  useEffect(() => {
+    fetchMacroData();
+    // Save current time to prevent multiple rapid updates
+    lastUpdateRef.current = Date.now();
+  }, [currentUser, fetchMacroData]);
+
+  // Set up periodic checking for new calculation data
+  useEffect(() => {
+    // Check for updated data when the dropdown is opened
+    if (isOpen) {
+      fetchMacroData();
+    }
+
+    // Also periodically check for changes in local storage
+    const checkForUpdates = () => {
+      const storedCalculation = getCalculationFromStorage();
+      if (storedCalculation && storedCalculation.timestamp > lastUpdateRef.current) {
+        // The data has been updated since our last fetch
+        fetchMacroData();
+        lastUpdateRef.current = storedCalculation.timestamp;
       }
     };
 
-    fetchMacroData();
-  }, [currentUser]);
+    // Check every 2 seconds
+    const intervalId = setInterval(checkForUpdates, 2000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [isOpen, fetchMacroData]);
 
   // Handle click outside to close the dropdown
   useEffect(() => {
@@ -128,7 +159,17 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
 
   return (
     <div className="relative" ref={cardRef}>
-      <Button variant="ghost" className="flex items-center gap-2 px-3" onClick={() => setIsOpen(!isOpen)}>
+      <Button
+        variant="ghost"
+        className="flex items-center gap-2 px-3"
+        onClick={() => {
+          // Fetch latest data when opening
+          if (!isOpen) {
+            fetchMacroData();
+          }
+          setIsOpen(!isOpen);
+        }}
+      >
         {currentUser.photoURL ? (
           <img src={currentUser.photoURL} alt={firstName} className="w-8 h-8 rounded-full object-cover" />
         ) : (
