@@ -12,6 +12,7 @@ import MacroCalculator from "@/pages/macro-calculator";
 import RecipePlanner from "@/pages/recipe-planner";
 import RecipeDetailPage from "@/pages/recipe/[id]";
 import AdminRecipesPage from "@/pages/admin/recipes";
+import AdminIngredientsPage from "./pages/admin/ingredients";
 import AdminRoute from "@/components/auth/AdminRoute";
 import AboutPage from "@/pages/about";
 import TermsPage from "@/pages/terms";
@@ -75,7 +76,7 @@ const App = () => {
                       path="/admin/ingredients"
                       element={
                         <AdminRoute>
-                          <AdminRecipesPage />
+                          <AdminIngredientsPage />
                         </AdminRoute>
                       }
                     />
