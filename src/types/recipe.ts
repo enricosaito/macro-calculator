@@ -1,8 +1,8 @@
 export interface RecipeIngredient {
   id: string; // Reference to ingredient in ingredients collection
   name: string; // For display purposes
-  amount: number; // Amount in grams
-  unit?: string; // Optional unit (g, ml, etc.)
+  amount: number; // Amount in grams or other unit
+  unit: string; // g, ml, tbsp, etc.
   optional?: boolean; // Is this ingredient optional?
 }
 
@@ -11,7 +11,7 @@ export interface RecipeNutrition {
   protein: number;
   carbs: number;
   fats: number;
-  fiber?: number; // Optional additional nutrition data
+  fiber?: number;
   sugar?: number;
   sodium?: number;
 }
@@ -23,23 +23,49 @@ export interface RecipeStep {
   duration?: number; // Optional duration in minutes
 }
 
+export type RecipeDifficulty = "easy" | "medium" | "hard";
+export type RecipeCategory = "breakfast" | "lunch" | "dinner" | "snack" | "dessert" | "side";
+export type CuisineType =
+  | "brasileira"
+  | "italiana"
+  | "japonesa"
+  | "mexicana"
+  | "chinesa"
+  | "indiana"
+  | "americana"
+  | "outras";
+export type DietaryRestriction =
+  | "vegetariano"
+  | "vegano"
+  | "sem-gluten"
+  | "sem-lactose"
+  | "low-carb"
+  | "keto"
+  | "paleo";
+export type MealType = "pre-treino" | "pos-treino" | "cafe-da-manha" | "almoco" | "jantar" | "lanche";
+
 export interface Recipe {
   id: string;
   name: string;
+  slug: string; // URL-friendly version of name for nice URLs
   description: string;
-  createdBy: string;
+
+  // Metadata
+  createdBy: string; // User ID of creator
   createdAt: Date;
   updatedAt: Date;
 
-  // Classification
-  category: "breakfast" | "lunch" | "dinner" | "snack" | "dessert" | "side";
-  cuisineType?: string;
-  tags: string[];
+  // Classification - important for filtering
+  category: RecipeCategory;
+  cuisineType: CuisineType;
+  dietaryRestrictions: DietaryRestriction[]; // Can match multiple restrictions
+  mealTypes: MealType[]; // Can be suitable for multiple meal times
+  tags: string[]; // General purpose tags
 
   // Recipe details
-  difficulty: "easy" | "medium" | "hard";
-  prepTime: number;
-  cookTime: number;
+  difficulty: RecipeDifficulty;
+  prepTime: number; // In minutes
+  cookTime: number; // In minutes
   servings: number;
 
   // Recipe content
@@ -51,14 +77,14 @@ export interface Recipe {
   nutrition: RecipeNutrition;
 
   // Media
-  mainImage?: string;
-  gallery?: string[];
+  mainImage?: string; // URL to Firebase Storage
+  gallery?: string[]; // Additional images
 
   // Access control
-  isPublic: boolean;
-  isPremium: boolean;
+  isPublic: boolean; // Is this recipe publicly visible?
+  isPremium: boolean; // Is this a premium recipe?
 
-  // Metadata
+  // Engagement metrics
   averageRating?: number;
   reviewCount?: number;
   isFeatured?: boolean;
