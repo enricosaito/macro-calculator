@@ -1,4 +1,4 @@
-import { Calculator, Utensils, LogOut, Menu, X, Search } from "lucide-react";
+import { Calculator, Utensils, LogOut, Menu, X, Search, Box } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -32,6 +32,12 @@ const Navbar = () => {
       label: "Explorar",
       path: "/explore",
       icon: Search,
+    },
+    {
+      label: "Admin",
+      path: "/admin/recipes",
+      icon: Box,
+      adminOnly: true,
     },
   ];
 
