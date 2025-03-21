@@ -27,7 +27,7 @@ export interface Recipe {
   id: string;
   name: string;
   description: string;
-  createdBy: string; // User ID of creator
+  createdBy: string;
   createdAt: Date;
   updatedAt: Date;
 
@@ -38,8 +38,8 @@ export interface Recipe {
 
   // Recipe details
   difficulty: "easy" | "medium" | "hard";
-  prepTime: number; // In minutes
-  cookTime: number; // In minutes
+  prepTime: number;
+  cookTime: number;
   servings: number;
 
   // Recipe content
@@ -51,8 +51,8 @@ export interface Recipe {
   nutrition: RecipeNutrition;
 
   // Media
-  mainImage?: string; // URL to Firebase Storage
-  gallery?: string[]; // Additional images
+  mainImage?: string;
+  gallery?: string[];
 
   // Access control
   isPublic: boolean;

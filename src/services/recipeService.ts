@@ -35,10 +35,24 @@ const convertFromFirestore = (doc: FirestoreRecipe): Recipe => ({
 // Get a single recipe by ID
 export const getRecipe = async (recipeId: string): Promise<Recipe | null> => {
   try {
+    console.log("Fetching recipe with ID:", recipeId);
     const recipeDoc = await getDoc(doc(db, RECIPES_COLLECTION, recipeId));
-    if (!recipeDoc.exists()) return null;
 
-    return convertFromFirestore(recipeDoc.data() as FirestoreRecipe);
+    if (!recipeDoc.exists()) {
+      console.log("Recipe not found");
+      return null;
+    }
+
+    const data = recipeDoc.data();
+    console.log("Recipe data:", data);
+
+    // Convert from Firestore format to Recipe type
+    return {
+      id: recipeDoc.id,
+      ...data,
+      createdAt: data.createdAt?.toDate() || new Date(),
+      updatedAt: data.updatedAt?.toDate() || new Date(),
+    } as Recipe;
   } catch (error) {
     console.error("Error fetching recipe:", error);
     throw error;
