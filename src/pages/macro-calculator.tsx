@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,8 +14,26 @@ import useMacroCalculator from "@/hooks/useMacroCalculator";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const MacroCalculator = () => {
-  const { userData, currentStep, handleNext, handlePrevious, updateUserData, handleStartOver } = useMacroCalculator();
+  const {
+    userData,
+    currentStep,
+    calculationResults,
+    isLoading,
+    handleNext,
+    handlePrevious,
+    updateUserData,
+    handleStartOver,
+    saveResultsToFirestore,
+  } = useMacroCalculator();
+
   const [stepErrors, setStepErrors] = useState<{ [key: number]: boolean }>({});
+
+  // Save results to Firestore when we load the results page
+  useEffect(() => {
+    if (currentStep === 4 && calculationResults) {
+      saveResultsToFirestore();
+    }
+  }, [currentStep, calculationResults, saveResultsToFirestore]);
 
   // Function to validate BMR step
   const validateBMRStep = () => {
@@ -83,6 +101,15 @@ const MacroCalculator = () => {
   const displayStep = currentStep === 0 ? 0 : currentStep;
   const totalSteps = steps.length - 2; // Exclude landing and results pages
 
+  // Show loading state while checking for existing calculations
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   const renderStep = () => {
     switch (steps[currentStep]) {
       case "landing":
@@ -126,7 +153,9 @@ const MacroCalculator = () => {
           </div>
         );
       case "results":
-        return <ResultsPage userData={userData} onStartOver={handleStartOver} />;
+        return (
+          <ResultsPage userData={userData} onStartOver={handleStartOver} calculationResults={calculationResults} />
+        );
       default:
         return null;
     }

@@ -1,9 +1,10 @@
-import { Calculator, Utensils, LogOut, Menu, X } from "lucide-react";
+import { Calculator, Utensils, LogOut, Menu, X, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
+import ProfileCard from "./profile-card";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -27,6 +28,11 @@ const Navbar = () => {
     //   path: "/about",
     //   icon: Info,
     // },
+    {
+      label: "Explorar",
+      path: "/explore",
+      icon: Search,
+    },
   ];
 
   const handleLogout = async () => {
@@ -82,13 +88,7 @@ const Navbar = () => {
           {/* User actions / right side */}
           <div className="hidden md:flex items-center gap-4">
             {currentUser ? (
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-muted-foreground">{currentUser.email}</span>
-                <Button variant="outline" size="sm" onClick={handleLogout} className="gap-2">
-                  <LogOut className="h-4 w-4" />
-                  <span>Sair</span>
-                </Button>
-              </div>
+              <ProfileCard onLogout={handleLogout} /> // Use our new ProfileCard component
             ) : (
               <Button variant="outline" size="sm" onClick={() => navigate("/login")}>
                 Login
@@ -105,7 +105,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile menu - Also update this to use ProfileCard for logged in users */}
       {mobileMenuOpen && (
         <div className="md:hidden p-4 pt-0 pb-6 border-b border-border/40 bg-background">
           <div className="flex flex-col gap-2">
@@ -133,10 +133,16 @@ const Navbar = () => {
             })}
 
             {currentUser ? (
-              <Button variant="outline" onClick={handleLogout} className="gap-2 mt-2 justify-start">
-                <LogOut className="h-4 w-4" />
-                <span>Sair</span>
-              </Button>
+              <div className="mt-2 pt-2 border-t border-border/20">
+                <div className="p-2 mb-2">
+                  <p className="text-sm font-medium">Logado como:</p>
+                  <p className="text-sm text-muted-foreground mb-2">{currentUser.email}</p>
+                  <Button variant="outline" onClick={handleLogout} className="gap-2 w-full justify-center">
+                    <LogOut className="h-4 w-4" />
+                    Sair
+                  </Button>
+                </div>
+              </div>
             ) : (
               <Button variant="outline" onClick={() => navigate("/login")} className="mt-2">
                 Login

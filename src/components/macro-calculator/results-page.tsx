@@ -1,6 +1,4 @@
-"use client";
-
-import { useRef, useEffect } from "react";
+import { useCallback, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,14 +18,21 @@ interface ResultsPageProps {
     goal: string;
   };
   onStartOver: () => void;
+  calculationResults: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fats: number;
+  } | null;
 }
 
-const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
+const ResultsPage = ({ userData, onStartOver, calculationResults }: ResultsPageProps) => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const hasSavedRef = useRef(false);
 
   // Calculate BMR
-  const calculateBMR = () => {
+  const calculateBMR = useCallback(() => {
     const { weight, height, age, sex } = userData;
     const w = Number.parseFloat(weight);
     const h = Number.parseFloat(height);
@@ -38,61 +43,83 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
     } else {
       return 10 * w + 6.25 * h - 5 * a - 161;
     }
-  };
+  }, [userData]);
 
   // Calculate TDEE
-  const calculateTDEE = () => {
+  const calculateTDEE = useCallback(() => {
     const bmr = calculateBMR();
     return bmr * Number.parseFloat(userData.activityLevel);
-  };
+  }, [calculateBMR, userData.activityLevel]);
 
-  // Calculate macros
-  const calculateMacros = () => {
-    let tdee = calculateTDEE();
-    const weight = parseFloat(userData.weight);
+  // Use calculation results from props, or fallback to zeros
+  // Use useMemo to avoid re-creating the object on each render
+  const macros = useMemo(
+    () =>
+      calculationResults || {
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fats: 0,
+      },
+    [calculationResults]
+  );
 
-    // Adjust TDEE based on goal
-    if (userData.goal === "lose") {
-      tdee -= 500; // Caloric deficit
-    } else if (userData.goal === "gain") {
-      tdee += 500; // Caloric surplus
-    }
-
-    // Calculate protein (2.2g per kg of body weight)
-    const protein = weight * 2.2;
-
-    // Calculate fats based on goal
-    let fatPercentage;
-    if (userData.goal === "lose") {
-      fatPercentage = 0.2; // 20% (middle of 15-25% range for cutting)
-    } else if (userData.goal === "gain") {
-      fatPercentage = 0.25; // 25% (middle of 20-30% range for bulking)
-    } else {
-      fatPercentage = 0.225; // 22.5% (middle ground for maintenance)
-    }
-
-    const fats = (tdee * fatPercentage) / 9; // 9 calories per gram of fat
-
-    // Calculate remaining calories for carbs
-    const proteinCalories = protein * 4; // 4 calories per gram of protein
-    const fatCalories = fats * 9;
-    const remainingCalories = tdee - proteinCalories - fatCalories;
-    const carbs = remainingCalories / 4; // 4 calories per gram of carbs
-
-    return {
-      calories: tdee,
-      protein: Math.round(protein),
-      carbs: Math.round(carbs),
-      fats: Math.round(fats),
-    };
-  };
-
-  const macros = calculateMacros();
   const bmr = calculateBMR();
   const tdee = calculateTDEE();
 
-  // Track saving
-  const hasSavedRef = useRef(false);
+  // Save to user profile
+  const saveToUserProfile = useCallback(async () => {
+    // Guard against multiple saves and ensure user is logged in
+    if (!currentUser || hasSavedRef.current) return;
+
+    try {
+      // Save to user profile document
+      const userDocRef = doc(db, "users", currentUser.uid);
+      await setDoc(
+        userDocRef,
+        {
+          latestMacros: {
+            data: {
+              weight: Number(userData.weight),
+              height: Number(userData.height),
+              age: Number(userData.age),
+              sex: userData.sex,
+              activityLevel: userData.activityLevel,
+              goal: userData.goal,
+            },
+            results: {
+              bmr,
+              tdee,
+              macros,
+            },
+            updatedAt: new Date(),
+          },
+        },
+        { merge: true }
+      );
+
+      // Mark as saved to prevent subsequent saves
+      hasSavedRef.current = true;
+    } catch (error) {
+      console.error("Error saving to user profile:", error);
+    }
+  }, [
+    currentUser,
+    bmr,
+    tdee,
+    macros,
+    userData.weight,
+    userData.height,
+    userData.age,
+    userData.sex,
+    userData.activityLevel,
+    userData.goal,
+  ]);
+
+  // Save to user profile when component mounts
+  useEffect(() => {
+    saveToUserProfile();
+  }, [saveToUserProfile]);
 
   // Navigate to recipe planner
   const goToRecipePlanner = () => {
@@ -140,61 +167,11 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
     }
   };
 
-  // Save to user profile if logged in
-  useEffect(() => {
-    const saveToUserProfile = async () => {
-      // Guard against multiple saves and ensure user is logged in
-      if (!currentUser || hasSavedRef.current) return;
-
-      try {
-        // Save to user profile document
-        const userDocRef = doc(db, "users", currentUser.uid);
-        await setDoc(
-          userDocRef,
-          {
-            latestMacros: {
-              data: {
-                weight: Number(userData.weight),
-                height: Number(userData.height),
-                age: Number(userData.age),
-                sex: userData.sex,
-                activityLevel: userData.activityLevel,
-                goal: userData.goal,
-              },
-              results: {
-                bmr,
-                tdee,
-                macros,
-              },
-              updatedAt: new Date(),
-            },
-          },
-          { merge: true }
-        ); // Use merge to avoid overwriting other user data
-
-        // Mark as saved to prevent subsequent saves
-        hasSavedRef.current = true;
-      } catch (error) {
-        console.error("Error saving to user profile:", error);
-      }
-    };
-
-    saveToUserProfile();
-  }, [
-    currentUser,
-    bmr,
-    tdee,
-    macros,
-    userData.weight,
-    userData.height,
-    userData.age,
-    userData.sex,
-    userData.activityLevel,
-    userData.goal,
-  ]);
-
-  const goalText =
-    userData.goal === "lose" ? "perder peso" : userData.goal === "maintain" ? "manter peso" : "ganhar massa muscular";
+  const goalText = useMemo(
+    () =>
+      userData.goal === "lose" ? "perder peso" : userData.goal === "maintain" ? "manter peso" : "ganhar massa muscular",
+    [userData.goal]
+  );
 
   // Animation variants
   const container = {

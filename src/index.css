@@ -158,3 +158,14 @@ html {
 :focus-visible {
   @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
 }
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
