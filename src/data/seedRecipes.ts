@@ -1,4 +1,4 @@
-import type { Recipe, RecipeCategory, CuisineType, DietaryRestriction, MealType } from "@/types/recipe";
+import type { Recipe } from "@/types/recipe";
 import { generateSlug } from "@/utils/recipe/recipeUtils";
 
 /**

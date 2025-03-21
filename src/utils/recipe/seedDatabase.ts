@@ -1,7 +1,7 @@
 // src/utils/recipe/seedDatabase.ts
 import { seedRecipes } from "@/data/seedRecipes";
 import { db } from "@/lib/firebase";
-import { collection, getDocs, doc, setDoc, query, where } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { createRecipe } from "@/services/recipeService";
 
 const RECIPES_COLLECTION = "recipes";
