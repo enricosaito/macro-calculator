@@ -12,8 +12,8 @@ export const generateSlug = (name: string): string => {
     .replace(/[\s_-]+/g, "-") // Replace spaces and underscores with hyphens
     .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
 };
-
 /**
+ *
  * Generate a unique recipe ID with category prefix and counter
  */
 export const generateRecipeId = (category: string, counter: number): string => {

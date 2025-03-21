@@ -1,7 +1,7 @@
 // src/components/admin/RecipeManager.tsx
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { getRecipes, deleteRecipe } from "@/services/recipeService";
+import { getRecipes, deleteRecipe, RecipeFilterParams } from "@/services/recipeService";
 import { Recipe } from "@/types/recipe";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,12 +20,12 @@ const RecipeManager = () => {
 
   useEffect(() => {
     fetchRecipes();
-  }, []);
+  });
 
   const fetchRecipes = async () => {
     try {
       setLoading(true);
-      const filters: any = {};
+      const filters: RecipeFilterParams = {};
 
       if (filterCategory) {
         filters.category = filterCategory;

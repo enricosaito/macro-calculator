@@ -12,14 +12,10 @@ import {
   updateDoc,
   deleteDoc,
   serverTimestamp,
-  Timestamp,
   DocumentSnapshot,
   QueryDocumentSnapshot,
   DocumentData,
-  collectionGroup,
   startAfter,
-  startAt,
-  endAt,
   QueryConstraint,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -28,7 +24,6 @@ import { generateSlug } from "@/utils/recipe/recipeUtils";
 
 // Collection references
 const RECIPES_COLLECTION = "recipes";
-const RECIPES_COUNTER_DOC = "counters/recipes";
 
 // Convert Firestore timestamps to Dates
 const convertFromFirestore = (doc: QueryDocumentSnapshot<DocumentData>): Recipe => {
@@ -124,7 +119,6 @@ export const getRecipes = async (
       isFeatured,
       isNew,
       createdBy,
-      searchText,
       lastVisible,
       pageSize = 10,
     } = params;
@@ -202,7 +196,8 @@ export const getRecipes = async (
     constraints.push(limit(pageSize + 1)); // +1 to check if there are more
 
     // Create query
-    let q = query(collection(db, RECIPES_COLLECTION), ...constraints);
+    const baseQuery = query(...);
+    const finalQuery = query(...);
 
     // Execute query
     const querySnapshot = await getDocs(q);
