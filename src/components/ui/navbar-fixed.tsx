@@ -14,10 +14,18 @@ const Navbar = () => {
   const { currentUser, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [adminLoaded, setAdminLoaded] = useState(false);
 
   useEffect(() => {
     const checkAdminRole = async () => {
-      if (!currentUser) return;
+      setAdminLoaded(false);
+      setIsAdmin(false);
+
+      if (!currentUser) {
+        setAdminLoaded(true);
+        return;
+      }
+
       try {
         const userRef = doc(db, "users", currentUser.uid);
         const userSnap = await getDoc(userRef);
@@ -26,8 +34,11 @@ const Navbar = () => {
         }
       } catch (error) {
         console.error("Error checking admin role:", error);
+      } finally {
+        setAdminLoaded(true);
       }
     };
+
     checkAdminRole();
   }, [currentUser]);
 
@@ -83,7 +94,7 @@ const Navbar = () => {
               );
             })}
 
-            {isAdmin && (
+            {adminLoaded && isAdmin && (
               <Button onClick={() => navigate("/admin/recipes")} variant="ghost">
                 <Box className="h-4 w-4 mr-2" />
                 Admin
@@ -134,9 +145,16 @@ const Navbar = () => {
               );
             })}
 
-            {isAdmin && (
-              <Button onClick={() => navigate("/admin/recipes")} variant="ghost">
-                <Box className="h-4 w-4 mr-2" />
+            {adminLoaded && isAdmin && (
+              <Button
+                onClick={() => {
+                  navigate("/admin/recipes");
+                  setMobileMenuOpen(false);
+                }}
+                variant="ghost"
+                className="gap-2 justify-start"
+              >
+                <Box className="h-4 w-4" />
                 Admin
               </Button>
             )}
