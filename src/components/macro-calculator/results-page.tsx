@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,9 +18,15 @@ interface ResultsPageProps {
     goal: string;
   };
   onStartOver: () => void;
+  calculationResults: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fats: number;
+  } | null;
 }
 
-const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
+const ResultsPage = ({ userData, onStartOver, calculationResults }: ResultsPageProps) => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const hasSavedRef = useRef(false);
@@ -45,48 +51,19 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
     return bmr * Number.parseFloat(userData.activityLevel);
   }, [calculateBMR, userData.activityLevel]);
 
-  // Calculate macros
-  const calculateMacros = useCallback(() => {
-    let tdee = calculateTDEE();
-    const weight = parseFloat(userData.weight);
+  // Use calculation results from props, or fallback to zeros
+  // Use useMemo to avoid re-creating the object on each render
+  const macros = useMemo(
+    () =>
+      calculationResults || {
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fats: 0,
+      },
+    [calculationResults]
+  );
 
-    // Adjust TDEE based on goal
-    if (userData.goal === "lose") {
-      tdee -= 500; // Caloric deficit
-    } else if (userData.goal === "gain") {
-      tdee += 500; // Caloric surplus
-    }
-
-    // Calculate protein (2.2g per kg of body weight)
-    const protein = weight * 2.2;
-
-    // Calculate fats based on goal
-    let fatPercentage;
-    if (userData.goal === "lose") {
-      fatPercentage = 0.2; // 20% (middle of 15-25% range for cutting)
-    } else if (userData.goal === "gain") {
-      fatPercentage = 0.25; // 25% (middle of 20-30% range for bulking)
-    } else {
-      fatPercentage = 0.225; // 22.5% (middle ground for maintenance)
-    }
-
-    const fats = (tdee * fatPercentage) / 9; // 9 calories per gram of fat
-
-    // Calculate remaining calories for carbs
-    const proteinCalories = protein * 4; // 4 calories per gram of protein
-    const fatCalories = fats * 9;
-    const remainingCalories = tdee - proteinCalories - fatCalories;
-    const carbs = remainingCalories / 4; // 4 calories per gram of carbs
-
-    return {
-      calories: tdee,
-      protein: Math.round(protein),
-      carbs: Math.round(carbs),
-      fats: Math.round(fats),
-    };
-  }, [calculateTDEE, userData.goal, userData.weight]);
-
-  const macros = calculateMacros();
   const bmr = calculateBMR();
   const tdee = calculateTDEE();
 
@@ -190,8 +167,11 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
     }
   };
 
-  const goalText =
-    userData.goal === "lose" ? "perder peso" : userData.goal === "maintain" ? "manter peso" : "ganhar massa muscular";
+  const goalText = useMemo(
+    () =>
+      userData.goal === "lose" ? "perder peso" : userData.goal === "maintain" ? "manter peso" : "ganhar massa muscular",
+    [userData.goal]
+  );
 
   // Animation variants
   const container = {
