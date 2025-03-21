@@ -34,6 +34,8 @@ const useMacroCalculator = () => {
   const [calculationResults, setCalculationResults] = useState<MacroResults | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRecalculating, setIsRecalculating] = useState(false);
+  // Add a flag to track whether we should skip to results
+  const [skipToResults, setSkipToResults] = useState(false);
 
   // Load saved data on component mount
   useEffect(() => {
@@ -70,8 +72,11 @@ const useMacroCalculator = () => {
                 carbs: firestoreData.results.macros.carbs,
                 fats: firestoreData.results.macros.fats,
               };
-              // If we have results, we should show the results page
-              savedStep = 4;
+
+              // If we have results and we're not recalculating, we should show results
+              if (!isRecalculating) {
+                setSkipToResults(true);
+              }
             }
           }
         }
@@ -91,12 +96,15 @@ const useMacroCalculator = () => {
                 carbs: storedCalc.results.carbs,
                 fats: storedCalc.results.fats,
               };
-              // If we have results, we should show the results page
-              savedStep = 4;
+
+              // If we have results and we're not recalculating, we should show results
+              if (!isRecalculating) {
+                setSkipToResults(true);
+              }
             }
 
-            // Only use stored step if we don't have results yet
-            if (!savedResults && storedCalc.currentStep > 0) {
+            // Only use stored step if we don't have results yet or if we're recalculating
+            if ((isRecalculating || !savedResults) && storedCalc.currentStep > 0) {
               savedStep = storedCalc.currentStep;
             }
           }
@@ -111,8 +119,15 @@ const useMacroCalculator = () => {
           setCalculationResults(savedResults);
         }
 
-        // Set the step unless we're recalculating
-        if (!isRecalculating) {
+        // Determine the correct step
+        if (isRecalculating) {
+          // If recalculating, go to step 1
+          setCurrentStep(1);
+        } else if (skipToResults && savedResults) {
+          // If we have results and we're not recalculating, go to results
+          setCurrentStep(4);
+        } else {
+          // Otherwise, use the saved step or default to 0
           setCurrentStep(savedStep);
         }
       } catch (error) {
@@ -123,7 +138,7 @@ const useMacroCalculator = () => {
     };
 
     loadSavedData();
-  }, [currentUser, isRecalculating]);
+  }, [currentUser, isRecalculating, skipToResults]);
 
   // Calculate BMR
   const calculateBMR = useCallback(() => {
@@ -191,6 +206,7 @@ const useMacroCalculator = () => {
   // Handle starting over / recalculating
   const handleStartOver = useCallback(() => {
     setIsRecalculating(true);
+    setSkipToResults(false); // Reset the skip flag
     setCurrentStep(1); // Go directly to step 1 with data pre-filled
 
     // Save current step to storage
@@ -203,35 +219,65 @@ const useMacroCalculator = () => {
 
   // Handle next step
   const handleNext = useCallback(() => {
-    const nextStep = Math.min(currentStep + 1, 4);
-    setCurrentStep(nextStep);
-
-    // If moving to results page, calculate and save results
-    if (nextStep === 4) {
-      const results = calculateMacros();
-      setCalculationResults(results);
-
-      // Save to storage with results
-      saveCalculationToStorage({
-        currentStep: nextStep,
-        userData,
-        timestamp: Date.now(),
-        results,
-      });
-    } else {
-      // Save to storage without results
-      saveCalculationToStorage({
-        currentStep: nextStep,
-        userData,
-        timestamp: Date.now(),
-      });
-    }
-
-    // Reset recalculating flag if we were recalculating
+    // If we're recalculating, we need to follow the normal step sequence
     if (isRecalculating) {
-      setIsRecalculating(false);
+      const nextStep = Math.min(currentStep + 1, 4);
+      setCurrentStep(nextStep);
+
+      // If we've reached the results page, calculate and save new results
+      if (nextStep === 4) {
+        const results = calculateMacros();
+        setCalculationResults(results);
+
+        // Save to storage with results
+        saveCalculationToStorage({
+          currentStep: nextStep,
+          userData,
+          timestamp: Date.now(),
+          results,
+        });
+
+        // Reset recalculating flag
+        setIsRecalculating(false);
+      } else {
+        // Save to storage without results
+        saveCalculationToStorage({
+          currentStep: nextStep,
+          userData,
+          timestamp: Date.now(),
+        });
+      }
+    } else if (skipToResults) {
+      // If not recalculating and we have previous results, go straight to results
+      setCurrentStep(4);
+      setSkipToResults(false);
+    } else {
+      // Normal progression
+      const nextStep = Math.min(currentStep + 1, 4);
+      setCurrentStep(nextStep);
+
+      // If moving to results page, calculate and save results
+      if (nextStep === 4) {
+        const results = calculateMacros();
+        setCalculationResults(results);
+
+        // Save to storage with results
+        saveCalculationToStorage({
+          currentStep: nextStep,
+          userData,
+          timestamp: Date.now(),
+          results,
+        });
+      } else {
+        // Save to storage without results
+        saveCalculationToStorage({
+          currentStep: nextStep,
+          userData,
+          timestamp: Date.now(),
+        });
+      }
     }
-  }, [currentStep, userData, calculateMacros, isRecalculating]);
+  }, [currentStep, userData, calculateMacros, isRecalculating, skipToResults]);
 
   // Handle previous step
   const handlePrevious = useCallback(() => {
