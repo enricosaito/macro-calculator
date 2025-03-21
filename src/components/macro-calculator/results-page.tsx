@@ -1,8 +1,5 @@
-"use client";
-
-import { useRef, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { saveCalculationToStorage } from "@/lib/storage-utils";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,9 +23,10 @@ interface ResultsPageProps {
 const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const hasSavedRef = useRef(false);
 
   // Calculate BMR
-  const calculateBMR = () => {
+  const calculateBMR = useCallback(() => {
     const { weight, height, age, sex } = userData;
     const w = Number.parseFloat(weight);
     const h = Number.parseFloat(height);
@@ -39,16 +37,16 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
     } else {
       return 10 * w + 6.25 * h - 5 * a - 161;
     }
-  };
+  }, [userData]);
 
   // Calculate TDEE
-  const calculateTDEE = () => {
+  const calculateTDEE = useCallback(() => {
     const bmr = calculateBMR();
     return bmr * Number.parseFloat(userData.activityLevel);
-  };
+  }, [calculateBMR, userData.activityLevel]);
 
   // Calculate macros
-  const calculateMacros = () => {
+  const calculateMacros = useCallback(() => {
     let tdee = calculateTDEE();
     const weight = parseFloat(userData.weight);
 
@@ -86,34 +84,65 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
       carbs: Math.round(carbs),
       fats: Math.round(fats),
     };
-  };
+  }, [calculateTDEE, userData.goal, userData.weight]);
 
   const macros = calculateMacros();
   const bmr = calculateBMR();
   const tdee = calculateTDEE();
 
-  const calculationData = {
-    currentStep: 4, // Results step
-    userData: {
-      weight: userData.weight,
-      height: userData.height,
-      age: userData.age,
-      sex: userData.sex,
-      activityLevel: userData.activityLevel,
-      goal: userData.goal,
-    },
-    timestamp: Date.now(),
-    results: {
-      calories: macros.calories,
-      protein: macros.protein,
-      carbs: macros.carbs,
-      fats: macros.fats,
-    },
-  };
-  saveCalculationToStorage(calculationData);
+  // Save to user profile
+  const saveToUserProfile = useCallback(async () => {
+    // Guard against multiple saves and ensure user is logged in
+    if (!currentUser || hasSavedRef.current) return;
 
-  // Track saving
-  const hasSavedRef = useRef(false);
+    try {
+      // Save to user profile document
+      const userDocRef = doc(db, "users", currentUser.uid);
+      await setDoc(
+        userDocRef,
+        {
+          latestMacros: {
+            data: {
+              weight: Number(userData.weight),
+              height: Number(userData.height),
+              age: Number(userData.age),
+              sex: userData.sex,
+              activityLevel: userData.activityLevel,
+              goal: userData.goal,
+            },
+            results: {
+              bmr,
+              tdee,
+              macros,
+            },
+            updatedAt: new Date(),
+          },
+        },
+        { merge: true }
+      );
+
+      // Mark as saved to prevent subsequent saves
+      hasSavedRef.current = true;
+    } catch (error) {
+      console.error("Error saving to user profile:", error);
+    }
+  }, [
+    currentUser,
+    bmr,
+    tdee,
+    macros,
+    userData.weight,
+    userData.height,
+    userData.age,
+    userData.sex,
+    userData.activityLevel,
+    userData.goal,
+  ]);
+
+  // Save to user profile when component mounts
+  useEffect(() => {
+    saveToUserProfile();
+  }, [saveToUserProfile]);
 
   // Navigate to recipe planner
   const goToRecipePlanner = () => {
@@ -160,59 +189,6 @@ const ResultsPage = ({ userData, onStartOver }: ResultsPageProps) => {
       });
     }
   };
-
-  // Save to user profile if logged in
-  useEffect(() => {
-    const saveToUserProfile = async () => {
-      // Guard against multiple saves and ensure user is logged in
-      if (!currentUser || hasSavedRef.current) return;
-
-      try {
-        // Save to user profile document
-        const userDocRef = doc(db, "users", currentUser.uid);
-        await setDoc(
-          userDocRef,
-          {
-            latestMacros: {
-              data: {
-                weight: Number(userData.weight),
-                height: Number(userData.height),
-                age: Number(userData.age),
-                sex: userData.sex,
-                activityLevel: userData.activityLevel,
-                goal: userData.goal,
-              },
-              results: {
-                bmr,
-                tdee,
-                macros,
-              },
-              updatedAt: new Date(),
-            },
-          },
-          { merge: true }
-        );
-
-        // Mark as saved to prevent subsequent saves
-        hasSavedRef.current = true;
-      } catch (error) {
-        console.error("Error saving to user profile:", error);
-      }
-    };
-
-    saveToUserProfile();
-  }, [
-    currentUser,
-    bmr,
-    tdee,
-    macros,
-    userData.weight,
-    userData.height,
-    userData.age,
-    userData.sex,
-    userData.activityLevel,
-    userData.goal,
-  ]);
 
   const goalText =
     userData.goal === "lose" ? "perder peso" : userData.goal === "maintain" ? "manter peso" : "ganhar massa muscular";
