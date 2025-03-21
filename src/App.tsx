@@ -10,6 +10,9 @@ import Navbar from "@/components/ui/navbar-fixed";
 import LoadingScreen from "@/components/ui/loading";
 import MacroCalculator from "@/pages/macro-calculator";
 import RecipePlanner from "@/pages/recipe-planner";
+import RecipeDetailPage from "@/pages/recipe/[id]";
+import AdminRecipesPage from "@/pages/admin/recipes";
+import AdminRoute from "@/components/auth/AdminRoute";
 import AboutPage from "@/pages/about";
 import TermsPage from "@/pages/terms";
 import PrivacyPage from "@/pages/privacy";
@@ -47,6 +50,7 @@ const App = () => {
                 <main className="flex-1">
                   <SettingsToggle />
                   <Routes>
+                    {/* Public routes */}
                     <Route path="/" element={<MacroCalculator />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
@@ -55,8 +59,34 @@ const App = () => {
                     <Route path="/privacy" element={<PrivacyPage />} />
                     <Route path="/recipes" element={<RecipePlanner />} />
                     <Route path="/explore" element={<RecipeExplorer />} />
-                    {/* Catch all route for 404 */}
+                    <Route path="/recipe/:id" element={<RecipeDetailPage />} />
                     <Route path="*" element={<NotFoundPage />} />
+
+                    {/* Admin routes */}
+                    <Route
+                      path="/admin/recipes"
+                      element={
+                        <AdminRoute>
+                          <AdminRecipesPage />
+                        </AdminRoute>
+                      }
+                    />
+                    {/* <Route
+                      path="/admin/recipes/new"
+                      element={
+                        <AdminRoute>
+                          <NewRecipePage />
+                        </AdminRoute>
+                      }
+                    />
+                    <Route
+                      path="/admin/recipes/edit/:id"
+                      element={
+                        <AdminRoute>
+                          <EditRecipePage />
+                        </AdminRoute>
+                      }
+                    /> */}
                   </Routes>
                 </main>
                 <Footer />

@@ -1,0 +1,109 @@
+// firestore.rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    function isPremiumUser() {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isPremiumUser == true;
+    }
+    
+    function isContributor() {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'contributor';
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // User profiles - basic user data
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // Saved calculations - user's macro calculations
+    match /savedCalculations/{calcId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+    
+    // Saved recipes - user's saved recipes
+    match /savedRecipes/{saveId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+    
+    // Recipes collection
+    match /recipes/{recipeId} {
+      // Read permissions
+      allow read: if 
+        // Public recipes are readable by anyone
+        resource.data.isPublic == true ||
+        // Premium recipes require premium membership
+        (resource.data.isPremium == true && isPremiumUser()) ||
+        // Private recipes are only visible to creator or admin
+        isOwner(resource.data.createdBy) || 
+        isAdmin();
+      
+      // Write permissions
+      allow create: if 
+        // Admins can create any recipe
+        isAdmin() || 
+        // Contributors can create recipes
+        isContributor() || 
+        // Recipe creators can create public/private non-premium recipes
+        (isAuthenticated() && 
+         request.resource.data.createdBy == request.auth.uid && 
+         request.resource.data.isPremium == false);
+      
+      allow update: if 
+        // Admins can update any recipe
+        isAdmin() || 
+        // Original creator can update their own recipes
+        (isAuthenticated() && 
+         resource.data.createdBy == request.auth.uid);
+      
+      // Only admins can delete recipes
+      allow delete: if isAdmin();
+    }
+    
+    // Recipe ratings
+    match /recipeRatings/{ratingId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+    
+    // Recipe comments
+    match /recipeComments/{commentId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+    
+    // Ingredients database (for recipe creation)
+    match /ingredients/{ingredientId} {
+      allow read: if true;
+      allow write: if isAdmin() || isContributor();
+    }
+  }
+}
