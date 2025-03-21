@@ -71,6 +71,14 @@ const App = () => {
                         </AdminRoute>
                       }
                     />
+                    <Route
+                      path="/admin/ingredients"
+                      element={
+                        <AdminRoute>
+                          <AdminRecipesPage />
+                        </AdminRoute>
+                      }
+                    />
                     {/* <Route
                       path="/admin/recipes/new"
                       element={
