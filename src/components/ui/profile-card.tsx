@@ -54,7 +54,18 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
 
         if (userDoc.exists() && userDoc.data().latestMacros) {
           const firestoreData = userDoc.data().latestMacros;
-          if (firestoreData.results) {
+
+          // Check if we have macros data in the results structure
+          if (firestoreData.results && firestoreData.results.macros) {
+            // This matches the structure we saw in your Firestore screenshot
+            setMacroData({
+              calories: Math.round(firestoreData.results.macros.calories),
+              protein: Math.round(firestoreData.results.macros.protein),
+              carbs: Math.round(firestoreData.results.macros.carbs),
+              fats: Math.round(firestoreData.results.macros.fats),
+            });
+          } else if (firestoreData.results) {
+            // Fallback if the structure is different
             setMacroData({
               calories: Math.round(firestoreData.results.calories),
               protein: Math.round(firestoreData.results.protein),
@@ -76,6 +87,16 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
         }
       } catch (error) {
         console.error("Error fetching macro data:", error);
+        // Fall back to local storage if there was an error
+        const storedCalculation = getCalculationFromStorage();
+        if (storedCalculation && storedCalculation.results) {
+          setMacroData({
+            calories: Math.round(storedCalculation.results.calories),
+            protein: Math.round(storedCalculation.results.protein),
+            carbs: Math.round(storedCalculation.results.carbs),
+            fats: Math.round(storedCalculation.results.fats),
+          });
+        }
       } finally {
         setIsLoading(false);
       }
