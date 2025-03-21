@@ -37,10 +37,10 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
         const storedCalculation = getCalculationFromStorage();
         if (storedCalculation && storedCalculation.results) {
           setMacroData({
-            calories: Math.round(storedCalculation.results.calories),
-            protein: Math.round(storedCalculation.results.protein),
-            carbs: Math.round(storedCalculation.results.carbs),
-            fats: Math.round(storedCalculation.results.fats),
+            calories: Math.round(storedCalculation.results.calories || 0),
+            protein: Math.round(storedCalculation.results.protein || 0),
+            carbs: Math.round(storedCalculation.results.carbs || 0),
+            fats: Math.round(storedCalculation.results.fats || 0),
           });
         }
         return;
@@ -58,19 +58,21 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
           // Check if we have macros data in the results structure
           if (firestoreData.results && firestoreData.results.macros) {
             // This matches the structure we saw in your Firestore screenshot
+            const macros = firestoreData.results.macros;
             setMacroData({
-              calories: Math.round(firestoreData.results.macros.calories),
-              protein: Math.round(firestoreData.results.macros.protein),
-              carbs: Math.round(firestoreData.results.macros.carbs),
-              fats: Math.round(firestoreData.results.macros.fats),
+              calories: Math.round(macros.calories || 0),
+              protein: Math.round(macros.protein || 0),
+              carbs: Math.round(macros.carbs || 0),
+              fats: Math.round(macros.fats || 0),
             });
           } else if (firestoreData.results) {
             // Fallback if the structure is different
+            const results = firestoreData.results;
             setMacroData({
-              calories: Math.round(firestoreData.results.calories),
-              protein: Math.round(firestoreData.results.protein),
-              carbs: Math.round(firestoreData.results.carbs),
-              fats: Math.round(firestoreData.results.fats),
+              calories: Math.round(results.calories || 0),
+              protein: Math.round(results.protein || 0),
+              carbs: Math.round(results.carbs || 0),
+              fats: Math.round(results.fats || 0),
             });
           }
         } else {
@@ -78,10 +80,10 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
           const storedCalculation = getCalculationFromStorage();
           if (storedCalculation && storedCalculation.results) {
             setMacroData({
-              calories: Math.round(storedCalculation.results.calories),
-              protein: Math.round(storedCalculation.results.protein),
-              carbs: Math.round(storedCalculation.results.carbs),
-              fats: Math.round(storedCalculation.results.fats),
+              calories: Math.round(storedCalculation.results.calories || 0),
+              protein: Math.round(storedCalculation.results.protein || 0),
+              carbs: Math.round(storedCalculation.results.carbs || 0),
+              fats: Math.round(storedCalculation.results.fats || 0),
             });
           }
         }
@@ -91,10 +93,10 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
         const storedCalculation = getCalculationFromStorage();
         if (storedCalculation && storedCalculation.results) {
           setMacroData({
-            calories: Math.round(storedCalculation.results.calories),
-            protein: Math.round(storedCalculation.results.protein),
-            carbs: Math.round(storedCalculation.results.carbs),
-            fats: Math.round(storedCalculation.results.fats),
+            calories: Math.round(storedCalculation.results.calories || 0),
+            protein: Math.round(storedCalculation.results.protein || 0),
+            carbs: Math.round(storedCalculation.results.carbs || 0),
+            fats: Math.round(storedCalculation.results.fats || 0),
           });
         }
       } finally {
