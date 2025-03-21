@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { LogOut, ChevronDown, ChevronUp, User, Award, Flame, Dumbbell, Croissant, Droplet } from "lucide-react";
+import { LogOut, ChevronDown, ChevronUp, User, Flame, Dumbbell, Croissant, Droplet } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getCalculationFromStorage } from "@/lib/storage-utils";
 import { useNavigate } from "react-router-dom";
@@ -282,7 +282,7 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
                 <div className="bg-secondary/30 rounded-lg p-3 mb-3">
                   <div className="flex items-center">
                     <div className="w-6 h-6 rounded-full bg-green-500 flex-shrink-0 mr-2 flex items-center justify-center">
-                      <Award className="h-3 w-3 text-white" />
+                      <span className="text-xs">🍉</span>
                     </div>
                     <div>
                       <p className="text-sm font-medium">Plano Gratuito</p>
