@@ -1,3 +1,4 @@
+// src/services/recipeService.ts
 import {
   collection,
   doc,
@@ -10,130 +11,371 @@ import {
   addDoc,
   updateDoc,
   deleteDoc,
-  Timestamp,
   serverTimestamp,
+  Timestamp,
+  DocumentSnapshot,
+  QueryDocumentSnapshot,
+  DocumentData,
+  collectionGroup,
+  startAfter,
+  startAt,
+  endAt,
+  QueryConstraint,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import type { Recipe } from "@/types/recipe";
+import type { Recipe, RecipeCategory, CuisineType, DietaryRestriction, MealType } from "@/types/recipe";
+import { generateSlug } from "@/utils/recipe/recipeUtils";
 
 // Collection references
 const RECIPES_COLLECTION = "recipes";
+const RECIPES_COUNTER_DOC = "counters/recipes";
 
-// Type for Firestore recipe (with Timestamp instead of Date)
-interface FirestoreRecipe extends Omit<Recipe, "createdAt" | "updatedAt"> {
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
-}
+// Convert Firestore timestamps to Dates
+const convertFromFirestore = (doc: QueryDocumentSnapshot<DocumentData>): Recipe => {
+  const data = doc.data();
 
-// Convert Firestore recipe to app Recipe
-const convertFromFirestore = (doc: FirestoreRecipe): Recipe => ({
-  ...doc,
-  createdAt: doc.createdAt.toDate(),
-  updatedAt: doc.updatedAt.toDate(),
-});
+  return {
+    ...data,
+    id: doc.id,
+    createdAt: data.createdAt?.toDate() || new Date(),
+    updatedAt: data.updatedAt?.toDate() || new Date(),
+  } as Recipe;
+};
 
-// Get a single recipe by ID
-export const getRecipe = async (recipeId: string): Promise<Recipe | null> => {
+/**
+ * Get recipe by ID
+ */
+export const getRecipeById = async (recipeId: string): Promise<Recipe | null> => {
   try {
-    console.log("Fetching recipe with ID:", recipeId);
     const recipeDoc = await getDoc(doc(db, RECIPES_COLLECTION, recipeId));
+    if (!recipeDoc.exists()) return null;
 
-    if (!recipeDoc.exists()) {
-      console.log("Recipe not found");
-      return null;
-    }
-
-    const data = recipeDoc.data();
-    console.log("Recipe data:", data);
-
-    // Convert from Firestore format to Recipe type
-    return {
-      id: recipeDoc.id,
-      ...data,
-      createdAt: data.createdAt?.toDate() || new Date(),
-      updatedAt: data.updatedAt?.toDate() || new Date(),
-    } as Recipe;
+    return convertFromFirestore(recipeDoc as QueryDocumentSnapshot<DocumentData>);
   } catch (error) {
-    console.error("Error fetching recipe:", error);
+    console.error("Error fetching recipe by ID:", error);
     throw error;
   }
 };
 
-// Get recipes with filtering options
-export const getRecipes = async ({
-  category,
-  tags,
-  isPremium,
-  isFeatured,
-  isNew,
-  createdBy,
-  maxResults = 20,
-}: {
-  category?: string;
+/**
+ * Get recipe by slug
+ */
+export const getRecipeBySlug = async (slug: string): Promise<Recipe | null> => {
+  try {
+    const q = query(
+      collection(db, RECIPES_COLLECTION),
+      where("slug", "==", slug),
+      where("isPublic", "==", true),
+      limit(1)
+    );
+
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) return null;
+
+    return convertFromFirestore(querySnapshot.docs[0]);
+  } catch (error) {
+    console.error("Error fetching recipe by slug:", error);
+    throw error;
+  }
+};
+
+/**
+ * Interface for recipe filter parameters
+ */
+export interface RecipeFilterParams {
+  category?: RecipeCategory;
+  cuisineType?: CuisineType;
+  dietaryRestrictions?: DietaryRestriction[];
+  mealTypes?: MealType[];
   tags?: string[];
+  maxCalories?: number;
+  minProtein?: number;
+  difficulty?: string;
   isPremium?: boolean;
   isFeatured?: boolean;
   isNew?: boolean;
   createdBy?: string;
-  maxResults?: number;
-}): Promise<Recipe[]> => {
+  searchText?: string;
+  lastVisible?: DocumentSnapshot;
+  pageSize?: number;
+}
+
+/**
+ * Get recipes with filtering and pagination
+ */
+export const getRecipes = async (
+  params: RecipeFilterParams = {}
+): Promise<{
+  recipes: Recipe[];
+  lastVisible: DocumentSnapshot | null;
+  hasMore: boolean;
+}> => {
   try {
-    // Start with the collection reference
-    let q = query(collection(db, RECIPES_COLLECTION), where("isPublic", "==", true));
+    const {
+      category,
+      cuisineType,
+      dietaryRestrictions,
+      mealTypes,
+      tags,
+      maxCalories,
+      minProtein,
+      difficulty,
+      isPremium,
+      isFeatured,
+      isNew,
+      createdBy,
+      searchText,
+      lastVisible,
+      pageSize = 10,
+    } = params;
 
-    // Add filters
+    // Build query constraints
+    const constraints: QueryConstraint[] = [where("isPublic", "==", true), orderBy("updatedAt", "desc")];
+
+    // Add category filter
     if (category) {
-      q = query(q, where("category", "==", category));
+      constraints.push(where("category", "==", category));
     }
 
-    if (tags && tags.length > 0) {
-      // Note: Firestore has limitations with array-contains-any (max 10 values)
-      q = query(q, where("tags", "array-contains-any", tags.slice(0, 10)));
+    // Add cuisine type filter
+    if (cuisineType) {
+      constraints.push(where("cuisineType", "==", cuisineType));
     }
 
-    if (isPremium !== undefined) {
-      q = query(q, where("isPremium", "==", isPremium));
-    }
-
-    if (isFeatured !== undefined) {
-      q = query(q, where("isFeatured", "==", isFeatured));
-    }
-
-    if (isNew !== undefined) {
-      q = query(q, where("isNew", "==", isNew));
-    }
-
-    if (createdBy) {
-      q = query(q, where("createdBy", "==", createdBy));
-    }
-
-    // Order by updatedAt (newest first) and limit results
-    q = query(q, orderBy("updatedAt", "desc"), limit(maxResults));
-
-    const recipeDocs = await getDocs(q);
-    return recipeDocs.docs.map((doc) => {
-      const data = doc.data() as FirestoreRecipe;
-      return convertFromFirestore({
-        ...data,
-        id: doc.id,
+    // Add dietary restrictions filter - all must match
+    if (dietaryRestrictions && dietaryRestrictions.length > 0) {
+      dietaryRestrictions.forEach((restriction) => {
+        constraints.push(where("dietaryRestrictions", "array-contains", restriction));
       });
-    });
+    }
+
+    // Add meal type filter - any can match (but we can only use one array-contains-any)
+    if (mealTypes && mealTypes.length > 0) {
+      constraints.push(where("mealTypes", "array-contains-any", mealTypes));
+    }
+
+    // Add tags filter - if we haven't already used array-contains-any
+    if (tags && tags.length > 0 && (!mealTypes || mealTypes.length === 0)) {
+      constraints.push(where("tags", "array-contains-any", tags.slice(0, 10)));
+    }
+
+    // Add nutrition filters
+    if (maxCalories) {
+      constraints.push(where("nutrition.calories", "<=", maxCalories));
+    }
+
+    if (minProtein) {
+      constraints.push(where("nutrition.protein", ">=", minProtein));
+    }
+
+    // Add difficulty filter
+    if (difficulty) {
+      constraints.push(where("difficulty", "==", difficulty));
+    }
+
+    // Add premium filter
+    if (isPremium !== undefined) {
+      constraints.push(where("isPremium", "==", isPremium));
+    }
+
+    // Add featured filter
+    if (isFeatured !== undefined) {
+      constraints.push(where("isFeatured", "==", isFeatured));
+    }
+
+    // Add new filter
+    if (isNew !== undefined) {
+      constraints.push(where("isNew", "==", isNew));
+    }
+
+    // Add creator filter
+    if (createdBy) {
+      constraints.push(where("createdBy", "==", createdBy));
+    }
+
+    // Add pagination
+    if (lastVisible) {
+      constraints.push(startAfter(lastVisible));
+    }
+
+    // Limit results
+    constraints.push(limit(pageSize + 1)); // +1 to check if there are more
+
+    // Create query
+    let q = query(collection(db, RECIPES_COLLECTION), ...constraints);
+
+    // Execute query
+    const querySnapshot = await getDocs(q);
+
+    // Check if we have more results
+    const hasMore = querySnapshot.docs.length > pageSize;
+
+    // Get the recipes
+    const recipes = querySnapshot.docs.slice(0, pageSize).map((doc) => convertFromFirestore(doc));
+
+    // Get the last visible document for pagination
+    const newLastVisible =
+      querySnapshot.docs.length > 0 ? querySnapshot.docs[Math.min(pageSize - 1, querySnapshot.docs.length - 1)] : null;
+
+    return {
+      recipes,
+      lastVisible: newLastVisible,
+      hasMore,
+    };
   } catch (error) {
     console.error("Error fetching recipes:", error);
     throw error;
   }
 };
 
-// Admin functions
-
-// Create a new recipe
-export const createRecipe = async (recipe: Omit<Recipe, "id" | "createdAt" | "updatedAt">): Promise<string> => {
+/**
+ * Search recipes by text
+ * Note: This requires a special index in Firestore
+ */
+export const searchRecipes = async (searchText: string, limit: number = 10): Promise<Recipe[]> => {
   try {
-    const docRef = await addDoc(collection(db, RECIPES_COLLECTION), {
-      ...recipe,
+    // Create a version of the search text without diacritical marks
+    const normalizedText = searchText
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
+    // For a proper text search, you'd need Algolia or a similar search service
+    // This is a simple approach that searches name and description
+    const nameStartQuery = query(
+      collection(db, RECIPES_COLLECTION),
+      where("isPublic", "==", true),
+      where("name", ">=", searchText),
+      where("name", "<=", searchText + "\uf8ff"),
+      limit(limit)
+    );
+
+    const nameNormalizedQuery = query(
+      collection(db, RECIPES_COLLECTION),
+      where("isPublic", "==", true),
+      where("nameNormalized", ">=", normalizedText),
+      where("nameNormalized", "<=", normalizedText + "\uf8ff"),
+      limit(limit)
+    );
+
+    // Execute queries
+    const [nameStartSnapshot, nameNormalizedSnapshot] = await Promise.all([
+      getDocs(nameStartQuery),
+      getDocs(nameNormalizedQuery),
+    ]);
+
+    // Combine results and remove duplicates
+    const idSet = new Set<string>();
+    const recipes: Recipe[] = [];
+
+    for (const snapshot of [nameStartSnapshot, nameNormalizedSnapshot]) {
+      snapshot.docs.forEach((doc) => {
+        if (!idSet.has(doc.id)) {
+          idSet.add(doc.id);
+          recipes.push(convertFromFirestore(doc));
+        }
+      });
+    }
+
+    return recipes;
+  } catch (error) {
+    console.error("Error searching recipes:", error);
+    throw error;
+  }
+};
+
+/**
+ * Get featured recipes
+ */
+export const getFeaturedRecipes = async (limit: number = 6): Promise<Recipe[]> => {
+  try {
+    const q = query(
+      collection(db, RECIPES_COLLECTION),
+      where("isPublic", "==", true),
+      where("isFeatured", "==", true),
+      orderBy("updatedAt", "desc"),
+      limit(limit)
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => convertFromFirestore(doc));
+  } catch (error) {
+    console.error("Error fetching featured recipes:", error);
+    throw error;
+  }
+};
+
+/**
+ * Get new recipes
+ */
+export const getNewRecipes = async (limit: number = 6): Promise<Recipe[]> => {
+  try {
+    const q = query(
+      collection(db, RECIPES_COLLECTION),
+      where("isPublic", "==", true),
+      where("isNew", "==", true),
+      orderBy("updatedAt", "desc"),
+      limit(limit)
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => convertFromFirestore(doc));
+  } catch (error) {
+    console.error("Error fetching new recipes:", error);
+    throw error;
+  }
+};
+
+/**
+ * Get recipes by category
+ */
+export const getRecipesByCategory = async (category: RecipeCategory, limit: number = 10): Promise<Recipe[]> => {
+  try {
+    const q = query(
+      collection(db, RECIPES_COLLECTION),
+      where("isPublic", "==", true),
+      where("category", "==", category),
+      orderBy("updatedAt", "desc"),
+      limit(limit)
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => convertFromFirestore(doc));
+  } catch (error) {
+    console.error(`Error fetching recipes for category ${category}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Admin functions - Create, Update, Delete
+ */
+
+/**
+ * Create a new recipe
+ */
+export const createRecipe = async (
+  recipeData: Omit<Recipe, "id" | "createdAt" | "updatedAt" | "slug">
+): Promise<string> => {
+  try {
+    // Generate slug from name
+    const slug = generateSlug(recipeData.name);
+
+    // Add timestamps and slug
+    const recipeWithMetadata = {
+      ...recipeData,
+      slug,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
-    });
+      // Add normalized name for better search
+      nameNormalized: recipeData.name
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, ""),
+    };
+
+    // Create the recipe document
+    const docRef = await addDoc(collection(db, RECIPES_COLLECTION), recipeWithMetadata);
 
     return docRef.id;
   } catch (error) {
@@ -142,23 +384,39 @@ export const createRecipe = async (recipe: Omit<Recipe, "id" | "createdAt" | "up
   }
 };
 
-// Update an existing recipe
+/**
+ * Update an existing recipe
+ */
 export const updateRecipe = async (
   recipeId: string,
-  recipe: Partial<Omit<Recipe, "id" | "createdAt" | "updatedAt">>
+  recipeData: Partial<Omit<Recipe, "id" | "createdAt" | "updatedAt" | "slug">>
 ): Promise<void> => {
   try {
-    await updateDoc(doc(db, RECIPES_COLLECTION, recipeId), {
-      ...recipe,
+    const updateData: any = {
+      ...recipeData,
       updatedAt: serverTimestamp(),
-    });
+    };
+
+    // If the name is being updated, update the slug and normalized name too
+    if (recipeData.name) {
+      updateData.slug = generateSlug(recipeData.name);
+      updateData.nameNormalized = recipeData.name
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    // Update the recipe document
+    await updateDoc(doc(db, RECIPES_COLLECTION, recipeId), updateData);
   } catch (error) {
     console.error("Error updating recipe:", error);
     throw error;
   }
 };
 
-// Delete a recipe
+/**
+ * Delete a recipe
+ */
 export const deleteRecipe = async (recipeId: string): Promise<void> => {
   try {
     await deleteDoc(doc(db, RECIPES_COLLECTION, recipeId));
