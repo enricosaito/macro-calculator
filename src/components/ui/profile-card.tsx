@@ -25,107 +25,112 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
   const { currentUser } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [macroData, setMacroData] = useState<MacroData | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const cardRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   // Add a ref to track the last update time
   const lastUpdateRef = useRef<number>(0);
+  // Add a cache for the data
+  const dataCache = useRef<{ data: MacroData | null; timestamp: number }>({
+    data: null,
+    timestamp: 0,
+  });
 
-  // Fetch macro data
-  const fetchMacroData = useCallback(async () => {
-    if (!currentUser) {
-      // Use local storage for non-authenticated users
-      const storedCalculation = getCalculationFromStorage();
-      if (storedCalculation && storedCalculation.results) {
-        setMacroData({
-          calories: Math.round(storedCalculation.results.calories || 0),
-          protein: Math.round(storedCalculation.results.protein || 0),
-          carbs: Math.round(storedCalculation.results.carbs || 0),
-          fats: Math.round(storedCalculation.results.fats || 0),
-        });
+  // Wrap fetchMacroData in useCallback to prevent it from changing on every render
+  const fetchMacroData = useCallback(
+    async (showLoading = true) => {
+      // If we have cached data that's less than 10 seconds old, use it
+      const now = Date.now();
+      if (dataCache.current.data && now - dataCache.current.timestamp < 10000) {
+        setMacroData(dataCache.current.data);
+        setIsLoading(false);
+        return;
       }
-      return;
-    }
 
-    // For authenticated users, fetch from Firestore
-    setIsLoading(true);
-    try {
-      const userDocRef = doc(db, "users", currentUser.uid);
-      const userDoc = await getDoc(userDocRef);
+      // Only show loading if requested (avoid it when opening the dropdown)
+      if (showLoading) {
+        setIsLoading(true);
+      }
 
-      if (userDoc.exists() && userDoc.data().latestMacros) {
-        const firestoreData = userDoc.data().latestMacros;
+      try {
+        let newMacroData: MacroData | null = null;
 
-        // Check if we have macros data in the results structure
-        if (firestoreData.results && firestoreData.results.macros) {
-          // This matches the structure we saw in your Firestore screenshot
-          const macros = firestoreData.results.macros;
-          setMacroData({
-            calories: Math.round(macros.calories || 0),
-            protein: Math.round(macros.protein || 0),
-            carbs: Math.round(macros.carbs || 0),
-            fats: Math.round(macros.fats || 0),
-          });
-        } else if (firestoreData.results) {
-          // Fallback if the structure is different
-          const results = firestoreData.results;
-          setMacroData({
-            calories: Math.round(results.calories || 0),
-            protein: Math.round(results.protein || 0),
-            carbs: Math.round(results.carbs || 0),
-            fats: Math.round(results.fats || 0),
-          });
+        if (currentUser) {
+          // First try to get data from Firestore for authenticated users
+          const userDocRef = doc(db, "users", currentUser.uid);
+          const userDoc = await getDoc(userDocRef);
+
+          if (userDoc.exists() && userDoc.data().latestMacros) {
+            const firestoreData = userDoc.data().latestMacros;
+
+            // Check if we have macros data in the results structure
+            if (firestoreData.results && firestoreData.results.macros) {
+              // This matches the structure we saw in your Firestore screenshot
+              const macros = firestoreData.results.macros;
+              newMacroData = {
+                calories: Math.round(macros.calories || 0),
+                protein: Math.round(macros.protein || 0),
+                carbs: Math.round(macros.carbs || 0),
+                fats: Math.round(macros.fats || 0),
+              };
+            } else if (firestoreData.results) {
+              // Fallback if the structure is different
+              const results = firestoreData.results;
+              newMacroData = {
+                calories: Math.round(results.calories || 0),
+                protein: Math.round(results.protein || 0),
+                carbs: Math.round(results.carbs || 0),
+                fats: Math.round(results.fats || 0),
+              };
+            }
+          }
         }
-      } else {
-        // Fall back to local storage if no Firestore data
-        const storedCalculation = getCalculationFromStorage();
-        if (storedCalculation && storedCalculation.results) {
-          setMacroData({
-            calories: Math.round(storedCalculation.results.calories || 0),
-            protein: Math.round(storedCalculation.results.protein || 0),
-            carbs: Math.round(storedCalculation.results.carbs || 0),
-            fats: Math.round(storedCalculation.results.fats || 0),
-          });
+
+        // Fall back to local storage if no Firestore data or not logged in
+        if (!newMacroData) {
+          const storedCalculation = getCalculationFromStorage();
+          if (storedCalculation && storedCalculation.results) {
+            newMacroData = {
+              calories: Math.round(storedCalculation.results.calories || 0),
+              protein: Math.round(storedCalculation.results.protein || 0),
+              carbs: Math.round(storedCalculation.results.carbs || 0),
+              fats: Math.round(storedCalculation.results.fats || 0),
+            };
+
+            // Update lastUpdateRef to match storage timestamp
+            lastUpdateRef.current = storedCalculation.timestamp;
+          }
         }
+
+        // Update state and cache
+        setMacroData(newMacroData);
+        dataCache.current = {
+          data: newMacroData,
+          timestamp: now,
+        };
+      } catch (error) {
+        console.error("Error fetching macro data:", error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching macro data:", error);
-      // Fall back to local storage if there was an error
-      const storedCalculation = getCalculationFromStorage();
-      if (storedCalculation && storedCalculation.results) {
-        setMacroData({
-          calories: Math.round(storedCalculation.results.calories || 0),
-          protein: Math.round(storedCalculation.results.protein || 0),
-          carbs: Math.round(storedCalculation.results.carbs || 0),
-          fats: Math.round(storedCalculation.results.fats || 0),
-        });
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [currentUser]);
+    },
+    [currentUser]
+  );
 
-  // Fetch data on component mount and when user changes
+  // Fetch data on component mount
   useEffect(() => {
-    fetchMacroData();
-    // Save current time to prevent multiple rapid updates
-    lastUpdateRef.current = Date.now();
-  }, [currentUser, fetchMacroData]);
+    fetchMacroData(true);
+  }, [fetchMacroData]);
 
-  // Set up periodic checking for new calculation data
+  // Background data refresh
   useEffect(() => {
-    // Check for updated data when the dropdown is opened
-    if (isOpen) {
-      fetchMacroData();
-    }
-
-    // Also periodically check for changes in local storage
+    // Periodically check for changes in local storage
     const checkForUpdates = () => {
       const storedCalculation = getCalculationFromStorage();
       if (storedCalculation && storedCalculation.timestamp > lastUpdateRef.current) {
         // The data has been updated since our last fetch
-        fetchMacroData();
+        fetchMacroData(false); // Don't show loading for background updates
         lastUpdateRef.current = storedCalculation.timestamp;
       }
     };
@@ -136,7 +141,7 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
     return () => {
       clearInterval(intervalId);
     };
-  }, [isOpen, fetchMacroData]);
+  }, [fetchMacroData]);
 
   // Handle click outside to close the dropdown
   useEffect(() => {
@@ -152,6 +157,20 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
     };
   }, []);
 
+  // Prefetch data before showing dropdown
+  const handleOpenDropdown = useCallback(() => {
+    // If not already open
+    if (!isOpen) {
+      // First open the dropdown with cached data
+      setIsOpen(true);
+      // Then fetch fresh data in background
+      fetchMacroData(false);
+    } else {
+      // Just close if already open
+      setIsOpen(false);
+    }
+  }, [isOpen, fetchMacroData]);
+
   if (!currentUser) return null;
 
   // Get user's first name for greeting
@@ -159,17 +178,7 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
 
   return (
     <div className="relative" ref={cardRef}>
-      <Button
-        variant="ghost"
-        className="flex items-center gap-2 px-3"
-        onClick={() => {
-          // Fetch latest data when opening
-          if (!isOpen) {
-            fetchMacroData();
-          }
-          setIsOpen(!isOpen);
-        }}
-      >
+      <Button variant="ghost" className="flex items-center gap-2 px-3" onClick={handleOpenDropdown}>
         {currentUser.photoURL ? (
           <img src={currentUser.photoURL} alt={firstName} className="w-8 h-8 rounded-full object-cover" />
         ) : (
@@ -197,13 +206,13 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
                   <p className="text-sm text-muted-foreground">{currentUser.email}</p>
                 </div>
 
-                {isLoading ? (
-                  <div className="bg-secondary/30 rounded-lg p-3 mb-3 text-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary mx-auto mb-1"></div>
-                    <p className="text-sm text-muted-foreground">Carregando dados...</p>
-                  </div>
-                ) : macroData ? (
-                  <div className="bg-primary/10 rounded-lg p-3 mb-3">
+                {macroData ? (
+                  <div className="bg-primary/10 rounded-lg p-3 mb-3 relative">
+                    {isLoading && (
+                      <div className="absolute top-1 right-1">
+                        <div className="w-3 h-3 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+                      </div>
+                    )}
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="text-sm font-medium">Seus macros:</h4>
                       <Button
@@ -246,6 +255,11 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
                         gorduras
                       </div>
                     </div>
+                  </div>
+                ) : isLoading ? (
+                  <div className="bg-secondary/30 rounded-lg p-3 mb-3 text-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary mx-auto mb-1"></div>
+                    <p className="text-sm text-muted-foreground">Carregando dados...</p>
                   </div>
                 ) : (
                   <div className="bg-secondary/30 rounded-lg p-3 mb-3">
