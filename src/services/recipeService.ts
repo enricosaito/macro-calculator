@@ -40,7 +40,7 @@ const convertFromFirestore = (doc: QueryDocumentSnapshot<DocumentData>): Recipe 
 /**
  * Get recipe by ID
  */
-export const getRecipeById = async (recipeId: string): Promise<Recipe | null> => {
+export const getRecipe = async (recipeId: string): Promise<Recipe | null> => {
   try {
     const recipeDoc = await getDoc(doc(db, RECIPES_COLLECTION, recipeId));
     if (!recipeDoc.exists()) return null;
@@ -193,11 +193,11 @@ export const getRecipes = async (
     }
 
     // Limit results
-    constraints.push(limit(pageSize + 1)); // +1 to check if there are more
+    const limitConstraint = limit(pageSize + 1); // +1 to check if there are more
+    constraints.push(limitConstraint);
 
     // Create query
-    const baseQuery = query(...);
-    const finalQuery = query(...);
+    const q = query(collection(db, RECIPES_COLLECTION), ...constraints);
 
     // Execute query
     const querySnapshot = await getDocs(q);
@@ -227,7 +227,7 @@ export const getRecipes = async (
  * Search recipes by text
  * Note: This requires a special index in Firestore
  */
-export const searchRecipes = async (searchText: string, limit: number = 10): Promise<Recipe[]> => {
+export const searchRecipes = async (searchText: string, limitCount: number = 10): Promise<Recipe[]> => {
   try {
     // Create a version of the search text without diacritical marks
     const normalizedText = searchText
@@ -242,7 +242,7 @@ export const searchRecipes = async (searchText: string, limit: number = 10): Pro
       where("isPublic", "==", true),
       where("name", ">=", searchText),
       where("name", "<=", searchText + "\uf8ff"),
-      limit(limit)
+      limit(limitCount)
     );
 
     const nameNormalizedQuery = query(
@@ -250,7 +250,7 @@ export const searchRecipes = async (searchText: string, limit: number = 10): Pro
       where("isPublic", "==", true),
       where("nameNormalized", ">=", normalizedText),
       where("nameNormalized", "<=", normalizedText + "\uf8ff"),
-      limit(limit)
+      limit(limitCount)
     );
 
     // Execute queries
@@ -282,14 +282,14 @@ export const searchRecipes = async (searchText: string, limit: number = 10): Pro
 /**
  * Get featured recipes
  */
-export const getFeaturedRecipes = async (limit: number = 6): Promise<Recipe[]> => {
+export const getFeaturedRecipes = async (limitCount: number = 6): Promise<Recipe[]> => {
   try {
     const q = query(
       collection(db, RECIPES_COLLECTION),
       where("isPublic", "==", true),
       where("isFeatured", "==", true),
       orderBy("updatedAt", "desc"),
-      limit(limit)
+      limit(limitCount)
     );
 
     const querySnapshot = await getDocs(q);
@@ -303,14 +303,14 @@ export const getFeaturedRecipes = async (limit: number = 6): Promise<Recipe[]> =
 /**
  * Get new recipes
  */
-export const getNewRecipes = async (limit: number = 6): Promise<Recipe[]> => {
+export const getNewRecipes = async (limitCount: number = 6): Promise<Recipe[]> => {
   try {
     const q = query(
       collection(db, RECIPES_COLLECTION),
       where("isPublic", "==", true),
       where("isNew", "==", true),
       orderBy("updatedAt", "desc"),
-      limit(limit)
+      limit(limitCount)
     );
 
     const querySnapshot = await getDocs(q);
@@ -324,14 +324,14 @@ export const getNewRecipes = async (limit: number = 6): Promise<Recipe[]> => {
 /**
  * Get recipes by category
  */
-export const getRecipesByCategory = async (category: RecipeCategory, limit: number = 10): Promise<Recipe[]> => {
+export const getRecipesByCategory = async (category: RecipeCategory, limitCount: number = 10): Promise<Recipe[]> => {
   try {
     const q = query(
       collection(db, RECIPES_COLLECTION),
       where("isPublic", "==", true),
       where("category", "==", category),
       orderBy("updatedAt", "desc"),
-      limit(limit)
+      limit(limitCount)
     );
 
     const querySnapshot = await getDocs(q);
@@ -387,7 +387,8 @@ export const updateRecipe = async (
   recipeData: Partial<Omit<Recipe, "id" | "createdAt" | "updatedAt" | "slug">>
 ): Promise<void> => {
   try {
-    const updateData: any = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updateData: { [key: string]: any } = {
       ...recipeData,
       updatedAt: serverTimestamp(),
     };

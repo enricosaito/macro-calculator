@@ -1,8 +1,7 @@
-// src/components/admin/RecipeManager.tsx
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { getRecipes, deleteRecipe, RecipeFilterParams } from "@/services/recipeService";
-import { Recipe } from "@/types/recipe";
+import { Recipe, RecipeCategory } from "@/types/recipe";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { seedDatabase } from "@/utils/recipe/seedDatabase";
@@ -15,23 +14,33 @@ const RecipeManager = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterCategory, setFilterCategory] = useState("");
+  const [filterCategory, setFilterCategory] = useState("all");
   const { currentUser } = useAuth();
+
+  // Filter recipes by search term
+  const filteredRecipes = recipes.filter(
+    (recipe) =>
+      recipe.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      recipe.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   useEffect(() => {
     fetchRecipes();
-  });
+  }, [filterCategory]);
 
   const fetchRecipes = async () => {
     try {
       setLoading(true);
       const filters: RecipeFilterParams = {};
 
-      if (filterCategory) {
-        filters.category = filterCategory;
+      if (filterCategory && filterCategory !== "all") {
+        filters.category = filterCategory as RecipeCategory;
       }
 
+      console.log("Fetching recipes with filters:", filters);
       const result = await getRecipes(filters);
+      console.log("Recipes fetched:", result);
+
       setRecipes(result.recipes);
     } catch (error) {
       console.error("Error fetching recipes:", error);
@@ -71,13 +80,6 @@ const RecipeManager = () => {
       alert("Erro ao excluir a receita");
     }
   };
-
-  // Filter recipes by search term
-  const filteredRecipes = recipes.filter(
-    (recipe) =>
-      recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      recipe.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   if (!currentUser) {
     return (
@@ -127,15 +129,14 @@ const RecipeManager = () => {
           value={filterCategory}
           onValueChange={(value) => {
             setFilterCategory(value);
-            // Trigger re-fetch when changing filter
-            setTimeout(fetchRecipes, 0);
+            // Fetch recipes will be triggered by useEffect dependency
           }}
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Categoria" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todas</SelectItem>
+            <SelectItem value="all">Todas</SelectItem>
             <SelectItem value="breakfast">Café da Manhã</SelectItem>
             <SelectItem value="lunch">Almoço</SelectItem>
             <SelectItem value="dinner">Jantar</SelectItem>
@@ -166,8 +167,10 @@ const RecipeManager = () => {
                 <tr key={recipe.id} className="border-t border-border/50 hover:bg-muted/30">
                   <td className="p-4">
                     <div>
-                      <p className="font-medium">{recipe.name}</p>
-                      <p className="text-sm text-muted-foreground line-clamp-1">{recipe.description}</p>
+                      <p className="font-medium">{recipe.name || "Sem nome"}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-1">
+                        {recipe.description || "Sem descrição"}
+                      </p>
                     </div>
                   </td>
                   <td className="p-4">
