@@ -178,19 +178,29 @@ const ProfileCard = ({ onLogout }: ProfileCardProps) => {
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div className="flex items-center gap-1 text-muted-foreground">
                         <Flame className="h-3 w-3 text-orange-500" />
-                        <span className="font-medium text-foreground">{macroData.calories}</span> kcal
+                        <span className="font-medium text-foreground">
+                          {macroData.calories ? macroData.calories : 0}
+                        </span>{" "}
+                        kcal
                       </div>
                       <div className="flex items-center gap-1 text-muted-foreground">
                         <Dumbbell className="h-3 w-3 text-blue-500" />
-                        <span className="font-medium text-primary">{macroData.protein}g</span> proteína
+                        <span className="font-medium text-primary">
+                          {macroData.protein ? macroData.protein : 0}g
+                        </span>{" "}
+                        proteína
                       </div>
                       <div className="flex items-center gap-1 text-muted-foreground">
                         <Croissant className="h-3 w-3 text-yellow-500" />
-                        <span className="font-medium text-yellow-500">{macroData.carbs}g</span> carbs
+                        <span className="font-medium text-yellow-500">
+                          {macroData.carbs ? macroData.carbs : 0}g
+                        </span>{" "}
+                        carbs
                       </div>
                       <div className="flex items-center gap-1 text-muted-foreground">
                         <Droplet className="h-3 w-3 text-red-500" />
-                        <span className="font-medium text-red-500">{macroData.fats}g</span> gorduras
+                        <span className="font-medium text-red-500">{macroData.fats ? macroData.fats : 0}g</span>{" "}
+                        gorduras
                       </div>
                     </div>
                   </div>
