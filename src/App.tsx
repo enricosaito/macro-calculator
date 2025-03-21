@@ -11,6 +11,7 @@ import LoadingScreen from "@/components/ui/loading";
 import MacroCalculator from "@/pages/macro-calculator";
 import RecipePlanner from "@/pages/recipe-planner";
 import RecipeDetailPage from "@/pages/recipe/[id]";
+import AdminRecipesPage from "@/pages/admin/recipes";
 import AboutPage from "@/pages/about";
 import TermsPage from "@/pages/terms";
 import PrivacyPage from "@/pages/privacy";
@@ -57,6 +58,7 @@ const App = () => {
                     <Route path="/recipes" element={<RecipePlanner />} />
                     <Route path="/explore" element={<RecipeExplorer />} />
                     <Route path="/recipe/:id" element={<RecipeDetailPage />} />
+                    <Route path="/admin/recipes" element={<AdminRecipesPage />} />
                     <Route path="*" element={<NotFoundPage />} />
                   </Routes>
                 </main>
