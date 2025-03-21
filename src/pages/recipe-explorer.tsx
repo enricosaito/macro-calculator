@@ -8,8 +8,6 @@ import { Link } from "react-router-dom";
 import { recipes } from "@/lib/recipes-data";
 import PageTransition from "@/components/ui/page-transition";
 
-import { createSampleRecipe } from "@/utils/createSampleRecipe";
-
 const RecipeExplorer = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -26,17 +24,6 @@ const RecipeExplorer = () => {
 
   const quickRecipes = recipes.filter((recipe) => recipe.prepTime + recipe.cookTime <= 20).slice(0, 10);
 
-  // Then add this function in the RecipeExplorer component
-  const handleCreateSampleRecipe = async () => {
-    try {
-      const recipeId = await createSampleRecipe();
-      alert(`Receita de exemplo criada com ID: ${recipeId}`);
-    } catch (error) {
-      console.error("Erro ao criar receita:", error);
-      alert("Erro ao criar receita de exemplo");
-    }
-  };
-
   return (
     <PageTransition>
       <div className="container mx-auto py-6 px-4">
@@ -51,11 +38,6 @@ const RecipeExplorer = () => {
           />
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         </div>
-
-        {/* Test Add Recipe */}
-        <Button onClick={handleCreateSampleRecipe} variant="outline" className="mb-4">
-          Criar Receita de Exemplo
-        </Button>
 
         {/* Quick Filter Pills */}
         <div className="flex gap-2 overflow-x-auto pb-2 mb-6 no-scrollbar">
