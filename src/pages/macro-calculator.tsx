@@ -12,64 +12,28 @@ import ResultsPage from "@/components/macro-calculator/results-page";
 import EducationalContent from "@/components/macro-calculator/educational-content";
 import useMacroCalculator from "@/hooks/useMacroCalculator";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import { getCalculationFromStorage } from "@/lib/storage-utils";
 
 const MacroCalculator = () => {
-  const { userData, currentStep, handleNext, handlePrevious, updateUserData, handleStartOver, isLoading } =
-    useMacroCalculator();
+  const {
+    userData,
+    currentStep,
+    calculationResults,
+    isLoading,
+    handleNext,
+    handlePrevious,
+    updateUserData,
+    handleStartOver,
+    saveResultsToFirestore,
+  } = useMacroCalculator();
+
   const [stepErrors, setStepErrors] = useState<{ [key: number]: boolean }>({});
-  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
-  const { currentUser } = useAuth();
 
-  // Check if user has existing results to show on initial load
+  // Save results to Firestore when we load the results page
   useEffect(() => {
-    const checkForExistingCalculations = async () => {
-      if (isLoading) return;
-
-      let hasExistingCalculation = false;
-
-      // First check Firestore for authenticated users
-      if (currentUser) {
-        try {
-          const userDocRef = doc(db, "users", currentUser.uid);
-          const userDoc = await getDoc(userDocRef);
-
-          if (userDoc.exists() && userDoc.data().latestMacros) {
-            hasExistingCalculation = true;
-          }
-        } catch (error) {
-          console.error("Error checking Firestore for existing calculations:", error);
-        }
-      }
-
-      // Check local storage as fallback
-      if (!hasExistingCalculation) {
-        const storedCalculation = getCalculationFromStorage();
-        if (storedCalculation && storedCalculation.results) {
-          hasExistingCalculation = true;
-        }
-      }
-
-      // If we have existing calculations and we're on the landing page, skip to results
-      if (hasExistingCalculation && currentStep === 0) {
-        // Set to step 4 (results page)
-        // Using setTimeout to avoid state updates during render
-        setTimeout(() => {
-          handleNext();
-          handleNext();
-          handleNext();
-          handleNext();
-        }, 0);
-      }
-
-      setInitialLoadComplete(true);
-    };
-
-    checkForExistingCalculations();
-  }, [currentUser, currentStep, handleNext, isLoading]);
+    if (currentStep === 4 && calculationResults) {
+      saveResultsToFirestore();
+    }
+  }, [currentStep, calculationResults, saveResultsToFirestore]);
 
   // Function to validate BMR step
   const validateBMRStep = () => {
@@ -138,7 +102,7 @@ const MacroCalculator = () => {
   const totalSteps = steps.length - 2; // Exclude landing and results pages
 
   // Show loading state while checking for existing calculations
-  if (isLoading || !initialLoadComplete) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
@@ -189,7 +153,9 @@ const MacroCalculator = () => {
           </div>
         );
       case "results":
-        return <ResultsPage userData={userData} onStartOver={handleStartOver} />;
+        return (
+          <ResultsPage userData={userData} onStartOver={handleStartOver} calculationResults={calculationResults} />
+        );
       default:
         return null;
     }
