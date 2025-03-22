@@ -269,7 +269,7 @@ function getEmojiFromRecipe(recipe: Recipe): string {
   if (recipe.mealTypes?.includes("pre-treino")) return "🏋️";
 
   // Check by main ingredient if available
-  const mainIngredient = recipe.ingredients?.[0]?.ingredientId;
+  const mainIngredient = recipe.ingredients?.[0]?.id;
 
   if (mainIngredient?.includes("chicken")) return "🍗";
   if (mainIngredient?.includes("beef")) return "🥩";
