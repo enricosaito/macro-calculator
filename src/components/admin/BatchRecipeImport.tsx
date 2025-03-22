@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { batchImportRecipes } from "@/utils/recipe/batchImport";
 import { AlertCircle, Upload } from "lucide-react";
+import { simplifiedRecipes } from "@/data/simplifiedRecipes";
 
 const BatchRecipeImport = () => {
   const [jsonData, setJsonData] = useState("");
@@ -42,6 +43,29 @@ const BatchRecipeImport = () => {
     } catch (error) {
       setStatus({
         message: `Erro ao processar JSON: ${error}`,
+        type: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Add this function inside the component
+  const handleImportSimplified = async () => {
+    try {
+      setIsLoading(true);
+      setStatus({ message: "", type: "" });
+
+      // Import simplified recipes
+      const result = await batchImportRecipes(simplifiedRecipes);
+
+      setStatus({
+        message: `Importadas ${result.count} receitas simplificadas.`,
+        type: result.status === "error" ? "error" : "success",
+      });
+    } catch (error) {
+      setStatus({
+        message: `Erro ao importar receitas simplificadas: ${error}`,
         type: "error",
       });
     } finally {
@@ -97,6 +121,9 @@ const BatchRecipeImport = () => {
 
           <Button onClick={handleImport} disabled={!jsonData.trim() || isLoading} className="w-full">
             {isLoading ? "Importando..." : "Importar Receitas"}
+          </Button>
+          <Button onClick={handleImportSimplified} variant="outline" disabled={isLoading} className="w-full mt-2">
+            Importar Receitas Simplificadas
           </Button>
         </div>
       </CardContent>
