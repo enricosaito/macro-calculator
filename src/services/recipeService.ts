@@ -29,11 +29,15 @@ const RECIPES_COLLECTION = "recipes";
 const convertFromFirestore = (doc: QueryDocumentSnapshot<DocumentData>): Recipe => {
   const data = doc.data();
 
+  // Handle the timestamp conversion safely
+  const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
+  const updatedAt = data.updatedAt?.toDate ? data.updatedAt.toDate() : new Date();
+
   return {
     ...data,
     id: doc.id,
-    createdAt: data.createdAt?.toDate() || new Date(),
-    updatedAt: data.updatedAt?.toDate() || new Date(),
+    createdAt,
+    updatedAt,
   } as Recipe;
 };
 
@@ -285,7 +289,7 @@ export const searchRecipes = async (searchText: string, limitCount: number = 10)
 export const getFeaturedRecipes = async (limitCount: number = 6): Promise<Recipe[]> => {
   try {
     const q = query(
-      collection(db, RECIPES_COLLECTION),
+      collection(db, "recipes"),
       where("isPublic", "==", true),
       where("isFeatured", "==", true),
       orderBy("updatedAt", "desc"),
@@ -296,7 +300,26 @@ export const getFeaturedRecipes = async (limitCount: number = 6): Promise<Recipe
     return querySnapshot.docs.map((doc) => convertFromFirestore(doc));
   } catch (error) {
     console.error("Error fetching featured recipes:", error);
-    throw error;
+    return [];
+  }
+};
+
+/* Get all public recipes */
+export const getAllPublicRecipes = async (limitCount: number = 20): Promise<Recipe[]> => {
+  try {
+    // Simple query with just one condition and order
+    const q = query(
+      collection(db, "recipes"),
+      where("isPublic", "==", true),
+      orderBy("updatedAt", "desc"),
+      limit(limitCount)
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => convertFromFirestore(doc));
+  } catch (error) {
+    console.error("Error fetching all public recipes:", error);
+    return [];
   }
 };
 
@@ -306,7 +329,7 @@ export const getFeaturedRecipes = async (limitCount: number = 6): Promise<Recipe
 export const getNewRecipes = async (limitCount: number = 6): Promise<Recipe[]> => {
   try {
     const q = query(
-      collection(db, RECIPES_COLLECTION),
+      collection(db, "recipes"),
       where("isPublic", "==", true),
       where("isNew", "==", true),
       orderBy("updatedAt", "desc"),
@@ -317,7 +340,7 @@ export const getNewRecipes = async (limitCount: number = 6): Promise<Recipe[]> =
     return querySnapshot.docs.map((doc) => convertFromFirestore(doc));
   } catch (error) {
     console.error("Error fetching new recipes:", error);
-    throw error;
+    return [];
   }
 };
 
@@ -327,7 +350,7 @@ export const getNewRecipes = async (limitCount: number = 6): Promise<Recipe[]> =
 export const getRecipesByCategory = async (category: RecipeCategory, limitCount: number = 10): Promise<Recipe[]> => {
   try {
     const q = query(
-      collection(db, RECIPES_COLLECTION),
+      collection(db, "recipes"),
       where("isPublic", "==", true),
       where("category", "==", category),
       orderBy("updatedAt", "desc"),
@@ -338,7 +361,26 @@ export const getRecipesByCategory = async (category: RecipeCategory, limitCount:
     return querySnapshot.docs.map((doc) => convertFromFirestore(doc));
   } catch (error) {
     console.error(`Error fetching recipes for category ${category}:`, error);
-    throw error;
+    return [];
+  }
+};
+
+/* Get Recipes by Tag */
+export const getRecipesByTag = async (tag: string, limitCount: number = 6): Promise<Recipe[]> => {
+  try {
+    const q = query(
+      collection(db, "recipes"),
+      where("isPublic", "==", true),
+      where("tags", "array-contains", tag),
+      orderBy("updatedAt", "desc"),
+      limit(limitCount)
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => convertFromFirestore(doc));
+  } catch (error) {
+    console.error(`Error fetching recipes with tag ${tag}:`, error);
+    return [];
   }
 };
 

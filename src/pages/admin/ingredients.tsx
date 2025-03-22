@@ -1,11 +1,10 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import RecipeManager from "@/components/admin/RecipeManager";
 import PageTransition from "@/components/ui/page-transition";
-import BatchRecipeImport from "@/components/admin/BatchRecipeImport";
+import IngredientManager from "@/components/admin/IngredientManager";
 
-const AdminRecipesPage = () => {
+const AdminIngredientsPage = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -19,11 +18,10 @@ const AdminRecipesPage = () => {
   return (
     <PageTransition>
       <div className="container mx-auto py-8 px-4">
-        <BatchRecipeImport />
-        <RecipeManager />
+        <IngredientManager />
       </div>
     </PageTransition>
   );
 };
 
-export default AdminRecipesPage;
+export default AdminIngredientsPage;
