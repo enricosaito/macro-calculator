@@ -3,9 +3,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Recipe, RecipeCategory, CuisineType, RecipeDifficulty } from "@/types/recipe";
 import { batchImportRecipes } from "@/utils/recipe/batchImport";
 import { AlertCircle, Upload } from "lucide-react";
 import { simplifiedRecipes } from "@/data/simplifiedRecipes";
+
+// Define a more accurate type for the simplified recipe data
+type SimplifiedRecipe = Omit<Recipe, "id" | "slug" | "createdBy" | "createdAt" | "updatedAt">;
+
+// Update the function to use the correct type
+const prepareRecipesForImport = (rawRecipes: SimplifiedRecipe[]) => {
+  return rawRecipes.map((recipe) => ({
+    ...recipe,
+    // Type assertions for enum fields
+    category: recipe.category as RecipeCategory,
+    cuisineType: recipe.cuisineType as CuisineType,
+    difficulty: recipe.difficulty as RecipeDifficulty,
+    // Arrays remain as string arrays and will be cast as needed
+    dietaryRestrictions: recipe.dietaryRestrictions || [],
+    mealTypes: recipe.mealTypes || [],
+    tags: recipe.tags || [],
+  }));
+};
 
 const BatchRecipeImport = () => {
   const [jsonData, setJsonData] = useState("");
@@ -21,7 +40,7 @@ const BatchRecipeImport = () => {
       setStatus({ message: "", type: "" });
 
       // Parse JSON data
-      const recipes = JSON.parse(jsonData);
+      const recipes = JSON.parse(jsonData) as SimplifiedRecipe[];
 
       if (!Array.isArray(recipes)) {
         setStatus({
@@ -32,7 +51,8 @@ const BatchRecipeImport = () => {
       }
 
       // Import recipes
-      const result = await batchImportRecipes(recipes);
+      const preparedRecipes = prepareRecipesForImport(recipes);
+      const result = await batchImportRecipes(preparedRecipes);
 
       if (result.status === "success") {
         setStatus({ message: result.message, type: "success" });
@@ -42,7 +62,7 @@ const BatchRecipeImport = () => {
       }
     } catch (error) {
       setStatus({
-        message: `Erro ao processar JSON: ${error}`,
+        message: `Erro ao processar JSON: ${error instanceof Error ? error.message : String(error)}`,
         type: "error",
       });
     } finally {
@@ -50,14 +70,15 @@ const BatchRecipeImport = () => {
     }
   };
 
-  // Add this function inside the component
+  // Update the simplified import function
   const handleImportSimplified = async () => {
     try {
       setIsLoading(true);
       setStatus({ message: "", type: "" });
 
-      // Import simplified recipes
-      const result = await batchImportRecipes(simplifiedRecipes);
+      // Import simplified recipes with proper type casting
+      const preparedRecipes = prepareRecipesForImport(simplifiedRecipes as unknown as SimplifiedRecipe[]);
+      const result = await batchImportRecipes(preparedRecipes);
 
       setStatus({
         message: `Importadas ${result.count} receitas simplificadas.`,
@@ -65,7 +86,7 @@ const BatchRecipeImport = () => {
       });
     } catch (error) {
       setStatus({
-        message: `Erro ao importar receitas simplificadas: ${error}`,
+        message: `Erro ao importar receitas simplificadas: ${error instanceof Error ? error.message : String(error)}`,
         type: "error",
       });
     } finally {
