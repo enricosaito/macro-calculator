@@ -202,7 +202,7 @@ const RecipeCarousel = ({ title, recipes, featured = false }: RecipeCarouselProp
             recipes.map((recipe) => (
               <Link
                 key={recipe.id}
-                to={`/recipe/${recipe.id}`}
+                to={`/recipe/${recipe.slug}`}
                 className="flex-none"
                 style={{ width: featured ? 280 : 160 }}
               >
