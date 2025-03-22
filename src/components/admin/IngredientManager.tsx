@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Edit, Search, RefreshCw } from "lucide-react";
-import { Ingredient, seedIngredients } from "@/utils/ingredients/seedIngredients";
+import { Ingredient } from "@/utils/ingredients/seedIngredients";
 
 const IngredientManager = () => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);

@@ -1,10 +1,10 @@
-// src/utils/recipe/batchImport.ts
 import { db } from "@/lib/firebase";
 import { collection, doc, writeBatch, serverTimestamp } from "firebase/firestore";
 import { generateSlug } from "./recipeUtils";
+import { Recipe } from "@/types/recipe";
 
 // Helper function to sanitize data for Firestore
-const sanitizeForFirestore = (obj: any): any => {
+const sanitizeForFirestore = <T>(obj: T): Record<string, unknown> | null | T => {
   if (obj === null || obj === undefined) {
     return null;
   }
@@ -14,15 +14,13 @@ const sanitizeForFirestore = (obj: any): any => {
   }
 
   if (Array.isArray(obj)) {
-    return obj.map((item) => sanitizeForFirestore(item));
+    return obj.map((item) => sanitizeForFirestore(item)) as unknown as T;
   }
 
-  const result: Record<string, any> = {};
-
-  for (const [key, value] of Object.entries(obj)) {
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
     // Skip undefined values
     if (value === undefined) continue;
-
     // Recursively sanitize nested objects
     result[key] = sanitizeForFirestore(value);
   }
@@ -30,7 +28,7 @@ const sanitizeForFirestore = (obj: any): any => {
   return result;
 };
 
-export const batchImportRecipes = async (recipeData: any[]) => {
+export const batchImportRecipes = async (recipeData: Partial<Recipe>[]) => {
   try {
     // Use multiple batches to avoid Firestore batch size limits
     let importedCount = 0;
@@ -82,7 +80,7 @@ export const batchImportRecipes = async (recipeData: any[]) => {
     console.error("Erro na importação em lote:", error);
     return {
       status: "error",
-      message: `Erro na importação: ${error}`,
+      message: `Erro na importação: ${error instanceof Error ? error.message : String(error)}`,
       count: 0,
     };
   }
