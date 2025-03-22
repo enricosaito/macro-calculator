@@ -289,7 +289,7 @@ export const searchRecipes = async (searchText: string, limitCount: number = 10)
 export const getFeaturedRecipes = async (limitCount: number = 6): Promise<Recipe[]> => {
   try {
     const q = query(
-      collection(db, RECIPES_COLLECTION),
+      collection(db, "recipes"),
       where("isPublic", "==", true),
       where("isFeatured", "==", true),
       orderBy("updatedAt", "desc"),
@@ -300,7 +300,7 @@ export const getFeaturedRecipes = async (limitCount: number = 6): Promise<Recipe
     return querySnapshot.docs.map((doc) => convertFromFirestore(doc));
   } catch (error) {
     console.error("Error fetching featured recipes:", error);
-    throw error;
+    return [];
   }
 };
 
@@ -310,7 +310,7 @@ export const getFeaturedRecipes = async (limitCount: number = 6): Promise<Recipe
 export const getNewRecipes = async (limitCount: number = 6): Promise<Recipe[]> => {
   try {
     const q = query(
-      collection(db, RECIPES_COLLECTION),
+      collection(db, "recipes"),
       where("isPublic", "==", true),
       where("isNew", "==", true),
       orderBy("updatedAt", "desc"),
@@ -321,7 +321,7 @@ export const getNewRecipes = async (limitCount: number = 6): Promise<Recipe[]> =
     return querySnapshot.docs.map((doc) => convertFromFirestore(doc));
   } catch (error) {
     console.error("Error fetching new recipes:", error);
-    throw error;
+    return [];
   }
 };
 
@@ -331,7 +331,7 @@ export const getNewRecipes = async (limitCount: number = 6): Promise<Recipe[]> =
 export const getRecipesByCategory = async (category: RecipeCategory, limitCount: number = 10): Promise<Recipe[]> => {
   try {
     const q = query(
-      collection(db, RECIPES_COLLECTION),
+      collection(db, "recipes"),
       where("isPublic", "==", true),
       where("category", "==", category),
       orderBy("updatedAt", "desc"),
@@ -342,7 +342,7 @@ export const getRecipesByCategory = async (category: RecipeCategory, limitCount:
     return querySnapshot.docs.map((doc) => convertFromFirestore(doc));
   } catch (error) {
     console.error(`Error fetching recipes for category ${category}:`, error);
-    throw error;
+    return [];
   }
 };
 
