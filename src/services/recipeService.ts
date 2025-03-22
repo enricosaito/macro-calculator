@@ -29,11 +29,15 @@ const RECIPES_COLLECTION = "recipes";
 const convertFromFirestore = (doc: QueryDocumentSnapshot<DocumentData>): Recipe => {
   const data = doc.data();
 
+  // Handle the timestamp conversion safely
+  const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
+  const updatedAt = data.updatedAt?.toDate ? data.updatedAt.toDate() : new Date();
+
   return {
     ...data,
     id: doc.id,
-    createdAt: data.createdAt?.toDate() || new Date(),
-    updatedAt: data.updatedAt?.toDate() || new Date(),
+    createdAt,
+    updatedAt,
   } as Recipe;
 };
 
