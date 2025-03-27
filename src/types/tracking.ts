@@ -11,8 +11,8 @@ export interface TrackingEntry {
 
 export interface Meal {
   id: string;
-  name: string; // Café da manhã, Almoço, Jantar, Lanche, etc.
-  time?: Timestamp | Date;
+  name: string;
+  time?: Date | { seconds: number; nanoseconds: number };
   foods: FoodEntry[];
   macros: MacroTotals;
 }

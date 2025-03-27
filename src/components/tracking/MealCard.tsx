@@ -11,6 +11,12 @@ interface MealCardProps {
   onRemoveFood: (mealId: string, foodId: string) => void;
 }
 
+// Define a proper type for Firestore Timestamp
+interface FirestoreTimestamp {
+  seconds: number;
+  nanoseconds: number;
+}
+
 const MealCard: React.FC<MealCardProps> = ({ meal, onAddFood, onRemoveFood }) => {
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -19,7 +25,7 @@ const MealCard: React.FC<MealCardProps> = ({ meal, onAddFood, onRemoveFood }) =>
     setShowAddForm(false);
   };
 
-  const formatTime = (date: Date | { seconds: number; nanoseconds: number } | undefined) => {
+  const formatTime = (date: Date | FirestoreTimestamp | undefined) => {
     if (!date) return "";
 
     if (date instanceof Date) {
@@ -46,7 +52,7 @@ const MealCard: React.FC<MealCardProps> = ({ meal, onAddFood, onRemoveFood }) =>
             {meal.time && (
               <span className="text-xs ml-2 text-muted-foreground flex items-center">
                 <Clock className="h-3 w-3 mr-1" />
-                {formatTime(meal.time instanceof Date ? meal.time : new Date(meal.time.seconds * 1000))}
+                {formatTime(meal.time)}
               </span>
             )}
           </CardTitle>
