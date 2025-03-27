@@ -10,6 +10,7 @@ import Navbar from "@/components/ui/navbar-fixed";
 import LoadingScreen from "@/components/ui/loading";
 import MacroCalculator from "@/pages/macro-calculator";
 import RecipePlanner from "@/pages/recipe-planner";
+import TrackingPage from "@/pages/tracking";
 import RecipeDetailPage from "@/pages/recipe/[id]";
 import AdminRecipesPage from "@/pages/admin/recipes";
 import AdminIngredientsPage from "./pages/admin/ingredients";
@@ -59,6 +60,7 @@ const App = () => {
                     <Route path="/terms" element={<TermsPage />} />
                     <Route path="/privacy" element={<PrivacyPage />} />
                     <Route path="/recipes" element={<RecipePlanner />} />
+                    <Route path="/tracking" element={<TrackingPage />} />
                     <Route path="/explore" element={<RecipeExplorer />} />
                     <Route path="/recipe/:id" element={<RecipeDetailPage />} />
                     <Route path="*" element={<NotFoundPage />} />
