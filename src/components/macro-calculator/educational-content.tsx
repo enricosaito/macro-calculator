@@ -1,9 +1,9 @@
 // src/components/macro-calculator/educational-content.tsx
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Target, ArrowUp, Zap, Star, Beaker, Users } from "lucide-react";
-import CallToAction from "@/components/ui/call-to-action";
+import { AlertTriangle, UtensilsCrossed, ArrowUp, Star, Beaker, Users } from "lucide-react";
 
 const EducationalContent = () => {
   const scrollToTop = () => {
@@ -12,6 +12,8 @@ const EducationalContent = () => {
       behavior: "smooth",
     });
   };
+
+  const navigate = useNavigate();
 
   return (
     <div id="educational-content" className="space-y-48 mt-32 pt-16 mb-24 relative border-t border-border/20">
@@ -162,77 +164,74 @@ const EducationalContent = () => {
         </Card>
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.5 }}
-      >
-        <h2 className="font-bold text-3xl mb-3 flex items-start gap-2">
-          <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-lg flex-shrink-0 mt-1">
-            3
-          </span>
-          "Quanta gordura posso perder por semana sem prejudicar minha saúde?"
-        </h2>
-        <Card className="border border-border/50">
-          <CardContent className="p-6">
-            <p className="text-lg mb-6">
-              Esta é a pergunta que todos fazem, mas poucos respondem com honestidade. Vamos falar a verdade aqui.
-            </p>
+      <h2 className="font-bold text-3xl mb-3 flex items-start gap-2">
+        <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-lg flex-shrink-0 mt-1">
+          3
+        </span>
+        "Como transformar meus macros em refeições deliciosas?"
+      </h2>
+      <Card className="border border-border/50">
+        <CardContent className="p-6">
+          <p className="text-lg mb-6">
+            Saber suas metas de macros é apenas metade do caminho. Transformá-las em pratos saborosos e variados é o
+            maior desafio do dia a dia.
+          </p>
 
-            <div className="mb-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-primary/10 p-4 rounded-lg border border-primary/20 h-full">
-                  <h3 className="font-medium mb-3 flex items-center gap-2">
-                    <Target className="h-5 w-5 text-primary" />
-                    Meta de perda ideal
-                  </h3>
-                  <p className="text-2xl font-bold text-primary mb-3">0,5 a 1kg por semana</p>
-                  <p>
-                    Este ritmo permite que você preserve músculo, mantenha sua energia e metabolismo, e o mais
-                    importante: <span className="font-medium">não sofra o efeito sanfona</span> depois.
-                  </p>
-                </div>
-
-                <div className="bg-primary/10 p-4 rounded-lg border border-primary/20 h-full">
-                  <h3 className="font-medium mb-3 flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-primary" />O que acontece se for mais rápido
-                  </h3>
-                  <p className="mb-2">Tentou perder 2kg+ por semana? Prepare-se para:</p>
-                  <ul className="list-disc pl-5 space-y-1">
-                    <li>Perda de músculo (que diminui seu metabolismo)</li>
-                    <li>Cansaço constante e irritabilidade</li>
-                    <li>Fome incontrolável levando a compulsões</li>
-                    <li>Recuperar tudo de volta (e mais um pouco)</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <div className="pl-2 mb-6">
-              <h3 className="font-medium mb-2">Para quem quer ganhar massa muscular:</h3>
-              <p className="mb-4">O ganho muscular natural é um processo lento, mas consistente:</p>
-              <div className="bg-primary/10 p-4 rounded-lg border border-primary/20">
-                <p className="mb-1">
-                  <span className="font-medium">Iniciantes:</span> Até 900g de músculo por mês (nos primeiros 6 meses)
-                </p>
-                <p className="mb-1">
-                  <span className="font-medium">Intermediários:</span> 400-500g por mês
-                </p>
+          <div className="mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-primary/10 p-4 rounded-lg border border-primary/20 h-full">
+                <h3 className="font-medium mb-3 flex items-center gap-2">
+                  <UtensilsCrossed className="h-5 w-5 text-primary" />
+                  Planejamento inteligente
+                </h3>
+                <p className="text-2xl font-bold text-primary mb-3">Receitas personalizadas</p>
                 <p>
-                  <span className="font-medium">Avançados:</span> 200-300g por mês (após anos de treino)
+                  Nosso planejador de receitas cria pratos deliciosos que encaixam perfeitamente nos seus macros, sem
+                  comprometer o sabor ou a variedade.
                 </p>
               </div>
-            </div>
 
-            <p>
-              <span className="font-medium">A verdade:</span> Transformações impressionantes levam tempo. Aquele "antes
-              e depois" de 30 dias que você viu no Instagram? Provavelmente envolveu desidratação, iluminação favorável,
-              ou não foi feito em apenas um mês.
-            </p>
-          </CardContent>
-        </Card>
-      </motion.div>
+              <div className="bg-primary/10 p-4 rounded-lg border border-primary/20 h-full">
+                <h3 className="font-medium mb-3 flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-primary" />
+                  Erros comuns de alimentação
+                </h3>
+                <p className="mb-2">Evite estas armadilhas que podem sabotar seus resultados:</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Monotonia alimentar que leva a compulsões</li>
+                  <li>Receitas sem sabor que desanimam</li>
+                  <li>Não aproveitar os ingredientes que já tem</li>
+                  <li>Planos de refeição muito complicados</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="pl-2 mb-6">
+            <h3 className="font-medium mb-2">Como nosso planejador de receitas ajuda:</h3>
+            <p className="mb-4">Transforme seus macros em refeições deliciosas de forma prática:</p>
+            <div className="bg-primary/10 p-4 rounded-lg border border-primary/20">
+              <p className="mb-1">
+                <span className="font-medium">Simplificado:</span> Selecione os ingredientes que você já tem em casa
+              </p>
+              <p className="mb-1">
+                <span className="font-medium">Personalizado:</span> Receba sugestões de receitas que se encaixam nos
+                seus macros
+              </p>
+              <p>
+                <span className="font-medium">Prático:</span> Instruções passo a passo e informações nutricionais
+                detalhadas
+              </p>
+            </div>
+          </div>
+
+          <p>
+            <span className="font-medium">A verdade:</span> Seguir seus macros não significa comer frango com batata
+            doce todos os dias. Com as receitas certas, você pode desfrutar de refeições deliciosas enquanto alcança
+            seus objetivos de composição corporal.
+          </p>
+        </CardContent>
+      </Card>
 
       {/* Call to Action section */}
       <motion.div
@@ -244,17 +243,28 @@ const EducationalContent = () => {
         <Card className="border-2 border-primary/30 shadow-md">
           <CardContent className="p-6">
             <div className="flex items-start gap-3 mb-6">
-              <Zap className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
+              <UtensilsCrossed className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
               <div>
-                <h2 className="font-bold text-2xl mb-1">Quer resultados mais rápidos e personalizados?</h2>
+                <h2 className="font-bold text-2xl mb-1">Transforme seus macros em refeições deliciosas!</h2>
                 <p>
-                  Mesmo a melhor calculadora não substitui o olhar especializado de um profissional que pode adaptar seu
-                  plano às suas necessidades específicas.
+                  Agora que você conhece seus macros ideais, use nosso planejador de receitas para criar pratos
+                  incríveis que se encaixam perfeitamente no seu plano nutricional.
                 </p>
               </div>
             </div>
 
-            <CallToAction />
+            <div className="text-center">
+              <Button
+                onClick={() => navigate("/recipes")}
+                className="px-8 py-6 text-lg gap-2 bg-gradient-to-r from-primary to-primary/80"
+              >
+                <UtensilsCrossed className="h-5 w-5 mr-2" />
+                Explorar Receitas Agora
+              </Button>
+              <p className="mt-4 text-sm text-muted-foreground">
+                Dê sabor ao seu plano alimentar e mantenha-se motivado com uma variedade de opções deliciosas!
+              </p>
+            </div>
           </CardContent>
         </Card>
       </motion.div>

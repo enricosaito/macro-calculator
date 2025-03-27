@@ -1,4 +1,4 @@
-import { Calculator, Utensils, LogOut, Menu, X, Search, Box } from "lucide-react";
+import { Calculator, Utensils, LogOut, Menu, X, Search, Box, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -46,6 +46,7 @@ const Navbar = () => {
     { label: "Calculadora de Macros", path: "/", icon: Calculator },
     { label: "Planejador de Receitas", path: "/recipes", icon: Utensils },
     { label: "Explorar", path: "/explore", icon: Search },
+    { label: "Diário Alimentar", path: "/tracking", icon: BookOpen },
   ];
 
   const handleLogout = async () => {
