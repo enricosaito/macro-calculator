@@ -1,4 +1,3 @@
-// src/services/trackingService.ts
 import {
   collection,
   doc,
@@ -8,12 +7,9 @@ import {
   query,
   where,
   orderBy,
-  limit,
   Timestamp,
   deleteDoc,
-  updateDoc,
   DocumentSnapshot,
-  startAfter,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { TrackingEntry, FoodEntry, Meal, MacroTotals } from "@/types/tracking";

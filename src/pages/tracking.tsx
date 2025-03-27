@@ -16,18 +16,7 @@ import { useNavigate } from "react-router-dom";
 const TrackingPage = () => {
   const { currentUser, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const {
-    currentDate,
-    todayEntry,
-    loading,
-    error,
-    stats,
-    changeDate,
-    addMeal,
-    addFood,
-    removeFood,
-    calculateRemaining,
-  } = useTracking();
+  const { currentDate, todayEntry, loading, error, stats, changeDate, addMeal, addFood, removeFood } = useTracking();
 
   // Default goal macros (should be fetched from the user's profile or calculations)
   const [goalMacros, setGoalMacros] = useState<MacroTotals>({
