@@ -19,11 +19,22 @@ const MealCard: React.FC<MealCardProps> = ({ meal, onAddFood, onRemoveFood }) =>
     setShowAddForm(false);
   };
 
-  const formatTime = (date: Date | undefined) => {
+  const formatTime = (date: Date | { seconds: number; nanoseconds: number } | undefined) => {
     if (!date) return "";
-    return date instanceof Date
-      ? date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-      : new Date(date.seconds * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    if (date instanceof Date) {
+      return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+
+    // If it's a Firestore timestamp object
+    if ("seconds" in date) {
+      return new Date(date.seconds * 1000).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+
+    return "";
   };
 
   return (
